@@ -26,6 +26,7 @@ export const COUNTING_SYSTEMS = {
 // Basic Strategy Matrix
 export const BASIC_STRATEGY = {
   // Hard totals: [2,3,4,5,6,7,8,9,10,A] dealer up cards
+  4: ['H','H','H','H','H','H','H','H','H','H'],
   5: ['H','H','H','H','H','H','H','H','H','H'],
   6: ['H','H','H','H','H','H','H','H','H','H'],
   7: ['H','H','H','H','H','H','H','H','H','H'],
@@ -56,6 +57,13 @@ export const SOFT_STRATEGY = {
   18: ['S','D','D','D','D','S','S','H','H','H'], // A,7
   19: ['S','S','S','S','S','S','S','S','S','S'], // A,8
   20: ['S','S','S','S','S','S','S','S','S','S'], // A,9
+};
+
+// Surrender strategy (only for initial 2-card hands)
+export const SURRENDER_STRATEGY = {
+  // Hard totals that should surrender: [2,3,4,5,6,7,8,9,10,A] dealer up cards
+  15: ['N','N','N','N','N','N','N','N','Y','N'], // 15 vs 10
+  16: ['N','N','N','N','N','N','N','Y','Y','Y'], // 16 vs 9, 10, A
 };
 
 // Pair splitting strategy
@@ -89,13 +97,17 @@ export class BlackjackSimulation {
     this.handsPlayed = 0;
     this.totalWon = 0;
     this.totalWagered = 0;
+    this.totalInitialBets = 0; // Track only initial bets (before doubles/splits)
     this.wins = 0;
     this.losses = 0;
     this.pushes = 0;
     this.doubles = 0;
     this.splits = 0;
+    this.surrenders = 0;
     this.blackjacks = 0;
     this.busts = 0;
+    this.hands15 = 0; // Track hands dealt as 15
+    this.hands16 = 0; // Track hands dealt as 16
     this.maxDrawdown = 0;
     this.currentBankroll = 0;
     this.minBankroll = 0;
@@ -103,6 +115,7 @@ export class BlackjackSimulation {
     this.handDetails = [];
     this.previousHandCount = 0; // Count from end of previous hand
     this.previousTrueCount = 0; // True count from end of previous hand
+    this.lastHandWasShuffle = true; // First hand is always after initial shuffle
   }
 
   createShoe() {
@@ -138,6 +151,7 @@ export class BlackjackSimulation {
     if (this.shoe.length === 0 || this.needReshuffle()) {
       this.shoe = this.createShoe();
       this.runningCount = 0;
+      this.lastHandWasShuffle = true; // Flag to track shuffle occurred
     }
     
     const card = this.shoe.pop();
@@ -237,7 +251,13 @@ export class BlackjackSimulation {
       return this.getBasicStrategyAction(playerHand, '10', canDouble, canSplit);
     }
     
-    // Check for pair splitting first
+    // Check for surrender first (only on initial 2-card hands)
+    if (this.config.surrenderAllowed && playerHand.length === 2 && !this.isSoftHand(playerHand)) {
+      const surrenderAction = SURRENDER_STRATEGY[playerTotal]?.[dealerIndex];
+      if (surrenderAction === 'Y') return 'R'; // Surrender
+    }
+    
+    // Check for pair splitting
     if (canSplit && this.isPair(playerHand)) {
       const pairCard = playerHand[0];
       const splitAction = PAIR_STRATEGY[pairCard]?.[dealerIndex];
@@ -272,6 +292,7 @@ export class BlackjackSimulation {
     const baseBetSize = this.getBetSize();
     let totalBet = baseBetSize;
     this.totalWagered += baseBetSize;
+    this.totalInitialBets += baseBetSize; // Track the initial bet amount
     
     // NOW deal initial cards (this will change the count)
     const playerHand = [this.dealCard(), this.dealCard()];
@@ -298,13 +319,22 @@ export class BlackjackSimulation {
       dealerTotal: this.calculateHandValue(dealerHand),
       playerBlackjack: false,
       dealerBlackjack: false,
-      errors: []
+      errors: [],
+      shuffleOccurred: this.lastHandWasShuffle // Track if shuffle happened before this hand
     } : null;
+    
+    // Reset shuffle flag after capturing it
+    this.lastHandWasShuffle = false;
+    
+    // Track initial hand totals for surrender analysis
+    const initialTotal = this.calculateHandValue(playerHand);
+    if (initialTotal === 15 && !this.isSoftHand(playerHand)) this.hands15++;
+    if (initialTotal === 16 && !this.isSoftHand(playerHand)) this.hands16++;
     
     // Capture initial basic strategy action
     if (handDetail && !this.isBlackjack(playerHand) && !this.isBlackjack(dealerHand)) {
       const initialAction = this.getBasicStrategyAction(playerHand, dealerHand[0], true, true);
-      const actionMap = { 'H': 'Hit', 'S': 'Stand', 'D': 'Double', 'P': 'Split' };
+      const actionMap = { 'H': 'Hit', 'S': 'Stand', 'D': 'Double', 'P': 'Split', 'R': 'Surrender' };
       handDetail.initialAction = actionMap[initialAction] || initialAction;
     } else if (handDetail) {
       handDetail.initialAction = this.isBlackjack(playerHand) ? 'Blackjack' : 'vs Dealer BJ';
@@ -399,6 +429,20 @@ export class BlackjackSimulation {
           break;
         }
         
+        if (action === 'R') {
+          // Surrender - lose half the bet
+          if (handDetail && handDetail.actions) handDetail.actions.push('Surrender');
+          this.surrenders++;
+          handResults.push({
+            cards: currentHand.cards,
+            total: playerTotal,
+            bet: currentHand.bet,
+            busted: false,
+            surrendered: true
+          });
+          break;
+        }
+        
         hasActed = true;
         
         if (action === 'H') {
@@ -414,9 +458,10 @@ export class BlackjackSimulation {
             handDetail.actions.push(`Double:${doubleCard}`);
           }
           currentHand.cards.push(doubleCard);
+          // Add the additional bet amount (equal to original bet)
           this.totalWagered += currentHand.bet;
           totalBet += currentHand.bet;
-          currentHand.bet *= 2;
+          currentHand.bet *= 2; // Now the hand bet represents total amount at risk
           this.doubles++;
           break;
         } else if (action === 'P') {
@@ -451,27 +496,41 @@ export class BlackjackSimulation {
         handDetail.actions.push('Stand');
       }
       
-      handResults.push({
-        cards: currentHand.cards,
-        total: playerTotal,
-        bet: currentHand.bet,
-        busted: isBusted
-      });
+      // Only add to results if hand wasn't surrendered
+      const wasSurrendered = handResults.some(h => h.cards === currentHand.cards && h.surrendered);
+      if (!wasSurrendered) {
+        // Recalculate final total after all cards added
+        const finalTotal = this.calculateHandValue(currentHand.cards);
+        handResults.push({
+          cards: currentHand.cards,
+          total: finalTotal,
+          bet: currentHand.bet,
+          busted: finalTotal > 21
+        });
+      }
     }
     
-    // Dealer plays
+    // Dealer plays only if at least one player hand didn't bust
+    const anyPlayerHandsAlive = handResults.some(hand => !hand.busted && !hand.surrendered);
     let dealerTotal = this.calculateHandValue(dealerHand);
-    while (dealerTotal < 17) {
-      const dealerCard = this.dealCard();
-      dealerHand.push(dealerCard);
-      dealerTotal = this.calculateHandValue(dealerHand);
+    
+    if (anyPlayerHandsAlive) {
+      while (dealerTotal < 17 || (dealerTotal === 17 && this.config.dealerHitsSoft17 && this.isSoftHand(dealerHand))) {
+        const dealerCard = this.dealCard();
+        dealerHand.push(dealerCard);
+        dealerTotal = this.calculateHandValue(dealerHand);
+      }
     }
+    // If all player hands busted/surrendered, dealer just reveals hole card (no additional draws)
     
     // Determine results for each hand
     let totalWinnings = 0;
     
     handResults.forEach(hand => {
-      if (hand.busted) {
+      if (hand.surrendered) {
+        this.losses++;
+        totalWinnings -= hand.bet / 2; // Lose half bet on surrender
+      } else if (hand.busted) {
         this.losses++;
         this.busts++;
         totalWinnings -= hand.bet;
@@ -575,27 +634,37 @@ export class BlackjackSimulation {
   }
 
   getResults() {
-    const winPercentage = this.handsPlayed > 0 ? (this.wins / this.handsPlayed * 100) : 0;
-    const lossPercentage = this.handsPlayed > 0 ? (this.losses / this.handsPlayed * 100) : 0;
-    const pushPercentage = this.handsPlayed > 0 ? (this.pushes / this.handsPlayed * 100) : 0;
-    const expectedValue = this.totalWagered > 0 ? (this.totalWon / this.totalWagered * 100) : 0;
-    const avgBetSize = this.handsPlayed > 0 ? (this.totalWagered / this.handsPlayed) : 0;
+    // Total outcomes includes split hands
+    const totalOutcomes = this.wins + this.losses + this.pushes;
+    
+    // Calculate percentages based on total outcomes (including splits)
+    const winPercentage = totalOutcomes > 0 ? (this.wins / totalOutcomes * 100) : 0;
+    const lossPercentage = totalOutcomes > 0 ? (this.losses / totalOutcomes * 100) : 0;
+    const pushPercentage = totalOutcomes > 0 ? (this.pushes / totalOutcomes * 100) : 0;
+    // Expected Value should be based on net profit (final bankroll)
+    const netProfit = this.currentBankroll;
+    const expectedValue = this.totalWagered > 0 ? (netProfit / this.totalWagered * 100) : 0;
+    const avgBetSize = this.handsPlayed > 0 ? (this.totalInitialBets / this.handsPlayed) : 0;
     
     return {
       handsPlayed: this.handsPlayed,
+      totalOutcomes: totalOutcomes, // Include total outcomes for clarity
       wins: this.wins,
       losses: this.losses,
       pushes: this.pushes,
       blackjacks: this.blackjacks,
       doubles: this.doubles,
       splits: this.splits,
+      surrenders: this.surrenders,
       busts: this.busts,
+      hands15: this.hands15,
+      hands16: this.hands16,
       winPercentage: parseFloat(winPercentage.toFixed(2)),
       lossPercentage: parseFloat(lossPercentage.toFixed(2)),
       pushPercentage: parseFloat(pushPercentage.toFixed(2)),
       totalWagered: this.totalWagered,
       totalWon: this.totalWon,
-      netResult: this.totalWon,
+      netResult: this.currentBankroll,
       expectedValue: parseFloat(expectedValue.toFixed(2)),
       averageBetSize: parseFloat(avgBetSize.toFixed(2)),
       maxDrawdown: this.maxDrawdown,

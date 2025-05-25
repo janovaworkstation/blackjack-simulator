@@ -49,16 +49,23 @@ const ResultsPanel = ({ results, isRunning, progress }) => {
     return num;
   };
 
+  // Calculate totalOutcomes in case it's not provided in results
+  const calculatedTotalOutcomes = safeNumber(results.wins) + safeNumber(results.losses) + safeNumber(results.pushes);
+  
   const safeResults = {
     ...results,
     handsPlayed: safeNumber(results.handsPlayed),
+    totalOutcomes: safeNumber(results.totalOutcomes) || calculatedTotalOutcomes,
     wins: safeNumber(results.wins),
     losses: safeNumber(results.losses),
     pushes: safeNumber(results.pushes),
     blackjacks: safeNumber(results.blackjacks),
     doubles: safeNumber(results.doubles),
     splits: safeNumber(results.splits),
+    surrenders: safeNumber(results.surrenders),
     busts: safeNumber(results.busts),
+    hands15: safeNumber(results.hands15),
+    hands16: safeNumber(results.hands16),
     winPercentage: safeNumber(results.winPercentage),
     lossPercentage: safeNumber(results.lossPercentage),
     pushPercentage: safeNumber(results.pushPercentage),
@@ -102,7 +109,7 @@ const ResultsPanel = ({ results, isRunning, progress }) => {
             <div className="bg-purple-50 p-4 rounded-lg">
               <div className="text-sm text-gray-600">Net Result</div>
               <div className={`text-xl font-bold ${safeResults.netResult >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                ${safeResults.netResult.toLocaleString()}
+                ${parseFloat(safeResults.netResult.toFixed(2)).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
               </div>
             </div>
           </div>
@@ -152,34 +159,45 @@ const ResultsPanel = ({ results, isRunning, progress }) => {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span>Total Wagered:</span>
-                  <span className="font-medium">${safeResults.totalWagered.toLocaleString()}</span>
+                  <span className="font-medium">${parseFloat(safeResults.totalWagered.toFixed(2)).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Total Won:</span>
-                  <span className="font-medium">${(safeResults.totalWagered + safeResults.totalWon).toLocaleString()}</span>
+                  <span className="font-medium">${parseFloat((safeResults.totalWagered + safeResults.totalWon).toFixed(2)).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Net Profit/Loss:</span>
                   <span className={`font-medium ${safeResults.netResult >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    ${safeResults.netResult.toLocaleString()}
+                    ${parseFloat(safeResults.netResult.toFixed(2)).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Average Bet:</span>
-                  <span className="font-medium">${safeResults.averageBetSize}</span>
+                  <span>Average Initial Bet:</span>
+                  <span className="font-medium">${safeResults.averageBetSize.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Max Drawdown:</span>
-                  <span className="text-red-600 font-medium">${safeResults.maxDrawdown.toLocaleString()}</span>
+                  <span className="text-red-600 font-medium">${parseFloat(safeResults.maxDrawdown.toFixed(2)).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Total Outcomes Summary */}
+          <div className="text-center">
+            <div className="text-xs text-gray-500">
+              Total: {safeResults.totalOutcomes.toLocaleString()} outcomes from {safeResults.handsPlayed.toLocaleString()} hands dealt (includes splits)
+            </div>
+            <div className="text-xs text-gray-500 mt-1">
+              Hard 15s: {safeResults.hands15.toLocaleString()} ({((safeResults.hands15 / safeResults.handsPlayed) * 100).toFixed(1)}%) | 
+              Hard 16s: {safeResults.hands16.toLocaleString()} ({((safeResults.hands16 / safeResults.handsPlayed) * 100).toFixed(1)}%)
             </div>
           </div>
 
           {/* Special Plays */}
           <div>
             <h4 className="font-semibold text-gray-900 mb-3">Special Plays</h4>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div className="flex justify-between">
                 <span>Doubles:</span>
                 <span className="font-medium">{safeResults.doubles.toLocaleString()}</span>
@@ -187,6 +205,10 @@ const ResultsPanel = ({ results, isRunning, progress }) => {
               <div className="flex justify-between">
                 <span>Splits:</span>
                 <span className="font-medium">{safeResults.splits.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Surrenders:</span>
+                <span className="font-medium">{safeResults.surrenders.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
                 <span>System:</span>

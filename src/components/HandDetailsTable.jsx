@@ -18,6 +18,54 @@ const HandDetailsTable = ({ handDetails }) => {
     return cards.join(', ');
   };
 
+  const downloadCSV = () => {
+    const headers = [
+      'Hand #',
+      'Running Count',
+      'True Count', 
+      'Initial Wager',
+      'Initial Cards - Player',
+      'Initial Cards - Dealer',
+      'Initial Action',
+      'Total Wager',
+      'Final Cards - Player',
+      'Final Cards - Dealer',
+      'Outcome',
+      'Bankroll'
+    ];
+
+    const csvData = handDetails.map(hand => [
+      hand.handNumber,
+      hand.shuffleOccurred ? 'Shuffle' : hand.runningCountStart,
+      hand.shuffleOccurred ? 'Shuffle' : hand.trueCountStart?.toFixed(1),
+      `$${hand.betAmount}`,
+      `P: ${formatCards(hand.playerCardsInitial)}${hand.playerBlackjack ? ' (BJ)' : ''}`,
+      `D: ${hand.dealerCardsInitial?.[0]}, X${hand.dealerBlackjack ? ' (BJ)' : ''}`,
+      hand.initialAction || 'N/A',
+      `$${hand.totalBet}`,
+      `P: ${hand.playerCardsFinal || formatCards(hand.playerCardsInitial)}`,
+      `D: ${formatCards(hand.dealerCardsFinal || hand.dealerCardsInitial)}`,
+      `$${Math.abs(hand.winnings)}`,
+      `$${Math.abs(handDetails.slice(0, handDetails.indexOf(hand) + 1).reduce((sum, h) => sum + (h.winnings || 0), 0))}`
+    ]);
+
+    const csvContent = [headers, ...csvData]
+      .map(row => row.map(cell => `"${cell}"`).join(','))
+      .join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `blackjack-hand-details-${new Date().toISOString().slice(0, 10)}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   const getOutcomeColor = (winnings) => {
     if (winnings > 0) return 'text-green-600';
     if (winnings < 0) return 'text-red-600';
@@ -41,7 +89,15 @@ const HandDetailsTable = ({ handDetails }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Hand-by-Hand Details ({handDetails.length} hands tracked)</CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle>Hand-by-Hand Details ({handDetails.length} hands tracked)</CardTitle>
+          <button
+            onClick={downloadCSV}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+          >
+            Download CSV
+          </button>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -49,6 +105,10 @@ const HandDetailsTable = ({ handDetails }) => {
             <table className="w-full text-xs">
               <thead>
                 <tr className="border-b bg-gray-50">
+                  <th className="text-center p-2">
+                    <div>Hand</div>
+                    <div>#</div>
+                  </th>
                   <th className="text-center p-2">
                     <div>Running</div>
                     <div>Count</div>
@@ -58,8 +118,8 @@ const HandDetailsTable = ({ handDetails }) => {
                     <div>Count</div>
                   </th>
                   <th className="text-center p-2">
-                    <div>Hand</div>
-                    <div>#</div>
+                    <div>Initial</div>
+                    <div>Wager</div>
                   </th>
                   <th className="text-center p-2">
                     <div>Initial</div>
@@ -70,10 +130,13 @@ const HandDetailsTable = ({ handDetails }) => {
                     <div>Action</div>
                   </th>
                   <th className="text-center p-2">
+                    <div>Total</div>
+                    <div>Wager</div>
+                  </th>
+                  <th className="text-center p-2">
                     <div>Final</div>
                     <div>Cards</div>
                   </th>
-                  <th className="text-center p-2">Bet</th>
                   <th className="text-center p-2">Outcome</th>
                   <th className="text-center p-2">Bankroll</th>
                 </tr>
@@ -81,9 +144,26 @@ const HandDetailsTable = ({ handDetails }) => {
               <tbody>
                 {handsWithBankroll.map((hand, index) => (
                   <tr key={index} className="border-b hover:bg-gray-50">
-                    <td className="p-2 text-center">{hand.runningCountStart}</td>
-                    <td className="p-2 text-center">{hand.trueCountStart?.toFixed(1)}</td>
                     <td className="p-2 text-center">{hand.handNumber}</td>
+                    <td className="p-2 text-center">
+                      {hand.shuffleOccurred ? (
+                        <span className="bg-yellow-200 text-yellow-800 px-2 py-1 rounded text-xs font-semibold">
+                          Shuffle
+                        </span>
+                      ) : (
+                        hand.runningCountStart
+                      )}
+                    </td>
+                    <td className="p-2 text-center">
+                      {hand.shuffleOccurred ? (
+                        <span className="bg-yellow-200 text-yellow-800 px-2 py-1 rounded text-xs font-semibold">
+                          Shuffle
+                        </span>
+                      ) : (
+                        hand.trueCountStart?.toFixed(1)
+                      )}
+                    </td>
+                    <td className="p-2 text-center">${hand.betAmount}</td>
                     <td className="p-2 text-center">
                       <div className="text-xs">
                         <div>P: {formatCards(hand.playerCardsInitial)} {hand.playerBlackjack && <span className="text-blue-600">(BJ)</span>}</div>
@@ -95,13 +175,13 @@ const HandDetailsTable = ({ handDetails }) => {
                         {hand.initialAction || 'N/A'}
                       </div>
                     </td>
+                    <td className="p-2 text-center">${hand.totalBet}</td>
                     <td className="p-2 text-center">
                       <div className="text-xs">
                         <div>P: {hand.playerCardsFinal || formatCards(hand.playerCardsInitial)}</div>
                         <div>D: {formatCards(hand.dealerCardsFinal || hand.dealerCardsInitial)}</div>
                       </div>
                     </td>
-                    <td className="p-2 text-center">${hand.totalBet}</td>
                     <td className={`p-2 text-center font-medium ${getOutcomeColor(hand.winnings)}`}>
                       ${Math.abs(hand.winnings)}
                     </td>
