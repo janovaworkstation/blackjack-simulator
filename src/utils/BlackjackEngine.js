@@ -100,6 +100,9 @@ export class BlackjackSimulation {
     this.currentBankroll = 0;
     this.minBankroll = 0;
     this.sessionResults = [];
+    this.handDetails = [];
+    this.previousHandCount = 0; // Count from end of previous hand
+    this.previousTrueCount = 0; // True count from end of previous hand
   }
 
   createShoe() {
@@ -197,9 +200,22 @@ export class BlackjackSimulation {
   }
 
   getBetSize() {
-    const trueCount = this.getTrueCount();
-    const { minBet, maxBet } = this.config;
+    // Use the count from the END of the previous hand for betting decisions
+    const trueCount = this.handsPlayed === 0 ? 0 : this.previousTrueCount;
+    const { bettingTable, minBet, maxBet } = this.config;
     
+    // If betting table is available, use it
+    if (bettingTable && bettingTable.length > 0) {
+      for (const row of bettingTable) {
+        if (trueCount >= row.minCount && trueCount <= row.maxCount) {
+          return Math.min(row.betAmount, maxBet);
+        }
+      }
+      // If no range matches, fall back to minimum bet
+      return minBet;
+    }
+    
+    // Legacy betting logic (fallback)
     if (trueCount < 1) return minBet;
     
     const betMultiplier = Math.max(1, Math.floor(trueCount));
@@ -210,7 +226,16 @@ export class BlackjackSimulation {
 
   getBasicStrategyAction(playerHand, dealerUpCard, canDouble = true, canSplit = true) {
     const playerTotal = this.calculateHandValue(playerHand);
-    const dealerIndex = ['2','3','4','5','6','7','8','9','10','A'].indexOf(dealerUpCard);
+    
+    // Normalize face cards to '10' for strategy lookup
+    const normalizedDealerCard = ['J','Q','K'].includes(dealerUpCard) ? '10' : dealerUpCard;
+    const dealerIndex = ['2','3','4','5','6','7','8','9','10','A'].indexOf(normalizedDealerCard);
+    
+    // Safety check - if dealer card not found, default to 10
+    if (dealerIndex === -1) {
+      console.warn(`Unknown dealer card: ${dealerUpCard}, defaulting to 10`);
+      return this.getBasicStrategyAction(playerHand, '10', canDouble, canSplit);
+    }
     
     // Check for pair splitting first
     if (canSplit && this.isPair(playerHand)) {
@@ -239,13 +264,51 @@ export class BlackjackSimulation {
   }
 
   playHand() {
-    // Deal initial cards
-    const playerHand = [this.dealCard(), this.dealCard()];
-    const dealerHand = [this.dealCard(), this.dealCard()];
+    // Capture the count that was used for betting (from previous hand)
+    const bettingRunningCount = this.handsPlayed === 0 ? 0 : this.previousHandCount;
+    const bettingTrueCount = this.handsPlayed === 0 ? 0 : this.previousTrueCount;
     
+    // Determine bet size based on count from PREVIOUS hand
     const baseBetSize = this.getBetSize();
     let totalBet = baseBetSize;
     this.totalWagered += baseBetSize;
+    
+    // NOW deal initial cards (this will change the count)
+    const playerHand = [this.dealCard(), this.dealCard()];
+    const dealerHand = [this.dealCard(), this.dealCard()];
+    
+    // Initialize hand tracking
+    const handDetail = this.config.enableHandTracking ? {
+      handNumber: this.handsPlayed + 1,
+      playerCardsInitial: [...playerHand],
+      dealerCardsInitial: [...dealerHand],
+      playerCardsFinal: [],
+      dealerCardsFinal: [],
+      runningCountStart: bettingRunningCount,
+      trueCountStart: bettingTrueCount,
+      runningCountEnd: null,
+      trueCountEnd: null,
+      betAmount: baseBetSize,
+      totalBet: baseBetSize,
+      initialAction: null,
+      actions: [],
+      outcome: null,
+      winnings: 0,
+      playerTotal: this.calculateHandValue(playerHand),
+      dealerTotal: this.calculateHandValue(dealerHand),
+      playerBlackjack: false,
+      dealerBlackjack: false,
+      errors: []
+    } : null;
+    
+    // Capture initial basic strategy action
+    if (handDetail && !this.isBlackjack(playerHand) && !this.isBlackjack(dealerHand)) {
+      const initialAction = this.getBasicStrategyAction(playerHand, dealerHand[0], true, true);
+      const actionMap = { 'H': 'Hit', 'S': 'Stand', 'D': 'Double', 'P': 'Split' };
+      handDetail.initialAction = actionMap[initialAction] || initialAction;
+    } else if (handDetail) {
+      handDetail.initialAction = this.isBlackjack(playerHand) ? 'Blackjack' : 'vs Dealer BJ';
+    }
     
     // Check for blackjacks
     const playerBlackjack = this.isBlackjack(playerHand);
@@ -253,6 +316,19 @@ export class BlackjackSimulation {
     
     if (playerBlackjack && dealerBlackjack) {
       this.pushes++;
+      if (handDetail) {
+        handDetail.outcome = 'push';
+        handDetail.winnings = 0;
+        handDetail.actions = ['Blackjack Push'];
+        handDetail.playerCardsFinal = playerHand.join(', ');
+        handDetail.dealerCardsFinal = dealerHand;
+        handDetail.runningCountEnd = this.runningCount;
+        handDetail.trueCountEnd = this.getTrueCount();
+        this.handDetails.push(handDetail);
+      }
+      // Store count from END of this hand for next hand's betting
+      this.previousHandCount = this.runningCount;
+      this.previousTrueCount = this.getTrueCount();
       return 0; // Push
     }
     
@@ -262,12 +338,38 @@ export class BlackjackSimulation {
       const winnings = Math.floor(baseBetSize * 1.5); // 3:2 payout
       this.totalWon += winnings;
       this.currentBankroll += winnings;
+      if (handDetail) {
+        handDetail.outcome = 'win';
+        handDetail.winnings = winnings;
+        handDetail.actions = ['Blackjack'];
+        handDetail.playerCardsFinal = playerHand.join(', ');
+        handDetail.dealerCardsFinal = dealerHand;
+        handDetail.runningCountEnd = this.runningCount;
+        handDetail.trueCountEnd = this.getTrueCount();
+        this.handDetails.push(handDetail);
+      }
+      // Store count from END of this hand for next hand's betting
+      this.previousHandCount = this.runningCount;
+      this.previousTrueCount = this.getTrueCount();
       return winnings;
     }
     
     if (dealerBlackjack) {
       this.losses++;
       this.currentBankroll -= baseBetSize;
+      if (handDetail) {
+        handDetail.outcome = 'loss';
+        handDetail.winnings = -baseBetSize;
+        handDetail.actions = ['Lost to Dealer Blackjack'];
+        handDetail.playerCardsFinal = playerHand.join(', ');
+        handDetail.dealerCardsFinal = dealerHand;
+        handDetail.runningCountEnd = this.runningCount;
+        handDetail.trueCountEnd = this.getTrueCount();
+        this.handDetails.push(handDetail);
+      }
+      // Store count from END of this hand for next hand's betting
+      this.previousHandCount = this.runningCount;
+      this.previousTrueCount = this.getTrueCount();
       return -baseBetSize;
     }
     
@@ -282,6 +384,7 @@ export class BlackjackSimulation {
       
       // Player decision loop
       let decisionCount = 0;
+      let hasActed = false;
       while (playerTotal < 21 && decisionCount < 10) { // Safety limit
         decisionCount++;
         const action = this.getBasicStrategyAction(
@@ -291,13 +394,26 @@ export class BlackjackSimulation {
           hands.length < 4 && currentHand.cards.length === 2
         );
         
-        if (action === 'S') break;
+        if (action === 'S') {
+          if (handDetail && handDetail.actions && !hasActed) handDetail.actions.push('Stand');
+          break;
+        }
+        
+        hasActed = true;
         
         if (action === 'H') {
-          currentHand.cards.push(this.dealCard());
+          const hitCard = this.dealCard();
+          if (handDetail && handDetail.actions) {
+            handDetail.actions.push(`Hit:${hitCard}`);
+          }
+          currentHand.cards.push(hitCard);
           currentHand.canDouble = false;
         } else if (action === 'D') {
-          currentHand.cards.push(this.dealCard());
+          const doubleCard = this.dealCard();
+          if (handDetail && handDetail.actions) {
+            handDetail.actions.push(`Double:${doubleCard}`);
+          }
+          currentHand.cards.push(doubleCard);
           this.totalWagered += currentHand.bet;
           totalBet += currentHand.bet;
           currentHand.bet *= 2;
@@ -305,13 +421,18 @@ export class BlackjackSimulation {
           break;
         } else if (action === 'P') {
           // Split
+          const splitCard1 = this.dealCard();
+          const splitCard2 = this.dealCard();
+          if (handDetail && handDetail.actions) {
+            handDetail.actions.push(`Split:${splitCard1},${splitCard2}`);
+          }
           const newHand = {
             cards: [currentHand.cards.pop()],
             bet: currentHand.bet,
             canDouble: true
           };
-          currentHand.cards.push(this.dealCard());
-          newHand.cards.push(this.dealCard());
+          currentHand.cards.push(splitCard1);
+          newHand.cards.push(splitCard2);
           hands.push(newHand);
           this.totalWagered += newHand.bet;
           totalBet += newHand.bet;
@@ -322,18 +443,27 @@ export class BlackjackSimulation {
         playerTotal = this.calculateHandValue(currentHand.cards);
       }
       
+      const isBusted = playerTotal > 21;
+      if (isBusted && handDetail && handDetail.actions) {
+        handDetail.actions.push('Bust');
+      } else if (!hasActed && handDetail && handDetail.actions) {
+        // Player stood on initial hand (like 20 or 21)
+        handDetail.actions.push('Stand');
+      }
+      
       handResults.push({
         cards: currentHand.cards,
         total: playerTotal,
         bet: currentHand.bet,
-        busted: playerTotal > 21
+        busted: isBusted
       });
     }
     
     // Dealer plays
     let dealerTotal = this.calculateHandValue(dealerHand);
     while (dealerTotal < 17) {
-      dealerHand.push(this.dealCard());
+      const dealerCard = this.dealCard();
+      dealerHand.push(dealerCard);
       dealerTotal = this.calculateHandValue(dealerHand);
     }
     
@@ -365,6 +495,33 @@ export class BlackjackSimulation {
     this.minBankroll = Math.min(this.minBankroll, this.currentBankroll);
     this.maxDrawdown = Math.max(this.maxDrawdown, -this.minBankroll);
     
+    // Complete hand tracking
+    if (handDetail) {
+      handDetail.runningCountEnd = this.runningCount;
+      handDetail.trueCountEnd = this.getTrueCount();
+      handDetail.totalBet = totalBet;
+      handDetail.winnings = totalWinnings;
+      handDetail.dealerTotal = dealerTotal;
+      handDetail.playerBlackjack = playerBlackjack;
+      handDetail.dealerBlackjack = dealerBlackjack;
+      handDetail.playerCardsFinal = handResults.map(h => h.cards.join(', ')).join(' | ');
+      handDetail.dealerCardsFinal = dealerHand;
+      
+      if (totalWinnings > 0) {
+        handDetail.outcome = 'win';
+      } else if (totalWinnings < 0) {
+        handDetail.outcome = 'loss';
+      } else {
+        handDetail.outcome = 'push';
+      }
+      
+      this.handDetails.push(handDetail);
+    }
+    
+    // Store count from END of this hand for next hand's betting
+    this.previousHandCount = this.runningCount;
+    this.previousTrueCount = this.getTrueCount();
+    
     return totalWinnings;
   }
 
@@ -373,7 +530,11 @@ export class BlackjackSimulation {
     this.reset();
     console.log('Reset complete, starting loop...');
     
-    for (let i = 0; i < this.config.hands; i++) {
+    // Limit hands when tracking is enabled for performance
+    const maxHands = this.config.enableHandTracking ? 
+      Math.min(this.config.hands, 1000) : this.config.hands;
+    
+    for (let i = 0; i < maxHands; i++) {
       if (i === 0) console.log('Playing first hand...');
       
       try {
@@ -382,7 +543,7 @@ export class BlackjackSimulation {
         
         // Update progress every 1000 hands
         if (progressCallback && (i + 1) % 1000 === 0) {
-          progressCallback(i + 1, this.config.hands);
+          progressCallback(i + 1, maxHands);
         }
         
         // Store session data every 1000 hands for charting
@@ -406,7 +567,7 @@ export class BlackjackSimulation {
     
     // Final progress update
     if (progressCallback) {
-      progressCallback(this.config.hands, this.config.hands);
+      progressCallback(maxHands, maxHands);
     }
     
     console.log('Simulation loop complete, getting results...');
@@ -441,7 +602,8 @@ export class BlackjackSimulation {
       finalBankroll: this.currentBankroll,
       sessionResults: this.sessionResults,
       countingSystem: this.countingSystem.name,
-      handsPerHour: this.handsPerHour
+      handsPerHour: this.handsPerHour,
+      handDetails: this.config.enableHandTracking ? this.handDetails : null
     };
   }
 }

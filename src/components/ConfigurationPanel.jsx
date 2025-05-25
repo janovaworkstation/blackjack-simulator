@@ -54,17 +54,7 @@ const ConfigurationPanel = ({ config, setConfig, countingSystems, isRunning }) =
           />
           
           <Input
-            label="Minimum Bet ($)"
-            type="number"
-            value={config.minBet}
-            onChange={(e) => updateConfig('minBet', parseInt(e.target.value))}
-            min="5"
-            max="100"
-            disabled={isRunning}
-          />
-          
-          <Input
-            label="Maximum Bet ($)"
+            label="Maximum Bet Limit ($)"
             type="number"
             value={config.maxBet}
             onChange={(e) => updateConfig('maxBet', parseInt(e.target.value))}
@@ -144,6 +134,26 @@ const ConfigurationPanel = ({ config, setConfig, countingSystems, isRunning }) =
               </label>
             </div>
           </div>
+        </div>
+        
+        <div className="border-t pt-4">
+          <h4 className="font-semibold text-gray-900 mb-3">Debugging Options</h4>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="enableHandTracking"
+              checked={config.enableHandTracking}
+              onChange={(e) => updateConfig('enableHandTracking', e.target.checked)}
+              disabled={isRunning}
+              className="mr-2"
+            />
+            <label htmlFor="enableHandTracking" className="text-sm text-gray-700">
+              Enable Hand-by-Hand Tracking (Limits to 1000 hands max)
+            </label>
+          </div>
+          <p className="text-xs text-gray-500 mt-1">
+            Track detailed information for each hand including cards, counts, bets, and outcomes
+          </p>
         </div>
       </CardContent>
     </Card>

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Button } from './UI';
 import ConfigurationPanel from './ConfigurationPanel';
+import BettingTable from './BettingTable';
 import ResultsPanel from './ResultsPanel';
+import HandDetailsTable from './HandDetailsTable';
 import { useSimulation } from '../hooks/useSimulation';
 
 const BlackjackSimulator = () => {
@@ -18,7 +20,16 @@ const BlackjackSimulator = () => {
     dealerHitsSoft17: true,
     doubleAfterSplit: true,
     surrenderAllowed: false,
-    resplitAces: false
+    resplitAces: false,
+    enableHandTracking: false,
+    bettingTable: [
+      { minCount: -10, maxCount: -0.1, betAmount: 5 },
+      { minCount: 0, maxCount: 0.9, betAmount: 10 },
+      { minCount: 1, maxCount: 1.9, betAmount: 25 },
+      { minCount: 2, maxCount: 2.9, betAmount: 50 },
+      { minCount: 3, maxCount: 3.9, betAmount: 75 },
+      { minCount: 4, maxCount: 10, betAmount: 100 }
+    ]
   });
 
   const countingSystems = [
@@ -31,6 +42,10 @@ const BlackjackSimulator = () => {
     console.log('Button clicked! Config:', config);
     console.log('runSimulation function:', runSimulation);
     runSimulation(config);
+  };
+
+  const setBettingTable = (newBettingTable) => {
+    setConfig(prev => ({ ...prev, bettingTable: newBettingTable }));
   };
 
   return (
@@ -47,30 +62,38 @@ const BlackjackSimulator = () => {
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
           {/* Configuration Panel */}
-          <div className="lg:col-span-1">
-            <ConfigurationPanel
-              config={config}
-              setConfig={setConfig}
-              countingSystems={countingSystems}
-              isRunning={isRunning}
-            />
-            
-            {/* Run Button */}
-            <div className="mt-6">
-              <Button
-                onClick={handleRunSimulation}
-                disabled={isRunning}
-                className="w-full py-3 text-lg"
-              >
-                {isRunning ? 'Running Simulation...' : 'Run Simulation'}
-              </Button>
+          <div className="xl:col-span-1">
+            <div className="space-y-6">
+              <ConfigurationPanel
+                config={config}
+                setConfig={setConfig}
+                countingSystems={countingSystems}
+                isRunning={isRunning}
+              />
+              
+              <BettingTable
+                bettingTable={config.bettingTable}
+                setBettingTable={setBettingTable}
+                isRunning={isRunning}
+              />
+              
+              {/* Run Button */}
+              <div>
+                <Button
+                  onClick={handleRunSimulation}
+                  disabled={isRunning}
+                  className="w-full py-3 text-lg"
+                >
+                  {isRunning ? 'Running Simulation...' : 'Run Simulation'}
+                </Button>
+              </div>
             </div>
           </div>
 
           {/* Results Panel */}
-          <div className="lg:col-span-2">
+          <div className="xl:col-span-2">
             <ResultsPanel
               results={results}
               isRunning={isRunning}
@@ -78,6 +101,13 @@ const BlackjackSimulator = () => {
             />
           </div>
         </div>
+
+        {/* Hand Details Section */}
+        {results && results.handDetails && results.handDetails.length > 0 && (
+          <div className="mb-8">
+            <HandDetailsTable handDetails={results.handDetails} />
+          </div>
+        )}
 
         {/* Charts Section - Disabled due to rendering issues */}
         {results && results.sessionResults && results.sessionResults.length > 0 && (
