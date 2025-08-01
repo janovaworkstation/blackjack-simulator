@@ -1,6 +1,8 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) for working on the Blackjack Strategy Simulator. It outlines the project's architecture, development commands, and key implementation plans, aligning with the project's formal documentation (`PRD.md`, `PLANNING.md`, `TASKS.md`).
+
+**Project Status:** Planning Phase (as of August 2025)
 
 ## Commands
 
@@ -13,51 +15,44 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Package Management:**
 - `npm install` - Install dependencies
 
-## Architecture
+## Architecture Overview
 
-### Core Components
-- **BlackjackSimulator.jsx** - Main application orchestrator that manages state and coordinates between configuration, simulation, and results
-- **BlackjackEngine.js** - Core simulation engine implementing card counting systems, basic strategy matrices, and game mechanics
-- **useSimulation.js** - React hook managing simulation state, progress tracking, and asynchronous execution
+The project follows a modern, web-first architecture, starting with a client-side Single Page Application (SPA) for the MVP and designed for future expansion into a full-stack service with microservices, as detailed in `PLANNING.md`.
+
+### Phase 1 (MVP) Core Components
+- **`BlackjackSimulator.jsx`** - The main application component that will orchestrate the UI, managing state and coordinating between the configuration panel, the simulation engine, and the results display.
+- **`BlackjackEngine.js`** - The core simulation engine. This will implement game mechanics, card management, and strategy execution.
+- **`useSimulation.js`** - A React hook to manage the simulation's state, handle its asynchronous execution, and track its progress.
 
 ### Data Flow
-1. Configuration flows from ConfigurationPanel → BlackjackSimulator → useSimulation hook
-2. Simulation runs in BlackjackEngine with progress callbacks to update UI
-3. Results flow back through hook to ResultsPanel and ResultsChart components
+1. Configuration settings will flow from `ConfigurationPanel` → `BlackjackSimulator` → `useSimulation` hook.
+2. The simulation will run within the `BlackjackEngine`, with progress callbacks updating the UI.
+3. Results will flow from the engine back through the `useSimulation` hook to be displayed in the `ResultsPanel` and `ResultsChart` components.
 
-### Key Implementation Details
+### Key Implementation Plan
 
 **Card Counting Systems:**
-- Implemented in `COUNTING_SYSTEMS` object with Hi-Lo, KO, and Hi-Opt I
-- Running count tracked per card dealt, true count calculated based on remaining decks
+- To be implemented in a `COUNTING_SYSTEMS` object in `BlackjackEngine.js`.
+- Initial systems for the MVP will include Hi-Lo and KO (Knock-Out), as per `TASKS.md`.
+- The design will be extensible to support additional systems in the future.
 
 **Basic Strategy:**
-- Complete strategy matrices in `BASIC_STRATEGY`, `SOFT_STRATEGY`, and `PAIR_STRATEGY`
-- Strategy decisions consider hand type, dealer up card, and available actions (double/split)
+- Strategy logic will be implemented using decision matrices (e.g., `BASIC_STRATEGY`, `SOFT_STRATEGY`, `PAIR_STRATEGY`).
+- The engine will make decisions based on the player's hand, the dealer's up-card, and game rules.
 
 **Simulation Engine:**
-- Multi-deck shoe with realistic shuffling and penetration
-- Count-based betting with configurable min/max spreads
-- Handles splits, doubles, surrenders with proper bet adjustments
-- Progress tracking for long simulations with sessionResults for charting
+- Will feature a multi-deck shoe with configurable penetration and realistic shuffling.
+- Will support count-based betting spreads.
+- Will handle all standard player actions: split, double, and surrender.
 
 ### UI Structure
-- Responsive grid layout with configuration panel (left) and results (right)
-- Real-time progress updates during simulation using React state
-- Recharts integration for bankroll progression and count visualization
-- Tailwind CSS for styling with consistent component patterns
+- The UI will be built with a responsive grid layout using Tailwind CSS.
+- The main view will consist of a configuration panel on one side and a results/charting area on the other.
+- Recharts will be used for data visualization (e.g., bankroll progression).
 
 ### Key Files
-- `src/utils/BlackjackEngine.js` - All simulation logic and strategy implementation
-- `src/hooks/useSimulation.js` - Simulation state management and async execution
-- `src/components/BlackjackSimulator.jsx` - Main coordinator component
-- `src/components/ConfigurationPanel.jsx` - Parameter controls for simulation setup
-- `src/components/ResultsPanel.jsx` - Statistical results display
-- `src/components/ResultsChart.jsx` - Bankroll/count visualization
-
-### Technology Stack
-- React 18 with hooks for state management
-- Vite for development and build tooling
-- Tailwind CSS for styling
-- Recharts for data visualization
-- ESLint for code quality
+- `src/utils/BlackjackEngine.js` - All simulation logic and strategy implementation.
+- `src/hooks/useSimulation.js` - Simulation state management and async execution.
+- `src/components/BlackjackSimulator.jsx` - Main coordinator component.
+- `src/components/ConfigurationPanel.jsx` - Parameter controls for simulation setup.
+- `src/components/ResultsPanel.jsx` - Component for displaying simulation results.
