@@ -10,6 +10,7 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "test:e2e": "playwright test"
   },
   "dependencies": {

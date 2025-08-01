@@ -7,4 +7,13 @@ module.exports = {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
   testPathIgnorePatterns: ['/node_modules/', '/tests-e2e/'],
+  collectCoverage: true,
+  coverageReporters: ['json', 'lcov', 'text', 'clover'],
+  collectCoverageFrom: [
+    'src/**/*.{ts,tsx}',
+    '!src/main.tsx',
+    '!src/vite-env.d.ts',
+    '!src/types/**/*.ts',
+    '!src/test-utils/**/*',
+  ],
 };

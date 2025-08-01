@@ -49,6 +49,23 @@ A modern, web-based blackjack simulation tool that replicates and enhances the f
 npm run build
 ```
 
+## Testing
+
+This project uses a comprehensive testing strategy to ensure code quality and application stability.
+
+- **Unit & Component Testing**: `Jest` and `React Testing Library` are used for testing individual components and functions. Run the tests with:
+  ```bash
+  npm run test
+  ```
+- **Code Coverage**: To generate a coverage report, run:
+  ```bash
+  npm run test:coverage
+  ```
+- **End-to-End (E2E) Testing**: `Playwright` is used to simulate real user interactions in a browser environment, ensuring the application works as expected from a user's perspective.
+  ```bash
+  npm run test:e2e
+  ```
+
 ## Usage
 
 ### Basic Simulation
@@ -84,17 +101,17 @@ npm run build
 blackjack-simulator/
 ├── src/
 │   ├── components/
-│   │   ├── BlackjackSimulator.jsx    # Main application component
-│   │   ├── ConfigurationPanel.jsx    # Simulation parameter controls
-│   │   ├── ResultsPanel.jsx          # Results display and analysis
-│   │   ├── ResultsChart.jsx          # Performance visualization
-│   │   └── UI.jsx                    # Reusable UI components
+│   │   ├── BlackjackSimulator.tsx    # Main application component
+│   │   ├── ConfigurationPanel.tsx    # Simulation parameter controls
+│   │   ├── ResultsPanel.tsx          # Results display and analysis
+│   │   ├── ResultsChart.tsx          # Performance visualization
+│   │   └── UI.tsx                    # Reusable UI components
 │   ├── hooks/
-│   │   └── useSimulation.js          # Simulation state management
+│   │   └── useSimulation.ts          # Simulation state management
 │   ├── utils/
-│   │   └── BlackjackEngine.js        # Core simulation logic
-│   ├── App.jsx                       # Root component
-│   ├── main.jsx                      # Application entry point
+│   │   └── BlackjackEngine.ts        # Core simulation logic
+│   ├── App.tsx                       # Root component
+│   ├── main.tsx                      # Application entry point
 │   └── index.css                     # Global styles
 ├── public/                           # Static assets
 ├── package.json                      # Dependencies and scripts

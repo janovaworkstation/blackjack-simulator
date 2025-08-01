@@ -24,9 +24,9 @@ This file provides guidance to Claude Code (claude.ai/code) for working on the B
 The project follows a modern, web-first architecture, starting with a client-side Single Page Application (SPA) for the MVP and designed for future expansion into a full-stack service with microservices, as detailed in `PLANNING.md`.
 
 ### Phase 1 (MVP) Core Components
-- **`BlackjackSimulator.jsx`** - The main application component that will orchestrate the UI, managing state and coordinating between the configuration panel, the simulation engine, and the results display.
-- **`BlackjackEngine.js`** - The core simulation engine. This will implement game mechanics, card management, and strategy execution.
-- **`useSimulation.js`** - A React hook to manage the simulation's state, handle its asynchronous execution, and track its progress.
+- **`BlackjackSimulator.tsx`** - The main application component that will orchestrate the UI, managing state and coordinating between the configuration panel, the simulation engine, and the results display.
+- **`BlackjackEngine.ts`** - The core simulation engine. This will implement game mechanics, card management, and strategy execution.
+- **`useSimulation.ts`** - A React hook to manage the simulation's state, handle its asynchronous execution, and track its progress.
 
 ### Data Flow
 1. Configuration settings will flow from `ConfigurationPanel` → `BlackjackSimulator` → `useSimulation` hook.
@@ -55,8 +55,8 @@ The project follows a modern, web-first architecture, starting with a client-sid
 - Recharts will be used for data visualization (e.g., bankroll progression).
 
 ### Key Files
-- `src/utils/BlackjackEngine.js` - All simulation logic and strategy implementation.
-- `src/hooks/useSimulation.js` - Simulation state management and async execution.
-- `src/components/BlackjackSimulator.jsx` - Main coordinator component.
-- `src/components/ConfigurationPanel.jsx` - Parameter controls for simulation setup.
-- `src/components/ResultsPanel.jsx` - Component for displaying simulation results.
+- `src/utils/BlackjackEngine.ts` - All simulation logic and strategy implementation.
+- `src/hooks/useSimulation.ts` - Simulation state management and async execution.
+- `src/components/BlackjackSimulator.tsx` - Main coordinator component.
+- `src/components/ConfigurationPanel.tsx` - Parameter controls for simulation setup.
+- `src/components/ResultsPanel.tsx` - Component for displaying simulation results.

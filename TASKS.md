@@ -26,7 +26,7 @@ This document serves as the master task list for developing the Blackjack Strate
 **Status**: 🚧 In Progress
 
 ### Infrastructure Tasks
-- [ ] **1.1.1** Set up development environment and build system
+- [✅] **1.1.1** Set up development environment and build system
   - ✅ Configure Vite + React project structure
   - ✅ Configure Progressive Web App (PWA) support
   - ✅ Set up TypeScript configuration
@@ -34,11 +34,11 @@ This document serves as the master task list for developing the Blackjack Strate
   - ✅ Set up ESLint, Prettier, and code formatting
   - ✅ Configure Git hooks and pre-commit checks
 
-- [ ] **1.1.2** Establish testing framework
+- [✅] **1.1.2** Establish testing framework
   - ✅ Set up Jest and React Testing Library
   - ✅ Configure end-to-end testing with Playwright
-  - [ ] Create test utilities and mock data generators
-  - [ ] Set up code coverage reporting
+  - ✅ Create test utilities and mock data generators
+  - ✅ Set up code coverage reporting
 
 - [ ] **1.1.3** Create project documentation structure
   - [ ] Set up README with installation and usage instructions
