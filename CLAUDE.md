@@ -12,6 +12,10 @@ This file provides guidance to Claude Code (claude.ai/code) for working on the B
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint for code quality checks
 
+**Testing:**
+- `npm run test` - Run unit tests with Jest
+- `npm run test:e2e` - Run end-to-end tests with Playwright
+
 **Package Management:**
 - `npm install` - Install dependencies
 

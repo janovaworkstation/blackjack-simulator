@@ -36,7 +36,7 @@ This document serves as the master task list for developing the Blackjack Strate
 
 - [ ] **1.1.2** Establish testing framework
   - ✅ Set up Jest and React Testing Library
-  - [ ] Configure end-to-end testing with Cypress/Playwright
+  - ✅ Configure end-to-end testing with Playwright
   - [ ] Create test utilities and mock data generators
   - [ ] Set up code coverage reporting
 

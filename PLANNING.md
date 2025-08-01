@@ -841,6 +841,11 @@ class CacheManager {
     "docker:dev": "docker-compose -f docker-compose.dev.yml up",
     "k8s:deploy": "kubectl apply -f k8s/"
   },
+  "testing": {
+    "unit": "Jest",
+    "component": "React Testing Library",
+    "e2e": "Playwright"
+  },
   "dependencies": {
     "react": "^18.2.0",
     "three": "^0.158.0",

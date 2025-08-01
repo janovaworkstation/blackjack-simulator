@@ -411,6 +411,11 @@ The Blackjack Strategy Simulator consists of two integrated but distinct platfor
 - **Export Formats**: CSV, JSON, PDF reporting
 - **Backup/Restore**: User data protection
 
+### 3.6 Testing Strategy
+- **Unit & Component Testing**: `Jest` and `React Testing Library` are used for testing individual components and functions to ensure they work correctly in isolation.
+- **End-to-End (E2E) Testing**: `Playwright` is used to simulate real user interactions in a browser environment. This ensures that the application works as expected from a user's perspective across major browsers (Chromium, Firefox, WebKit).
+- **Static Analysis**: `ESLint` and `Prettier` are used for static code analysis and formatting to maintain code quality and consistency.
+
 ---
 
 ## Success Metrics
