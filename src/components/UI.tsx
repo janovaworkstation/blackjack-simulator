@@ -1,98 +1,191 @@
 import { clsx } from 'clsx';
+import React from 'react';
 
-export const Card = ({ children, className, ...props }) => (
+export interface CardProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+/**
+ * A reusable Card component.
+ * @param {CardProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered component.
+ */
+export const Card: React.FC<CardProps> = ({
+  children,
+  className,
+  ...props
+}) => (
   <div className={clsx('card', className)} {...props}>
     {children}
   </div>
 );
 
-export const CardHeader = ({ children, className, ...props }) => (
+/**
+ * A reusable CardHeader component.
+ * @param {CardProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered component.
+ */
+export const CardHeader: React.FC<CardProps> = ({
+  children,
+  className,
+  ...props
+}) => (
   <div className={clsx('card-header', className)} {...props}>
     {children}
   </div>
 );
 
-export const CardContent = ({ children, className, ...props }) => (
+/**
+ * A reusable CardContent component.
+ * @param {CardProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered component.
+ */
+export const CardContent: React.FC<CardProps> = ({
+  children,
+  className,
+  ...props
+}) => (
   <div className={clsx('card-content', className)} {...props}>
     {children}
   </div>
 );
 
-export const CardTitle = ({ children, className, ...props }) => (
+/**
+ * A reusable CardTitle component.
+ * @param {CardProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered component.
+ */
+export const CardTitle: React.FC<CardProps> = ({
+  children,
+  className,
+  ...props
+}) => (
   <h3 className={clsx('card-title', className)} {...props}>
     {children}
   </h3>
 );
 
-export const Button = ({
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode;
+  className?: string;
+  variant?: 'primary' | 'secondary';
+}
+
+/**
+ * A reusable Button component.
+ * @param {ButtonProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered component.
+ */
+export const Button: React.FC<ButtonProps> = ({
   children,
-  variant = 'primary',
-  disabled,
   className,
+  variant = 'primary',
   ...props
 }) => (
   <button
     className={clsx(
       'btn',
-      variant === 'primary' && 'btn-primary',
-      variant === 'secondary' && 'btn-secondary',
+      {
+        'btn-primary': variant === 'primary',
+        'btn-secondary': variant === 'secondary',
+      },
       className,
     )}
-    disabled={disabled}
     {...props}
   >
     {children}
   </button>
 );
 
-export const Alert = ({ children, variant = 'info', className, ...props }) => (
-  <div
-    className={clsx(
-      'alert',
-      variant === 'info' && 'alert-info',
-      variant === 'success' && 'alert-success',
-      variant === 'warning' && 'alert-warning',
-      variant === 'error' && 'alert-error',
-      className,
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  id: string;
+  label?: string;
+  className?: string;
+}
+
+/**
+ * A reusable Input component.
+ * @param {InputProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered component.
+ */
+export const Input: React.FC<InputProps> = ({
+  id,
+  label,
+  className,
+  ...props
+}) => (
+  <div className="flex flex-col">
+    {label && (
+      <label htmlFor={id} className="mb-1 text-sm font-medium text-gray-700">
+        {label}
+      </label>
     )}
-    {...props}
-  >
-    {children}
+    <input id={id} className={clsx('input', className)} {...props} />
   </div>
 );
 
-export const Input = ({ label, className, ...props }) => (
-  <div className="space-y-1">
-    {label && (
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
-    )}
-    <input
-      className={clsx(
-        'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-        className,
-      )}
-      {...props}
-    />
-  </div>
-);
+export interface SelectProps
+  extends React.SelectHTMLAttributes<HTMLSelectElement> {
+  id: string;
+  label?: string;
+  children?: React.ReactNode;
+  className?: string;
+  options?: { value: string; label: string }[];
+}
 
-export const Select = ({ label, options, className, ...props }) => (
-  <div className="space-y-1">
+/**
+ * A reusable Select component.
+ * @param {SelectProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered component.
+ */
+export const Select: React.FC<SelectProps> = ({
+  id,
+  label,
+  children,
+  className,
+  options,
+  ...props
+}) => (
+  <div className="flex flex-col">
     {label && (
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
+      <label htmlFor={id} className="mb-1 text-sm font-medium text-gray-700">
+        {label}
+      </label>
     )}
-    <select
-      className={clsx(
-        'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-        className,
-      )}
-      {...props}
-    >
-      {options?.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
+    <select id={id} className={clsx('select', className)} {...props}>
+      {options
+        ? options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))
+        : children}
     </select>
+  </div>
+);
+
+export interface AlertProps {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+}
+
+/**
+ * A reusable Alert component.
+ * @param {AlertProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered component.
+ */
+export const Alert: React.FC<AlertProps> = ({
+  title,
+  children,
+  className,
+  ...props
+}) => (
+  <div className={clsx('alert', className)} {...props}>
+    <h4 className="font-bold">{title}</h4>
+    <p>{children}</p>
   </div>
 );

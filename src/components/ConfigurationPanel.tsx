@@ -1,85 +1,133 @@
+import React from 'react';
+import { SimulationConfig } from '../types/blackjack';
 import { Card, CardHeader, CardContent, CardTitle, Input, Select } from './UI';
 
-const ConfigurationPanel = ({
+// Extends SimulationConfig to include UI-specific fields
+export interface PanelConfig extends SimulationConfig {
+  maxBet: number;
+  handsPerHour: number;
+  countingSystem: string;
+  resplitAces: boolean;
+  enableHandTracking: boolean;
+}
+
+export interface ConfigurationPanelProps<T extends PanelConfig = PanelConfig> {
+  config: T;
+  setConfig: React.Dispatch<React.SetStateAction<T>>;
+  countingSystems: { value: string; label: string }[];
+  isRunning: boolean;
+}
+
+/**
+ * A component for configuring the simulation settings.
+ * @param {ConfigurationPanelProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered component.
+ */
+const ConfigurationPanel = <T extends PanelConfig = PanelConfig>({
   config,
   setConfig,
   countingSystems,
   isRunning,
-}) => {
-  const updateConfig = (key, value) => {
-    setConfig((prev) => ({ ...prev, [key]: value }));
+}: ConfigurationPanelProps<T>) => {
+  const updateConfig = (
+    key: keyof PanelConfig,
+    value: string | number | boolean,
+  ) => {
+    setConfig((prev: T) => ({ ...prev, [key]: value }) as T);
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Simulation Configuration</CardTitle>
+    <Card className="bg-white shadow-md rounded-lg">
+      <CardHeader className="border-b border-gray-200 px-6 py-4">
+        <CardTitle className="text-lg font-semibold text-gray-800">
+          Simulation Configuration
+        </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             label="Number of Hands"
             type="number"
-            value={config.hands}
-            onChange={(e) => updateConfig('hands', parseInt(e.target.value))}
+            id="numberOfSimulations"
+            value={config.numberOfSimulations}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              updateConfig('numberOfSimulations', parseInt(e.target.value, 10))
+            }
             min="1000"
             max="10000000"
             step="1000"
             disabled={isRunning}
+            className="w-full"
           />
 
           <Select
             label="Counting System"
+            id="countingSystem"
             value={config.countingSystem}
-            onChange={(e) => updateConfig('countingSystem', e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              updateConfig('countingSystem', e.target.value)
+            }
             options={countingSystems}
             disabled={isRunning}
+            className="w-full"
           />
 
           <Input
             label="Number of Decks"
             type="number"
-            value={config.decks}
-            onChange={(e) => updateConfig('decks', parseInt(e.target.value))}
+            id="numberOfDecks"
+            value={config.numberOfDecks}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              updateConfig('numberOfDecks', parseInt(e.target.value, 10))
+            }
             min="1"
             max="8"
             disabled={isRunning}
+            className="w-full"
           />
 
           <Input
             label="Penetration (%)"
             type="number"
-            value={config.penetration * 100}
-            onChange={(e) =>
-              updateConfig('penetration', parseFloat(e.target.value) / 100)
+            id="deckPenetration"
+            value={config.deckPenetration}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              updateConfig('deckPenetration', parseFloat(e.target.value))
             }
             min="50"
             max="95"
             step="5"
             disabled={isRunning}
+            className="w-full"
           />
 
           <Input
             label="Maximum Bet Limit ($)"
             type="number"
+            id="maxBet"
             value={config.maxBet}
-            onChange={(e) => updateConfig('maxBet', parseInt(e.target.value))}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              updateConfig('maxBet', parseInt(e.target.value, 10))
+            }
             min="25"
             max="10000"
             disabled={isRunning}
+            className="w-full"
           />
 
           <Input
             label="Hands per Hour"
             type="number"
+            id="handsPerHour"
             value={config.handsPerHour}
-            onChange={(e) =>
-              updateConfig('handsPerHour', parseInt(e.target.value))
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              updateConfig('handsPerHour', parseInt(e.target.value, 10))
             }
             min="30"
             max="150"
             step="5"
             disabled={isRunning}
+            className="w-full"
           />
         </div>
 
@@ -90,9 +138,9 @@ const ConfigurationPanel = ({
               <input
                 type="checkbox"
                 id="dealerHitsSoft17"
-                checked={config.dealerHitsSoft17}
-                onChange={(e) =>
-                  updateConfig('dealerHitsSoft17', e.target.checked)
+                checked={config.dealerHitsOnSoft17}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  updateConfig('dealerHitsOnSoft17', e.target.checked)
                 }
                 disabled={isRunning}
                 className="mr-2"
@@ -109,9 +157,9 @@ const ConfigurationPanel = ({
               <input
                 type="checkbox"
                 id="doubleAfterSplit"
-                checked={config.doubleAfterSplit}
-                onChange={(e) =>
-                  updateConfig('doubleAfterSplit', e.target.checked)
+                checked={config.playerCanDouble}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  updateConfig('playerCanDouble', e.target.checked)
                 }
                 disabled={isRunning}
                 className="mr-2"
@@ -120,7 +168,23 @@ const ConfigurationPanel = ({
                 htmlFor="doubleAfterSplit"
                 className="text-sm text-gray-700"
               >
-                Double After Split
+                Player Can Double
+              </label>
+            </div>
+
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="playerCanSplit"
+                checked={config.playerCanSplit}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  updateConfig('playerCanSplit', e.target.checked)
+                }
+                disabled={isRunning}
+                className="mr-2"
+              />
+              <label htmlFor="playerCanSplit" className="text-sm text-gray-700">
+                Player Can Split
               </label>
             </div>
 
@@ -128,9 +192,9 @@ const ConfigurationPanel = ({
               <input
                 type="checkbox"
                 id="surrenderAllowed"
-                checked={config.surrenderAllowed}
-                onChange={(e) =>
-                  updateConfig('surrenderAllowed', e.target.checked)
+                checked={config.playerCanSurrender}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  updateConfig('playerCanSurrender', e.target.checked)
                 }
                 disabled={isRunning}
                 className="mr-2"
@@ -148,7 +212,9 @@ const ConfigurationPanel = ({
                 type="checkbox"
                 id="resplitAces"
                 checked={config.resplitAces}
-                onChange={(e) => updateConfig('resplitAces', e.target.checked)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  updateConfig('resplitAces', e.target.checked)
+                }
                 disabled={isRunning}
                 className="mr-2"
               />
@@ -168,7 +234,7 @@ const ConfigurationPanel = ({
               type="checkbox"
               id="enableHandTracking"
               checked={config.enableHandTracking}
-              onChange={(e) =>
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 updateConfig('enableHandTracking', e.target.checked)
               }
               disabled={isRunning}

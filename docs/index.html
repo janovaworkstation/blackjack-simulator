@@ -1,0 +1,183 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="./"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>blackjack-simulator</title><meta name="description" content="Documentation for blackjack-simulator"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script defer src="assets/main.js"></script><script async src="assets/icons.js" id="tsd-icons-script"></script><script async src="assets/search.js" id="tsd-search-script"></script><script async src="assets/navigation.js" id="tsd-nav-script"></script><script async src="assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="index.html" class="title">blackjack-simulator</a><div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><h1>blackjack-simulator</h1></div><div class="tsd-panel tsd-typography"><h1 id="blackjack-strategy-simulator" class="tsd-anchor-link">Blackjack Strategy Simulator<a href="#blackjack-strategy-simulator" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h1><p>A modern, web-based blackjack simulation tool that replicates and enhances the functionality of classic programs like CVData and CVCX. Built with React and featuring comprehensive card counting analysis, risk management tools, and advanced statistical reporting.</p>
+<h2 id="features" class="tsd-anchor-link">Features<a href="#features" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><h3 id="core-simulation-engine" class="tsd-anchor-link">Core Simulation Engine<a href="#core-simulation-engine" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><ul>
+<li><strong>Multiple Card Counting Systems</strong>: Hi-Lo, Knock-Out (KO), Hi-Opt I</li>
+<li><strong>Complete Basic Strategy</strong>: Mathematically optimal play for all situations</li>
+<li><strong>Realistic Game Rules</strong>: Configurable deck count, penetration, dealer rules</li>
+<li><strong>Advanced Betting</strong>: Count-based bet sizing with configurable spreads</li>
+<li><strong>Pair Splitting &amp; Doubling</strong>: Full implementation of all strategic plays</li>
+</ul>
+<h3 id="analysis--reporting" class="tsd-anchor-link">Analysis &amp; Reporting<a href="#analysis--reporting" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><ul>
+<li><strong>Comprehensive Statistics</strong>: Win rates, expected value, standard deviation</li>
+<li><strong>Risk Analysis</strong>: Maximum drawdown, risk ratings, hourly expectations</li>
+<li><strong>Performance Visualization</strong>: Real-time charts showing bankroll progression</li>
+<li><strong>Session Tracking</strong>: Hand-by-hand analysis with count correlation</li>
+</ul>
+<h3 id="modern-interface" class="tsd-anchor-link">Modern Interface<a href="#modern-interface" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><ul>
+<li><strong>Responsive Design</strong>: Works on desktop, tablet, and mobile devices</li>
+<li><strong>Real-time Updates</strong>: Live progress tracking during simulations</li>
+<li><strong>Interactive Configuration</strong>: Easy-to-use parameter adjustment</li>
+<li><strong>Professional Styling</strong>: Clean, modern UI with Tailwind CSS</li>
+</ul>
+<h2 id="quick-start" class="tsd-anchor-link">Quick Start<a href="#quick-start" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><h3 id="prerequisites" class="tsd-anchor-link">Prerequisites<a href="#prerequisites" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><ul>
+<li>Node.js 16+ and npm/yarn</li>
+<li>Modern web browser</li>
+</ul>
+<h3 id="installation" class="tsd-anchor-link">Installation<a href="#installation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><ol>
+<li>
+<p><strong>Clone the repository:</strong></p>
+<pre><code class="bash"><span class="hl-0">git</span><span class="hl-1"> </span><span class="hl-2">clone</span><span class="hl-1"> </span><span class="hl-2">https://github.com/janovaworkstation/blackjack-simulator.git</span><br/><span class="hl-0">cd</span><span class="hl-1"> </span><span class="hl-2">blackjack-simulator</span>
+</code><button type="button">Copy</button></pre>
+
+</li>
+<li>
+<p><strong>Install dependencies:</strong>
+Using npm:</p>
+<pre><code class="bash"><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">install</span>
+</code><button type="button">Copy</button></pre>
+
+<p>Or using yarn:</p>
+<pre><code class="bash"><span class="hl-0">yarn</span><span class="hl-1"> </span><span class="hl-2">install</span>
+</code><button type="button">Copy</button></pre>
+
+</li>
+<li>
+<p><strong>Start the development server:</strong></p>
+<pre><code class="bash"><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">dev</span>
+</code><button type="button">Copy</button></pre>
+
+</li>
+<li>
+<p><strong>Open your browser to</strong> <code>http://localhost:5173</code></p>
+</li>
+</ol>
+<h3 id="building-for-production" class="tsd-anchor-link">Building for Production<a href="#building-for-production" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><pre><code class="bash"><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">build</span>
+</code><button type="button">Copy</button></pre>
+
+<h2 id="testing" class="tsd-anchor-link">Testing<a href="#testing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>This project uses a comprehensive testing strategy to ensure code quality and application stability.</p>
+<ul>
+<li><strong>Unit &amp; Component Testing</strong>: <code>Jest</code> and <code>React Testing Library</code> are used for testing individual components and functions. Run the tests with:<pre><code class="bash"><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">test</span>
+</code><button type="button">Copy</button></pre>
+
+</li>
+<li><strong>Code Coverage</strong>: To generate a coverage report, run:<pre><code class="bash"><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">test:coverage</span>
+</code><button type="button">Copy</button></pre>
+
+</li>
+<li><strong>End-to-End (E2E) Testing</strong>: <code>Playwright</code> is used to simulate real user interactions in a browser environment, ensuring the application works as expected from a user's perspective.<pre><code class="bash"><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">run</span><span class="hl-1"> </span><span class="hl-2">test:e2e</span>
+</code><button type="button">Copy</button></pre>
+
+</li>
+</ul>
+<h2 id="usage" class="tsd-anchor-link">Usage<a href="#usage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>This simulator allows you to run complex blackjack simulations to analyze strategies and understand the game's statistics.</p>
+<h3 id="configuring-a-simulation" class="tsd-anchor-link">Configuring a Simulation<a href="#configuring-a-simulation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p>The <strong>Configuration Panel</strong> on the left side of the screen is where you set up your simulation.</p>
+<ol>
+<li>
+<p><strong>Simulation Parameters</strong>:</p>
+<ul>
+<li><strong>Number of Hands</strong>: Set the total number of hands to simulate. Larger numbers provide more statistically significant results but take longer to process. A good starting point is 1,000,000 hands.</li>
+<li><strong>Counting System</strong>: Choose the card counting system you want to test. The simulator currently supports:
+<ul>
+<li><code>Hi-Lo</code>: A balanced, level-1 system, popular for its simplicity and effectiveness.</li>
+<li><code>KO (Knock-Out)</code>: An unbalanced system that simplifies true count calculation.</li>
+<li><code>Hi-Opt I</code>: A balanced system that ignores Aces for the running count, often used with a side count of Aces.</li>
+</ul>
+</li>
+<li><strong>Deck Count</strong>: Select the number of 52-card decks in the shoe (typically 1 to 8).</li>
+<li><strong>Penetration</strong>: Set the percentage of the shoe that is dealt before reshuffling (e.g., 75%).</li>
+</ul>
+</li>
+<li>
+<p><strong>Betting Strategy</strong>:</p>
+<ul>
+<li><strong>Min/Max Bet</strong>: Define the minimum and maximum bet amounts for a single hand.</li>
+<li><strong>Bet Spread</strong>: Configure how your bet size changes in relation to the true count. For example, a 1-10 spread means your maximum bet is 10 times your minimum bet, typically scaled up as the count rises.</li>
+</ul>
+</li>
+<li>
+<p><strong>Game Rules</strong>:</p>
+<ul>
+<li><strong>Dealer Hits Soft 17 (H17/S17)</strong>: Choose whether the dealer hits or stands on a soft 17 (an Ace and a 6). H17 slightly increases the house edge.</li>
+<li><strong>Double After Split (DAS)</strong>: Allow or disallow doubling down after splitting a pair. DAS is a player-favorable rule.</li>
+<li><strong>Surrender</strong>: Enable or disable the option to surrender a hand (giving up half your bet).</li>
+<li><strong>Re-split Aces</strong>: Allow or disallow splitting aces more than once.</li>
+</ul>
+</li>
+</ol>
+<p>Once all parameters are set, click the <strong>&quot;Run Simulation&quot;</strong> button to start. You can monitor the progress in real-time.</p>
+<h3 id="analyzing-the-results" class="tsd-anchor-link">Analyzing the Results<a href="#analyzing-the-results" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p>After the simulation completes, the <strong>Results Panel</strong> will display detailed statistics and charts.</p>
+<h4 id="key-metrics" class="tsd-anchor-link">Key Metrics<a href="#key-metrics" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><ul>
+<li><strong>Total Hands</strong>: The total number of hands played in the simulation.</li>
+<li><strong>Win Rate</strong>: The percentage of hands won by the player (this does not include pushes).</li>
+<li><strong>Expected Value (EV)</strong>: Your expected profit or loss, expressed as a percentage of the total money wagered. A positive EV indicates a long-term profitable strategy.</li>
+<li><strong>Max Drawdown</strong>: The largest single drop in your bankroll from a peak to a subsequent low. This is a key indicator of financial risk.</li>
+<li><strong>Risk Rating</strong>: A qualitative assessment (Low, Medium, High) of the strategy's volatility, based on standard deviation and drawdown.</li>
+</ul>
+<h4 id="performance-chart" class="tsd-anchor-link">Performance Chart<a href="#performance-chart" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h4><p>The chart visualizes the simulation's progress over time:</p>
+<ul>
+<li><strong>Bankroll Line</strong>: Shows the fluctuation of your bankroll over the course of the simulated hands.</li>
+<li><strong>True Count Line</strong>: Illustrates how the true count varied throughout the simulation, helping you correlate your bankroll changes with the state of the deck.</li>
+</ul>
+<h2 id="project-structure" class="tsd-anchor-link">Project Structure<a href="#project-structure" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><pre><code><span class="hl-3">blackjack</span><span class="hl-1">-</span><span class="hl-3">simulator</span><span class="hl-1">/</span><br/><span class="hl-1">├── </span><span class="hl-3">src</span><span class="hl-1">/</span><br/><span class="hl-1">│   ├── </span><span class="hl-3">components</span><span class="hl-1">/</span><br/><span class="hl-1">│   │   ├── </span><span class="hl-3">BlackjackSimulator</span><span class="hl-1">.</span><span class="hl-3">tsx</span><span class="hl-1">    # </span><span class="hl-3">Main</span><span class="hl-1"> </span><span class="hl-3">application</span><span class="hl-1"> </span><span class="hl-3">component</span><br/><span class="hl-1">│   │   ├── </span><span class="hl-3">ConfigurationPanel</span><span class="hl-1">.</span><span class="hl-3">tsx</span><span class="hl-1">    # </span><span class="hl-3">Simulation</span><span class="hl-1"> </span><span class="hl-3">parameter</span><span class="hl-1"> </span><span class="hl-3">controls</span><br/><span class="hl-1">│   │   ├── </span><span class="hl-3">ResultsPanel</span><span class="hl-1">.</span><span class="hl-3">tsx</span><span class="hl-1">          # </span><span class="hl-3">Results</span><span class="hl-1"> </span><span class="hl-3">display</span><span class="hl-1"> </span><span class="hl-3">and</span><span class="hl-1"> </span><span class="hl-3">analysis</span><br/><span class="hl-1">│   │   ├── </span><span class="hl-3">ResultsChart</span><span class="hl-1">.</span><span class="hl-3">tsx</span><span class="hl-1">          # </span><span class="hl-3">Performance</span><span class="hl-1"> </span><span class="hl-3">visualization</span><br/><span class="hl-1">│   │   └── </span><span class="hl-4">UI</span><span class="hl-1">.</span><span class="hl-3">tsx</span><span class="hl-1">                    # </span><span class="hl-3">Reusable</span><span class="hl-1"> </span><span class="hl-4">UI</span><span class="hl-1"> </span><span class="hl-3">components</span><br/><span class="hl-1">│   ├── </span><span class="hl-3">hooks</span><span class="hl-1">/</span><br/><span class="hl-1">│   │   └── </span><span class="hl-3">useSimulation</span><span class="hl-1">.</span><span class="hl-3">ts</span><span class="hl-1">          # </span><span class="hl-3">Simulation</span><span class="hl-1"> </span><span class="hl-3">state</span><span class="hl-1"> </span><span class="hl-3">management</span><br/><span class="hl-1">│   ├── </span><span class="hl-3">utils</span><span class="hl-1">/</span><br/><span class="hl-1">│   │   └── </span><span class="hl-3">BlackjackEngine</span><span class="hl-1">.</span><span class="hl-3">ts</span><span class="hl-1">        # </span><span class="hl-3">Core</span><span class="hl-1"> </span><span class="hl-3">simulation</span><span class="hl-1"> </span><span class="hl-3">logic</span><br/><span class="hl-1">│   ├── </span><span class="hl-3">App</span><span class="hl-1">.</span><span class="hl-3">tsx</span><span class="hl-1">                       # </span><span class="hl-3">Root</span><span class="hl-1"> </span><span class="hl-3">component</span><br/><span class="hl-1">│   ├── </span><span class="hl-3">main</span><span class="hl-1">.</span><span class="hl-3">tsx</span><span class="hl-1">                      # </span><span class="hl-3">Application</span><span class="hl-1"> </span><span class="hl-3">entry</span><span class="hl-1"> </span><span class="hl-3">point</span><br/><span class="hl-1">│   └── </span><span class="hl-3">index</span><span class="hl-1">.</span><span class="hl-3">css</span><span class="hl-1">                     # </span><span class="hl-3">Global</span><span class="hl-1"> </span><span class="hl-3">styles</span><br/><span class="hl-1">├── </span><span class="hl-3">public</span><span class="hl-1">/                           # </span><span class="hl-3">Static</span><span class="hl-1"> </span><span class="hl-3">assets</span><br/><span class="hl-1">├── </span><span class="hl-3">package</span><span class="hl-1">.</span><span class="hl-3">json</span><span class="hl-1">                      # </span><span class="hl-3">Dependencies</span><span class="hl-1"> </span><span class="hl-3">and</span><span class="hl-1"> </span><span class="hl-3">scripts</span><br/><span class="hl-1">├── </span><span class="hl-3">vite</span><span class="hl-1">.</span><span class="hl-3">config</span><span class="hl-1">.</span><span class="hl-3">js</span><span class="hl-1">                    # </span><span class="hl-3">Vite</span><span class="hl-1"> </span><span class="hl-3">configuration</span><br/><span class="hl-1">├── </span><span class="hl-3">tailwind</span><span class="hl-1">.</span><span class="hl-3">config</span><span class="hl-1">.</span><span class="hl-3">js</span><span class="hl-1">               # </span><span class="hl-3">Tailwind</span><span class="hl-1"> </span><span class="hl-4">CSS</span><span class="hl-1"> </span><span class="hl-3">configuration</span><br/><span class="hl-1">└── </span><span class="hl-4">README</span><span class="hl-1">.</span><span class="hl-3">md</span><span class="hl-1">                        # </span><span class="hl-3">This</span><span class="hl-1"> </span><span class="hl-3">file</span>
+</code><button>Copy</button></pre>
+
+<h2 id="technical-details" class="tsd-anchor-link">Technical Details<a href="#technical-details" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><h3 id="simulation-engine" class="tsd-anchor-link">Simulation Engine<a href="#simulation-engine" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p>The core simulation engine (<code>BlackjackEngine.js</code>) implements:</p>
+<ul>
+<li><strong>Card Deck Management</strong>: Realistic multi-deck shoes with proper shuffling</li>
+<li><strong>Card Counting</strong>: Multiple systems with running/true count calculations</li>
+<li><strong>Basic Strategy</strong>: Complete decision matrices for all hand types</li>
+<li><strong>Betting Strategy</strong>: Count-based betting with configurable spreads</li>
+<li><strong>Game Flow</strong>: Accurate simulation of casino blackjack rules</li>
+</ul>
+<h3 id="performance" class="tsd-anchor-link">Performance<a href="#performance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><ul>
+<li>Capable of simulating millions of hands efficiently</li>
+<li>Real-time progress updates during long simulations</li>
+<li>Optimized for modern browsers with efficient algorithms</li>
+</ul>
+<h2 id="comparison-to-cvdatacvcx" class="tsd-anchor-link">Comparison to CVData/CVCX<a href="#comparison-to-cvdatacvcx" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><h3 id="advantages-over-legacy-tools" class="tsd-anchor-link">Advantages over Legacy Tools<a href="#advantages-over-legacy-tools" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><ul>
+<li><strong>Cross-Platform</strong>: Runs on any device with a web browser</li>
+<li><strong>Modern Interface</strong>: Intuitive, responsive design</li>
+<li><strong>Real-time Visualization</strong>: Live charts and progress tracking</li>
+<li><strong>Easy Sharing</strong>: Web-based results can be easily shared</li>
+<li><strong>No Installation</strong>: Runs directly in browser</li>
+</ul>
+<h3 id="feature-parity" class="tsd-anchor-link">Feature Parity<a href="#feature-parity" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><ul>
+<li>✅ Multiple counting systems</li>
+<li>✅ Basic strategy simulation</li>
+<li>✅ Betting strategy analysis</li>
+<li>✅ Risk analysis and statistics</li>
+<li>✅ Configurable game rules</li>
+<li>🔄 Risk of Ruin calculations (coming soon)</li>
+<li>🔄 Strategy deviations (coming soon)</li>
+<li>🔄 Bankroll sizing recommendations (coming soon)</li>
+</ul>
+<h2 id="roadmap" class="tsd-anchor-link">Roadmap<a href="#roadmap" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><h3 id="phase-2-features" class="tsd-anchor-link">Phase 2 Features<a href="#phase-2-features" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><ul>
+<li><strong>Risk of Ruin Calculator</strong>: Implement Kelly Criterion and bankroll sizing</li>
+<li><strong>Strategy Deviations</strong>: Add Illustrious 18 and Fab 4 variations</li>
+<li><strong>Additional Counting Systems</strong>: Red 7, Omega II, Zen Count</li>
+<li><strong>Side Bet Analysis</strong>: Perfect Pairs, 21+3, Lucky Ladies</li>
+</ul>
+<h3 id="phase-3-features" class="tsd-anchor-link">Phase 3 Features<a href="#phase-3-features" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><ul>
+<li><strong>Tournament Simulation</strong>: Multi-round tournament analysis</li>
+<li><strong>Team Play Tools</strong>: Coordination and bankroll management</li>
+<li><strong>Advanced Visualization</strong>: Heat maps, distribution charts</li>
+<li><strong>Export/Import</strong>: Save and share simulation configurations</li>
+</ul>
+<h3 id="phase-4-features" class="tsd-anchor-link">Phase 4 Features<a href="#phase-4-features" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><ul>
+<li><strong>Machine Learning</strong>: Optimize strategies using ML techniques</li>
+<li><strong>Real-time Integration</strong>: Connect with live casino data</li>
+<li><strong>Mobile App</strong>: Native iOS/Android applications</li>
+<li><strong>Cloud Sync</strong>: Cross-device synchronization</li>
+</ul>
+<h2 id="contributing" class="tsd-anchor-link">Contributing<a href="#contributing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>This project is designed to be modular and extensible. Key areas for contribution:</p>
+<ol>
+<li><strong>New Counting Systems</strong>: Add additional card counting methods</li>
+<li><strong>Game Variations</strong>: Implement Spanish 21, Pontoon, other variants</li>
+<li><strong>Advanced Analytics</strong>: Add more sophisticated statistical analysis</li>
+<li><strong>UI/UX Improvements</strong>: Enhance the user interface and experience</li>
+</ol>
+<h2 id="license" class="tsd-anchor-link">License<a href="#license" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>This project is for educational and research purposes. Please use responsibly and in accordance with local laws and casino policies.</p>
+<h2 id="disclaimer" class="tsd-anchor-link">Disclaimer<a href="#disclaimer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p>This simulator is designed for educational purposes and strategy development. It assumes perfect play and ideal conditions that may not reflect real-world casino environments. Always gamble responsibly and within your means.</p>
+<hr>
+<p><strong>Built with</strong>: React, Vite, Tailwind CSS, Recharts
+<strong>Inspired by</strong>: CVData, CVCX, and the blackjack advantage play community</p>
+</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#blackjack-strategy-simulator"><span>Blackjack <wbr/>Strategy <wbr/>Simulator</span></a><ul><li><a href="#features"><span>Features</span></a></li><li><ul><li><a href="#core-simulation-engine"><span>Core <wbr/>Simulation <wbr/>Engine</span></a></li><li><a href="#analysis--reporting"><span>Analysis &amp; <wbr/>Reporting</span></a></li><li><a href="#modern-interface"><span>Modern <wbr/>Interface</span></a></li></ul></li><li><a href="#quick-start"><span>Quick <wbr/>Start</span></a></li><li><ul><li><a href="#prerequisites"><span>Prerequisites</span></a></li><li><a href="#installation"><span>Installation</span></a></li><li><a href="#building-for-production"><span>Building for <wbr/>Production</span></a></li></ul></li><li><a href="#testing"><span>Testing</span></a></li><li><a href="#usage"><span>Usage</span></a></li><li><ul><li><a href="#configuring-a-simulation"><span>Configuring a <wbr/>Simulation</span></a></li><li><a href="#analyzing-the-results"><span>Analyzing the <wbr/>Results</span></a></li><li><ul><li><a href="#key-metrics"><span>Key <wbr/>Metrics</span></a></li><li><a href="#performance-chart"><span>Performance <wbr/>Chart</span></a></li></ul></li></ul></li><li><a href="#project-structure"><span>Project <wbr/>Structure</span></a></li><li><a href="#technical-details"><span>Technical <wbr/>Details</span></a></li><li><ul><li><a href="#simulation-engine"><span>Simulation <wbr/>Engine</span></a></li><li><a href="#performance"><span>Performance</span></a></li></ul></li><li><a href="#comparison-to-cvdatacvcx"><span>Comparison to <wbr/>CV<wbr/>Data/<wbr/>CVCX</span></a></li><li><ul><li><a href="#advantages-over-legacy-tools"><span>Advantages over <wbr/>Legacy <wbr/>Tools</span></a></li><li><a href="#feature-parity"><span>Feature <wbr/>Parity</span></a></li></ul></li><li><a href="#roadmap"><span>Roadmap</span></a></li><li><ul><li><a href="#phase-2-features"><span>Phase 2 <wbr/>Features</span></a></li><li><a href="#phase-3-features"><span>Phase 3 <wbr/>Features</span></a></li><li><a href="#phase-4-features"><span>Phase 4 <wbr/>Features</span></a></li></ul></li><li><a href="#contributing"><span>Contributing</span></a></li><li><a href="#license"><span>License</span></a></li><li><a href="#disclaimer"><span>Disclaimer</span></a></li></ul></div></details></div><div class="site-menu"><nav class="tsd-navigation"><a href="modules.html">blackjack-simulator</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>

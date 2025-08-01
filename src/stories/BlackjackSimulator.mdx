@@ -1,0 +1,31 @@
+import { Meta, Story, Canvas } from '@storybook/blocks';
+import * as BlackjackSimulatorStories from './BlackjackSimulator.stories';
+
+<Meta of={BlackjackSimulatorStories} />
+
+# Blackjack Simulator
+
+The `BlackjackSimulator` is the main component of the application. It orchestrates the entire simulation process, from configuration to displaying the results.
+
+This component integrates several other components to provide a complete user experience:
+
+- `ConfigurationPanel`: Allows users to set up the simulation parameters.
+- `BettingTable`: Enables users to define a custom betting strategy.
+- `ResultsPanel`: Displays the results of the simulation.
+- `HandDetailsTable`: Shows a detailed log of each hand played.
+
+<Canvas>
+  <Story of={BlackjackSimulatorStories.Default} />
+</Canvas>
+
+## How it Works
+
+The `BlackjackSimulator` component manages the state for the simulation configuration and results. When the "Run Simulation" button is clicked, it calls the `useSimulation` hook, which runs the simulation in a web worker to avoid blocking the UI.
+
+The component passes down the necessary state and callbacks to its child components, ensuring that the entire UI is synchronized.
+
+## Future Enhancements
+
+- **Real-time Charting:** Add real-time charting of the player's bankroll as the simulation progresses.
+- **Strategy Deviations:** Allow users to input strategy deviations for specific hands.
+- **More Counting Systems:** Add support for more card counting systems.

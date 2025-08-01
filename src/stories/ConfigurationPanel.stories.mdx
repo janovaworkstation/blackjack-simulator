@@ -1,0 +1,25 @@
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/blocks';
+import * as ConfigurationPanelStories from './ConfigurationPanel.stories';
+import ConfigurationPanel from '../components/ConfigurationPanel';
+
+<Meta of={ConfigurationPanelStories} />
+
+# Configuration Panel
+
+The `ConfigurationPanel` component is the primary way for users to configure the blackjack simulation. It provides a user-friendly interface for setting all the parameters of the simulation.
+
+<Canvas>
+  <Story of={ConfigurationPanelStories.Default} />
+</Canvas>
+
+## Features
+
+- **Comprehensive Options:** The panel includes options for the number of decks, deck penetration, player rules, and more.
+- **Counting System Selection:** Users can choose from a variety of card counting systems.
+- **Real-time Updates:** The component uses a state management system to ensure that the simulation configuration is always up-to-date.
+
+## Props
+
+The `ConfigurationPanel` component accepts the following props:
+
+<ArgsTable of={ConfigurationPanel} />

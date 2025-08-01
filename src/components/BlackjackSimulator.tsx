@@ -1,25 +1,30 @@
 import { useState } from 'react';
 import { Button } from './UI';
-import ConfigurationPanel from './ConfigurationPanel';
-import BettingTable from './BettingTable';
+import ConfigurationPanel, { PanelConfig } from './ConfigurationPanel';
+import BettingTable, { BetRow } from './BettingTable';
 import ResultsPanel from './ResultsPanel';
 import HandDetailsTable from './HandDetailsTable';
 import { useSimulation } from '../hooks/useSimulation';
+import { SimulationConfig } from '../types/blackjack';
 
 const BlackjackSimulator = () => {
   const { isRunning, results, progress, runSimulation } = useSimulation();
 
-  const [config, setConfig] = useState({
-    hands: 100000,
-    decks: 6,
-    penetration: 0.75,
-    minBet: 10,
+  const [config, setConfig] = useState<
+    PanelConfig & { bettingTable: BetRow[] }
+  >({
+    numberOfSimulations: 100000,
+    numberOfDecks: 6,
+    deckPenetration: 75,
+    playerBet: 10,
+    dealerHitsOnSoft17: true,
+    playerCanDouble: true,
+    playerCanSplit: true,
+    playerCanSurrender: false,
+    // UI-specific or other config
     maxBet: 100,
     handsPerHour: 80,
     countingSystem: 'HI_LO',
-    dealerHitsSoft17: true,
-    doubleAfterSplit: true,
-    surrenderAllowed: false,
     resplitAces: false,
     enableHandTracking: false,
     bettingTable: [
@@ -40,11 +45,21 @@ const BlackjackSimulator = () => {
 
   const handleRunSimulation = () => {
     console.log('Button clicked! Config:', config);
+    const simulationConfig: SimulationConfig = {
+      numberOfDecks: config.numberOfDecks,
+      deckPenetration: config.deckPenetration,
+      playerBet: config.playerBet,
+      dealerHitsOnSoft17: config.dealerHitsOnSoft17,
+      playerCanDouble: config.playerCanDouble,
+      playerCanSplit: config.playerCanSplit,
+      playerCanSurrender: config.playerCanSurrender,
+      numberOfSimulations: config.numberOfSimulations,
+    };
     console.log('runSimulation function:', runSimulation);
-    runSimulation(config);
+    runSimulation(simulationConfig);
   };
 
-  const setBettingTable = (newBettingTable) => {
+  const setBettingTable = (newBettingTable: BetRow[]) => {
     setConfig((prev) => ({ ...prev, bettingTable: newBettingTable }));
   };
 

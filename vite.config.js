@@ -1,6 +1,15 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { VitePWA } from 'vite-plugin-pwa'
+
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const dirname =
+  typeof __dirname !== 'undefined'
+    ? __dirname
+    : path.dirname(fileURLToPath(import.meta.url));
+
 
 export default defineConfig({
   plugins: [
@@ -11,7 +20,8 @@ export default defineConfig({
       manifest: {
         name: 'Blackjack Strategy Simulator',
         short_name: 'Blackjack Sim',
-        description: 'A professional blackjack analysis tool and immersive gaming experience.',
+        description:
+          'A professional blackjack analysis tool and immersive gaming experience.',
         theme_color: '#1a1a1a',
         background_color: '#1a1a1a',
         display: 'standalone',
@@ -43,4 +53,4 @@ export default defineConfig({
       '@': '/src',
     },
   },
-})
+});

@@ -1,0 +1,32 @@
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/blocks';
+import * as ResultsPanelStories from './ResultsPanel.stories';
+import ResultsPanel from '../components/ResultsPanel';
+
+<Meta of={ResultsPanelStories} />
+
+# Results Panel
+
+The `ResultsPanel` component displays the aggregated results of the blackjack simulation. It provides a high-level overview of the simulation's outcome, including key metrics like win percentage, net result, and expected value.
+
+<Canvas>
+  <Story of={ResultsPanelStories.Default} />
+</Canvas>
+
+## States
+
+The `ResultsPanel` has three states:
+
+- **Default:** Displays the simulation results.
+- **IsRunning:** Shows a progress bar and a message indicating that the simulation is in progress.
+- **NoResults:** Displays a message prompting the user to run a simulation.
+
+<Canvas>
+  <Story of={ResultsPanelStories.IsRunning} />
+  <Story of={ResultsPanelStories.NoResults} />
+</Canvas>
+
+## Props
+
+The `ResultsPanel` component accepts the following props:
+
+<ArgsTable of={ResultsPanel} />

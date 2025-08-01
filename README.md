@@ -31,18 +31,28 @@ A modern, web-based blackjack simulation tool that replicates and enhances the f
 
 ### Installation
 
-1. **Clone or download this repository**
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/janovaworkstation/blackjack-simulator.git
+    cd blackjack-simulator
+    ```
 
-3. **Start the development server:**
-   ```bash
-   npm run dev
-   ```
+2.  **Install dependencies:**
+    Using npm:
+    ```bash
+    npm install
+    ```
+    Or using yarn:
+    ```bash
+    yarn install
+    ```
 
-4. **Open your browser to** `http://localhost:5173`
+3.  **Start the development server:**
+    ```bash
+    npm run dev
+    ```
+
+4.  **Open your browser to** `http://localhost:5173`
 
 ### Building for Production
 ```bash
@@ -66,39 +76,81 @@ This project uses a comprehensive testing strategy to ensure code quality and ap
   npm run test:e2e
   ```
 
+## Component Documentation
+
+This project uses **Storybook** for component documentation and development. Storybook provides an isolated environment for developing and testing UI components.
+
+### Running Storybook
+```bash
+npm run storybook
+```
+
+This will start the Storybook development server at `http://localhost:6006`.
+
+### What's Documented
+- **Core Components**: All major UI components with interactive examples
+- **Component Props**: Complete documentation of component interfaces
+- **Usage Examples**: Multiple scenarios showing how components work
+- **Visual Testing**: See components in different states and configurations
+
+### Storybook Features
+- **Interactive Controls**: Modify component props in real-time
+- **Multiple Stories**: Each component has stories for different use cases
+- **MDX Documentation**: Rich documentation with examples and explanations
+- **Responsive Testing**: Test components across different screen sizes
+
 ## Usage
 
-### Basic Simulation
-1. Configure your simulation parameters:
-   - Number of hands (1,000 - 10,000,000)
-   - Counting system (Hi-Lo, KO, Hi-Opt I)
-   - Deck count and penetration
-   - Betting limits and spreads
+This simulator allows you to run complex blackjack simulations to analyze strategies and understand the game's statistics.
 
-2. Set game rules:
-   - Dealer hits soft 17
-   - Double after split
-   - Surrender options
-   - Re-split aces
+### Configuring a Simulation
 
-3. Click "Run Simulation" and analyze results
+The **Configuration Panel** on the left side of the screen is where you set up your simulation.
 
-### Understanding Results
+1.  **Simulation Parameters**:
+    *   **Number of Hands**: Set the total number of hands to simulate. Larger numbers provide more statistically significant results but take longer to process. A good starting point is 1,000,000 hands.
+    *   **Counting System**: Choose the card counting system you want to test. The simulator currently supports:
+        *   `Hi-Lo`: A balanced, level-1 system, popular for its simplicity and effectiveness.
+        *   `KO (Knock-Out)`: An unbalanced system that simplifies true count calculation.
+        *   `Hi-Opt I`: A balanced system that ignores Aces for the running count, often used with a side count of Aces.
+    *   **Deck Count**: Select the number of 52-card decks in the shoe (typically 1 to 8).
+    *   **Penetration**: Set the percentage of the shoe that is dealt before reshuffling (e.g., 75%).
+
+2.  **Betting Strategy**:
+    *   **Min/Max Bet**: Define the minimum and maximum bet amounts for a single hand.
+    *   **Bet Spread**: Configure how your bet size changes in relation to the true count. For example, a 1-10 spread means your maximum bet is 10 times your minimum bet, typically scaled up as the count rises.
+
+3.  **Game Rules**:
+    *   **Dealer Hits Soft 17 (H17/S17)**: Choose whether the dealer hits or stands on a soft 17 (an Ace and a 6). H17 slightly increases the house edge.
+    *   **Double After Split (DAS)**: Allow or disallow doubling down after splitting a pair. DAS is a player-favorable rule.
+    *   **Surrender**: Enable or disable the option to surrender a hand (giving up half your bet).
+    *   **Re-split Aces**: Allow or disallow splitting aces more than once.
+
+Once all parameters are set, click the **"Run Simulation"** button to start. You can monitor the progress in real-time.
+
+### Analyzing the Results
+
+After the simulation completes, the **Results Panel** will display detailed statistics and charts.
 
 #### Key Metrics
-- **Expected Value (EV)**: Percentage return on total money wagered
-- **Win Rate**: Percentage of hands won (not including pushes)
-- **Max Drawdown**: Largest loss from peak bankroll
-- **Risk Rating**: Low/Medium/High based on volatility
+*   **Total Hands**: The total number of hands played in the simulation.
+*   **Win Rate**: The percentage of hands won by the player (this does not include pushes).
+*   **Expected Value (EV)**: Your expected profit or loss, expressed as a percentage of the total money wagered. A positive EV indicates a long-term profitable strategy.
+*   **Max Drawdown**: The largest single drop in your bankroll from a peak to a subsequent low. This is a key indicator of financial risk.
+*   **Risk Rating**: A qualitative assessment (Low, Medium, High) of the strategy's volatility, based on standard deviation and drawdown.
 
 #### Performance Chart
-- **Blue Line**: Bankroll progression over time
-- **Red Line**: True count variations during session
+The chart visualizes the simulation's progress over time:
+*   **Bankroll Line**: Shows the fluctuation of your bankroll over the course of the simulated hands.
+*   **True Count Line**: Illustrates how the true count varied throughout the simulation, helping you correlate your bankroll changes with the state of the deck.
 
 ## Project Structure
 
 ```
 blackjack-simulator/
+├── .storybook/
+│   ├── main.ts                       # Storybook configuration
+│   └── preview.ts                    # Global Storybook settings
 ├── src/
 │   ├── components/
 │   │   ├── BlackjackSimulator.tsx    # Main application component
@@ -108,6 +160,10 @@ blackjack-simulator/
 │   │   └── UI.tsx                    # Reusable UI components
 │   ├── hooks/
 │   │   └── useSimulation.ts          # Simulation state management
+│   ├── stories/
+│   │   ├── BlackjackSimulator.stories.tsx  # Component stories
+│   │   ├── BlackjackSimulator.mdx           # Component documentation
+│   │   └── [other component stories]        # Additional component docs
 │   ├── utils/
 │   │   └── BlackjackEngine.ts        # Core simulation logic
 │   ├── App.tsx                       # Root component
@@ -194,5 +250,5 @@ This simulator is designed for educational purposes and strategy development. It
 
 ---
 
-**Built with**: React, Vite, Tailwind CSS, Recharts
+**Built with**: React, Vite, Tailwind CSS, Recharts, Storybook
 **Inspired by**: CVData, CVCX, and the blackjack advantage play community

@@ -1,0 +1,25 @@
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/blocks';
+import * as HandDetailsTableStories from './HandDetailsTable.stories';
+import HandDetailsTable from '../components/HandDetailsTable';
+
+<Meta of={HandDetailsTableStories} />
+
+# Hand Details Table
+
+The `HandDetailsTable` component provides a detailed, hand-by-hand log of the simulation results. This allows users to analyze the simulation in great detail and understand how the results were achieved.
+
+<Canvas>
+  <Story of={HandDetailsTableStories.Default} />
+</Canvas>
+
+## Features
+
+- **Pagination:** The table is paginated to ensure that it can handle a large number of hands without performance issues.
+- **CSV Export:** Users can export the hand details to a CSV file for further analysis in other tools.
+- **Clear and Concise:** The table is designed to be easy to read and understand, with clear headings and formatting.
+
+## Props
+
+The `HandDetailsTable` component accepts the following props:
+
+<ArgsTable of={HandDetailsTable} />

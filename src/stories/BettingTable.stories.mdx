@@ -1,0 +1,25 @@
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/blocks';
+import * as BettingTableStories from './BettingTable.stories';
+import BettingTable from '../components/BettingTable';
+
+<Meta of={BettingTableStories} />
+
+# Betting Table
+
+The `BettingTable` component allows users to define a custom betting strategy based on the true count of the deck. This gives advanced players fine-grained control over their betting strategy.
+
+<Canvas>
+  <Story of={BettingTableStories.Default} />
+</Canvas>
+
+## Features
+
+- **Dynamic Rows:** Users can add or remove rows to the betting table to define as many or as few betting tiers as they need.
+- **Custom Ranges:** Each row allows the user to specify a minimum and maximum true count for a particular bet amount.
+- **Input Validation:** The component includes basic input validation to ensure that the betting table is logical.
+
+## Props
+
+The `BettingTable` component accepts the following props:
+
+<ArgsTable of={BettingTable} />
