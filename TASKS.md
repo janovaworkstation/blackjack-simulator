@@ -32,7 +32,7 @@ This document serves as the master task list for developing the Blackjack Strate
   - ✅ Set up TypeScript configuration
   - ✅ Configure Tailwind CSS and component library
   - ✅ Set up ESLint, Prettier, and code formatting
-  - [ ] Configure Git hooks and pre-commit checks
+  - ✅ Configure Git hooks and pre-commit checks
 
 - [ ] **1.1.2** Establish testing framework
   - [ ] Set up Jest and React Testing Library
