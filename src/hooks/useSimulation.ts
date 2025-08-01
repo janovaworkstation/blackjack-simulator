@@ -15,21 +15,27 @@ export const useSimulation = () => {
     setTimeout(async () => {
       try {
         console.log('Starting simulation with config:', config);
-        const simulation = new BlackjackSimulation(config, config.countingSystem);
-        
+        const simulation = new BlackjackSimulation(
+          config,
+          config.countingSystem,
+        );
+
         const progressCallback = (current, total) => {
           console.log(`Progress: ${current} of ${total}`);
           setProgress({ current, total });
         };
-        
+
         console.log('About to start simulation...');
         const simulationResults = await simulation.simulate(progressCallback);
         console.log('Simulation completed:', simulationResults);
-        
+
         // Validate results before setting
         if (simulationResults && typeof simulationResults === 'object') {
           console.log('Setting results:', simulationResults);
-          console.log('Session results length:', simulationResults.sessionResults?.length);
+          console.log(
+            'Session results length:',
+            simulationResults.sessionResults?.length,
+          );
           setResults(simulationResults);
         } else {
           console.error('Invalid simulation results:', simulationResults);
@@ -49,6 +55,6 @@ export const useSimulation = () => {
     isRunning,
     results,
     progress,
-    runSimulation
+    runSimulation,
   };
 };

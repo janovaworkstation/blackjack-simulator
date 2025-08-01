@@ -31,7 +31,7 @@ This document serves as the master task list for developing the Blackjack Strate
   - ✅ Configure Progressive Web App (PWA) support
   - ✅ Set up TypeScript configuration
   - ✅ Configure Tailwind CSS and component library
-  - [ ] Set up ESLint, Prettier, and code formatting
+  - ✅ Set up ESLint, Prettier, and code formatting
   - [ ] Configure Git hooks and pre-commit checks
 
 - [ ] **1.1.2** Establish testing framework

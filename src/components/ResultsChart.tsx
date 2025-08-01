@@ -1,5 +1,13 @@
-import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 import { Card, CardHeader, CardContent, CardTitle } from './UI';
 
 const ResultsChart = ({ results }) => {
@@ -8,14 +16,15 @@ const ResultsChart = ({ results }) => {
   }
 
   // Validate and clean session data
-  const validSessionData = results.sessionResults.filter(session => 
-    session && 
-    typeof session.hand === 'number' && 
-    typeof session.bankroll === 'number' && 
-    typeof session.trueCount === 'number' &&
-    isFinite(session.hand) && 
-    isFinite(session.bankroll) && 
-    isFinite(session.trueCount)
+  const validSessionData = results.sessionResults.filter(
+    (session) =>
+      session &&
+      typeof session.hand === 'number' &&
+      typeof session.bankroll === 'number' &&
+      typeof session.trueCount === 'number' &&
+      isFinite(session.hand) &&
+      isFinite(session.bankroll) &&
+      isFinite(session.trueCount),
   );
 
   if (validSessionData.length === 0) {
@@ -43,30 +52,32 @@ const ResultsChart = ({ results }) => {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={validSessionData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="hand" 
+              <XAxis
+                dataKey="hand"
                 tickFormatter={(value) => `${(value / 1000).toFixed(0)}K`}
               />
               <YAxis />
-              <Tooltip 
+              <Tooltip
                 labelFormatter={(value) => `Hand: ${value.toLocaleString()}`}
                 formatter={(value, name) => [
-                  name === 'bankroll' ? `$${value.toLocaleString()}` : value.toFixed(1),
-                  name === 'bankroll' ? 'Bankroll' : 'True Count'
+                  name === 'bankroll'
+                    ? `$${value.toLocaleString()}`
+                    : value.toFixed(1),
+                  name === 'bankroll' ? 'Bankroll' : 'True Count',
                 ]}
               />
               <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="bankroll" 
-                stroke="#2563eb" 
+              <Line
+                type="monotone"
+                dataKey="bankroll"
+                stroke="#2563eb"
                 strokeWidth={2}
                 dot={false}
               />
-              <Line 
-                type="monotone" 
-                dataKey="trueCount" 
-                stroke="#dc2626" 
+              <Line
+                type="monotone"
+                dataKey="trueCount"
+                stroke="#dc2626"
                 strokeWidth={1}
                 dot={false}
                 yAxisId="right"

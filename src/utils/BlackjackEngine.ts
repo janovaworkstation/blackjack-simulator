@@ -3,84 +3,117 @@ export const COUNTING_SYSTEMS = {
   HI_LO: {
     name: 'Hi-Lo',
     values: {
-      'A': -1, '2': 1, '3': 1, '4': 1, '5': 1, '6': 1,
-      '7': 0, '8': 0, '9': 0, '10': -1, 'J': -1, 'Q': -1, 'K': -1
-    }
+      A: -1,
+      '2': 1,
+      '3': 1,
+      '4': 1,
+      '5': 1,
+      '6': 1,
+      '7': 0,
+      '8': 0,
+      '9': 0,
+      '10': -1,
+      J: -1,
+      Q: -1,
+      K: -1,
+    },
   },
   KO: {
     name: 'Knock-Out (KO)',
     values: {
-      'A': -1, '2': 1, '3': 1, '4': 1, '5': 1, '6': 1, '7': 1,
-      '8': 0, '9': 0, '10': -1, 'J': -1, 'Q': -1, 'K': -1
-    }
+      A: -1,
+      '2': 1,
+      '3': 1,
+      '4': 1,
+      '5': 1,
+      '6': 1,
+      '7': 1,
+      '8': 0,
+      '9': 0,
+      '10': -1,
+      J: -1,
+      Q: -1,
+      K: -1,
+    },
   },
   HI_OPT_I: {
     name: 'Hi-Opt I',
     values: {
-      'A': 0, '2': 0, '3': 1, '4': 1, '5': 1, '6': 1,
-      '7': 0, '8': 0, '9': 0, '10': -1, 'J': -1, 'Q': -1, 'K': -1
-    }
-  }
+      A: 0,
+      '2': 0,
+      '3': 1,
+      '4': 1,
+      '5': 1,
+      '6': 1,
+      '7': 0,
+      '8': 0,
+      '9': 0,
+      '10': -1,
+      J: -1,
+      Q: -1,
+      K: -1,
+    },
+  },
 };
 
 // Basic Strategy Matrix
 export const BASIC_STRATEGY = {
   // Hard totals: [2,3,4,5,6,7,8,9,10,A] dealer up cards
-  4: ['H','H','H','H','H','H','H','H','H','H'],
-  5: ['H','H','H','H','H','H','H','H','H','H'],
-  6: ['H','H','H','H','H','H','H','H','H','H'],
-  7: ['H','H','H','H','H','H','H','H','H','H'],
-  8: ['H','H','H','H','H','H','H','H','H','H'],
-  9: ['H','D','D','D','D','H','H','H','H','H'],
-  10: ['D','D','D','D','D','D','D','D','H','H'],
-  11: ['D','D','D','D','D','D','D','D','D','H'],
-  12: ['H','H','S','S','S','H','H','H','H','H'],
-  13: ['S','S','S','S','S','H','H','H','H','H'],
-  14: ['S','S','S','S','S','H','H','H','H','H'],
-  15: ['S','S','S','S','S','H','H','H','H','H'],
-  16: ['S','S','S','S','S','H','H','H','H','H'],
-  17: ['S','S','S','S','S','S','S','S','S','S'],
-  18: ['S','S','S','S','S','S','S','S','S','S'],
-  19: ['S','S','S','S','S','S','S','S','S','S'],
-  20: ['S','S','S','S','S','S','S','S','S','S'],
-  21: ['S','S','S','S','S','S','S','S','S','S']
+  4: ['H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H'],
+  5: ['H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H'],
+  6: ['H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H'],
+  7: ['H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H'],
+  8: ['H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H'],
+  9: ['H', 'D', 'D', 'D', 'D', 'H', 'H', 'H', 'H', 'H'],
+  10: ['D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'H', 'H'],
+  11: ['D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'H'],
+  12: ['H', 'H', 'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H'],
+  13: ['S', 'S', 'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H'],
+  14: ['S', 'S', 'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H'],
+  15: ['S', 'S', 'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H'],
+  16: ['S', 'S', 'S', 'S', 'S', 'H', 'H', 'H', 'H', 'H'],
+  17: ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
+  18: ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
+  19: ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
+  20: ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
+  21: ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
 };
 
 // Soft totals (with Ace)
 export const SOFT_STRATEGY = {
   // Soft totals: A,2 through A,9
-  13: ['H','H','H','D','D','H','H','H','H','H'], // A,2
-  14: ['H','H','H','D','D','H','H','H','H','H'], // A,3
-  15: ['H','H','D','D','D','H','H','H','H','H'], // A,4
-  16: ['H','H','D','D','D','H','H','H','H','H'], // A,5
-  17: ['H','D','D','D','D','H','H','H','H','H'], // A,6
-  18: ['S','D','D','D','D','S','S','H','H','H'], // A,7
-  19: ['S','S','S','S','S','S','S','S','S','S'], // A,8
-  20: ['S','S','S','S','S','S','S','S','S','S'], // A,9
+  13: ['H', 'H', 'H', 'D', 'D', 'H', 'H', 'H', 'H', 'H'], // A,2
+  14: ['H', 'H', 'H', 'D', 'D', 'H', 'H', 'H', 'H', 'H'], // A,3
+  15: ['H', 'H', 'D', 'D', 'D', 'H', 'H', 'H', 'H', 'H'], // A,4
+  16: ['H', 'H', 'D', 'D', 'D', 'H', 'H', 'H', 'H', 'H'], // A,5
+  17: ['H', 'D', 'D', 'D', 'D', 'H', 'H', 'H', 'H', 'H'], // A,6
+  18: ['S', 'D', 'D', 'D', 'D', 'S', 'S', 'H', 'H', 'H'], // A,7
+  19: ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'], // A,8
+  20: ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'], // A,9
 };
 
 // Surrender strategy (only for initial 2-card hands)
 export const SURRENDER_STRATEGY = {
   // Hard totals that should surrender: [2,3,4,5,6,7,8,9,10,A] dealer up cards
-  15: ['N','N','N','N','N','N','N','N','Y','N'], // 15 vs 10
-  16: ['N','N','N','N','N','N','N','Y','Y','Y'], // 16 vs 9, 10, A
+  15: ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'Y', 'N'], // 15 vs 10
+  16: ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'Y', 'Y', 'Y'], // 16 vs 9, 10, A
 };
 
 // Pair splitting strategy
 export const PAIR_STRATEGY = {
-  'A': ['Y','Y','Y','Y','Y','Y','Y','Y','Y','Y'], // A,A
-  '2': ['Y','Y','Y','Y','Y','Y','N','N','N','N'], // 2,2
-  '3': ['Y','Y','Y','Y','Y','Y','N','N','N','N'], // 3,3
-  '4': ['N','N','N','Y','Y','N','N','N','N','N'], // 4,4
-  '5': ['N','N','N','N','N','N','N','N','N','N'], // 5,5 (never split)
-  '6': ['Y','Y','Y','Y','Y','N','N','N','N','N'], // 6,6
-  '7': ['Y','Y','Y','Y','Y','Y','N','N','N','N'], // 7,7
-  '8': ['Y','Y','Y','Y','Y','Y','Y','Y','Y','Y'], // 8,8
-  '9': ['Y','Y','Y','Y','Y','N','Y','Y','N','N'], // 9,9
-  '10': ['N','N','N','N','N','N','N','N','N','N'], // 10,10 (never split)
-  'J': ['N','N','N','N','N','N','N','N','N','N'], // J,J (never split)
-  'Q': ['N','N','N','N','N','N','N','N','N','N'], // Q,Q (never split)
-  'K': ['N','N','N','N','N','N','N','N','N','N'], // K,K (never split)
+  A: ['Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y'], // A,A
+  '2': ['Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'N', 'N', 'N', 'N'], // 2,2
+  '3': ['Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'N', 'N', 'N', 'N'], // 3,3
+  '4': ['N', 'N', 'N', 'Y', 'Y', 'N', 'N', 'N', 'N', 'N'], // 4,4
+  '5': ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'], // 5,5 (never split)
+  '6': ['Y', 'Y', 'Y', 'Y', 'Y', 'N', 'N', 'N', 'N', 'N'], // 6,6
+  '7': ['Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'N', 'N', 'N', 'N'], // 7,7
+  '8': ['Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y'], // 8,8
+  '9': ['Y', 'Y', 'Y', 'Y', 'Y', 'N', 'Y', 'Y', 'N', 'N'], // 9,9
+  '10': ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'], // 10,10 (never split)
+  J: ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'], // J,J (never split)
+  Q: ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'], // Q,Q (never split)
+  K: ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'], // K,K (never split)
 };
 
 export class BlackjackSimulation {
@@ -120,14 +153,28 @@ export class BlackjackSimulation {
 
   createShoe() {
     const cards = [];
-    const cardTypes = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
-    
+    const cardTypes = [
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+      '9',
+      '10',
+      'J',
+      'Q',
+      'K',
+      'A',
+    ];
+
     for (let deck = 0; deck < this.config.decks; deck++) {
       for (let suit = 0; suit < 4; suit++) {
-        cardTypes.forEach(card => cards.push(card));
+        cardTypes.forEach((card) => cards.push(card));
       }
     }
-    
+
     return this.shuffle(cards);
   }
 
@@ -153,14 +200,14 @@ export class BlackjackSimulation {
       this.runningCount = 0;
       this.lastHandWasShuffle = true; // Flag to track shuffle occurred
     }
-    
+
     const card = this.shoe.pop();
     this.runningCount += this.countingSystem.values[card];
     return card;
   }
 
   getCardValue(card) {
-    if (['J','Q','K'].includes(card)) return 10;
+    if (['J', 'Q', 'K'].includes(card)) return 10;
     if (card === 'A') return 11;
     return parseInt(card);
   }
@@ -168,8 +215,8 @@ export class BlackjackSimulation {
   calculateHandValue(hand) {
     let value = 0;
     let aces = 0;
-    
-    hand.forEach(card => {
+
+    hand.forEach((card) => {
       if (card === 'A') {
         aces++;
         value += 11;
@@ -177,12 +224,12 @@ export class BlackjackSimulation {
         value += this.getCardValue(card);
       }
     });
-    
+
     while (value > 21 && aces > 0) {
       value -= 10;
       aces--;
     }
-    
+
     return value;
   }
 
@@ -193,13 +240,13 @@ export class BlackjackSimulation {
   isSoftHand(hand) {
     let hasAce = false;
     let value = 0;
-    
-    hand.forEach(card => {
+
+    hand.forEach((card) => {
       if (card === 'A') hasAce = true;
       value += this.getCardValue(card);
     });
-    
-    return hasAce && value <= 21 && (value - 10) < 21;
+
+    return hasAce && value <= 21 && value - 10 < 21;
   }
 
   isPair(hand) {
@@ -217,7 +264,7 @@ export class BlackjackSimulation {
     // Use the count from the END of the previous hand for betting decisions
     const trueCount = this.handsPlayed === 0 ? 0 : this.previousTrueCount;
     const { bettingTable, minBet, maxBet } = this.config;
-    
+
     // If betting table is available, use it
     if (bettingTable && bettingTable.length > 0) {
       for (const row of bettingTable) {
@@ -228,42 +275,64 @@ export class BlackjackSimulation {
       // If no range matches, fall back to minimum bet
       return minBet;
     }
-    
+
     // Legacy betting logic (fallback)
     if (trueCount < 1) return minBet;
-    
+
     const betMultiplier = Math.max(1, Math.floor(trueCount));
     const betSize = minBet * betMultiplier;
-    
+
     return Math.min(betSize, maxBet);
   }
 
-  getBasicStrategyAction(playerHand, dealerUpCard, canDouble = true, canSplit = true) {
+  getBasicStrategyAction(
+    playerHand,
+    dealerUpCard,
+    canDouble = true,
+    canSplit = true,
+  ) {
     const playerTotal = this.calculateHandValue(playerHand);
-    
+
     // Normalize face cards to '10' for strategy lookup
-    const normalizedDealerCard = ['J','Q','K'].includes(dealerUpCard) ? '10' : dealerUpCard;
-    const dealerIndex = ['2','3','4','5','6','7','8','9','10','A'].indexOf(normalizedDealerCard);
-    
+    const normalizedDealerCard = ['J', 'Q', 'K'].includes(dealerUpCard)
+      ? '10'
+      : dealerUpCard;
+    const dealerIndex = [
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+      '9',
+      '10',
+      'A',
+    ].indexOf(normalizedDealerCard);
+
     // Safety check - if dealer card not found, default to 10
     if (dealerIndex === -1) {
       console.warn(`Unknown dealer card: ${dealerUpCard}, defaulting to 10`);
       return this.getBasicStrategyAction(playerHand, '10', canDouble, canSplit);
     }
-    
+
     // Check for surrender first (only on initial 2-card hands)
-    if (this.config.surrenderAllowed && playerHand.length === 2 && !this.isSoftHand(playerHand)) {
+    if (
+      this.config.surrenderAllowed &&
+      playerHand.length === 2 &&
+      !this.isSoftHand(playerHand)
+    ) {
       const surrenderAction = SURRENDER_STRATEGY[playerTotal]?.[dealerIndex];
       if (surrenderAction === 'Y') return 'R'; // Surrender
     }
-    
+
     // Check for pair splitting
     if (canSplit && this.isPair(playerHand)) {
       const pairCard = playerHand[0];
       const splitAction = PAIR_STRATEGY[pairCard]?.[dealerIndex];
       if (splitAction === 'Y') return 'P'; // Split
     }
-    
+
     // Check for soft hands
     if (this.isSoftHand(playerHand)) {
       const softStrategy = SOFT_STRATEGY[playerTotal];
@@ -273,77 +342,98 @@ export class BlackjackSimulation {
         return action;
       }
     }
-    
+
     // Hard totals
     const strategy = BASIC_STRATEGY[playerTotal] || BASIC_STRATEGY[21];
     let action = strategy[dealerIndex];
-    
+
     if (action === 'D' && !canDouble) action = 'H';
-    
+
     return action;
   }
 
   playHand() {
     // Capture the count that was used for betting (from previous hand)
-    const bettingRunningCount = this.handsPlayed === 0 ? 0 : this.previousHandCount;
-    const bettingTrueCount = this.handsPlayed === 0 ? 0 : this.previousTrueCount;
-    
+    const bettingRunningCount =
+      this.handsPlayed === 0 ? 0 : this.previousHandCount;
+    const bettingTrueCount =
+      this.handsPlayed === 0 ? 0 : this.previousTrueCount;
+
     // Determine bet size based on count from PREVIOUS hand
     const baseBetSize = this.getBetSize();
     let totalBet = baseBetSize;
     this.totalWagered += baseBetSize;
     this.totalInitialBets += baseBetSize; // Track the initial bet amount
-    
+
     // NOW deal initial cards (this will change the count)
     const playerHand = [this.dealCard(), this.dealCard()];
     const dealerHand = [this.dealCard(), this.dealCard()];
-    
+
     // Initialize hand tracking
-    const handDetail = this.config.enableHandTracking ? {
-      handNumber: this.handsPlayed + 1,
-      playerCardsInitial: [...playerHand],
-      dealerCardsInitial: [...dealerHand],
-      playerCardsFinal: [],
-      dealerCardsFinal: [],
-      runningCountStart: bettingRunningCount,
-      trueCountStart: bettingTrueCount,
-      runningCountEnd: null,
-      trueCountEnd: null,
-      betAmount: baseBetSize,
-      totalBet: baseBetSize,
-      initialAction: null,
-      actions: [],
-      outcome: null,
-      winnings: 0,
-      playerTotal: this.calculateHandValue(playerHand),
-      dealerTotal: this.calculateHandValue(dealerHand),
-      playerBlackjack: false,
-      dealerBlackjack: false,
-      errors: [],
-      shuffleOccurred: this.lastHandWasShuffle // Track if shuffle happened before this hand
-    } : null;
-    
+    const handDetail = this.config.enableHandTracking
+      ? {
+          handNumber: this.handsPlayed + 1,
+          playerCardsInitial: [...playerHand],
+          dealerCardsInitial: [...dealerHand],
+          playerCardsFinal: [],
+          dealerCardsFinal: [],
+          runningCountStart: bettingRunningCount,
+          trueCountStart: bettingTrueCount,
+          runningCountEnd: null,
+          trueCountEnd: null,
+          betAmount: baseBetSize,
+          totalBet: baseBetSize,
+          initialAction: null,
+          actions: [],
+          outcome: null,
+          winnings: 0,
+          playerTotal: this.calculateHandValue(playerHand),
+          dealerTotal: this.calculateHandValue(dealerHand),
+          playerBlackjack: false,
+          dealerBlackjack: false,
+          errors: [],
+          shuffleOccurred: this.lastHandWasShuffle, // Track if shuffle happened before this hand
+        }
+      : null;
+
     // Reset shuffle flag after capturing it
     this.lastHandWasShuffle = false;
-    
+
     // Track initial hand totals for surrender analysis
     const initialTotal = this.calculateHandValue(playerHand);
     if (initialTotal === 15 && !this.isSoftHand(playerHand)) this.hands15++;
     if (initialTotal === 16 && !this.isSoftHand(playerHand)) this.hands16++;
-    
+
     // Capture initial basic strategy action
-    if (handDetail && !this.isBlackjack(playerHand) && !this.isBlackjack(dealerHand)) {
-      const initialAction = this.getBasicStrategyAction(playerHand, dealerHand[0], true, true);
-      const actionMap = { 'H': 'Hit', 'S': 'Stand', 'D': 'Double', 'P': 'Split', 'R': 'Surrender' };
+    if (
+      handDetail &&
+      !this.isBlackjack(playerHand) &&
+      !this.isBlackjack(dealerHand)
+    ) {
+      const initialAction = this.getBasicStrategyAction(
+        playerHand,
+        dealerHand[0],
+        true,
+        true,
+      );
+      const actionMap = {
+        H: 'Hit',
+        S: 'Stand',
+        D: 'Double',
+        P: 'Split',
+        R: 'Surrender',
+      };
       handDetail.initialAction = actionMap[initialAction] || initialAction;
     } else if (handDetail) {
-      handDetail.initialAction = this.isBlackjack(playerHand) ? 'Blackjack' : 'vs Dealer BJ';
+      handDetail.initialAction = this.isBlackjack(playerHand)
+        ? 'Blackjack'
+        : 'vs Dealer BJ';
     }
-    
+
     // Check for blackjacks
     const playerBlackjack = this.isBlackjack(playerHand);
     const dealerBlackjack = this.isBlackjack(dealerHand);
-    
+
     if (playerBlackjack && dealerBlackjack) {
       this.pushes++;
       if (handDetail) {
@@ -361,7 +451,7 @@ export class BlackjackSimulation {
       this.previousTrueCount = this.getTrueCount();
       return 0; // Push
     }
-    
+
     if (playerBlackjack) {
       this.blackjacks++;
       this.wins++;
@@ -383,7 +473,7 @@ export class BlackjackSimulation {
       this.previousTrueCount = this.getTrueCount();
       return winnings;
     }
-    
+
     if (dealerBlackjack) {
       this.losses++;
       this.currentBankroll -= baseBetSize;
@@ -402,49 +492,52 @@ export class BlackjackSimulation {
       this.previousTrueCount = this.getTrueCount();
       return -baseBetSize;
     }
-    
+
     // Player plays
-    let hands = [{ cards: playerHand, bet: baseBetSize, canDouble: true }];
-    let handResults = [];
-    
+    const hands = [{ cards: playerHand, bet: baseBetSize, canDouble: true }];
+    const handResults = [];
+
     // Process each hand (for splits)
     for (let handIndex = 0; handIndex < hands.length; handIndex++) {
       const currentHand = hands[handIndex];
       let playerTotal = this.calculateHandValue(currentHand.cards);
-      
+
       // Player decision loop
       let decisionCount = 0;
       let hasActed = false;
-      while (playerTotal < 21 && decisionCount < 10) { // Safety limit
+      while (playerTotal < 21 && decisionCount < 10) {
+        // Safety limit
         decisionCount++;
         const action = this.getBasicStrategyAction(
           currentHand.cards,
           dealerHand[0],
           currentHand.canDouble,
-          hands.length < 4 && currentHand.cards.length === 2
+          hands.length < 4 && currentHand.cards.length === 2,
         );
-        
+
         if (action === 'S') {
-          if (handDetail && handDetail.actions && !hasActed) handDetail.actions.push('Stand');
+          if (handDetail && handDetail.actions && !hasActed)
+            handDetail.actions.push('Stand');
           break;
         }
-        
+
         if (action === 'R') {
           // Surrender - lose half the bet
-          if (handDetail && handDetail.actions) handDetail.actions.push('Surrender');
+          if (handDetail && handDetail.actions)
+            handDetail.actions.push('Surrender');
           this.surrenders++;
           handResults.push({
             cards: currentHand.cards,
             total: playerTotal,
             bet: currentHand.bet,
             busted: false,
-            surrendered: true
+            surrendered: true,
           });
           break;
         }
-        
+
         hasActed = true;
-        
+
         if (action === 'H') {
           const hitCard = this.dealCard();
           if (handDetail && handDetail.actions) {
@@ -474,7 +567,7 @@ export class BlackjackSimulation {
           const newHand = {
             cards: [currentHand.cards.pop()],
             bet: currentHand.bet,
-            canDouble: true
+            canDouble: true,
           };
           currentHand.cards.push(splitCard1);
           newHand.cards.push(splitCard2);
@@ -484,10 +577,10 @@ export class BlackjackSimulation {
           this.splits++;
           currentHand.canDouble = true;
         }
-        
+
         playerTotal = this.calculateHandValue(currentHand.cards);
       }
-      
+
       const isBusted = playerTotal > 21;
       if (isBusted && handDetail && handDetail.actions) {
         handDetail.actions.push('Bust');
@@ -495,9 +588,11 @@ export class BlackjackSimulation {
         // Player stood on initial hand (like 20 or 21)
         handDetail.actions.push('Stand');
       }
-      
+
       // Only add to results if hand wasn't surrendered
-      const wasSurrendered = handResults.some(h => h.cards === currentHand.cards && h.surrendered);
+      const wasSurrendered = handResults.some(
+        (h) => h.cards === currentHand.cards && h.surrendered,
+      );
       if (!wasSurrendered) {
         // Recalculate final total after all cards added
         const finalTotal = this.calculateHandValue(currentHand.cards);
@@ -505,28 +600,35 @@ export class BlackjackSimulation {
           cards: currentHand.cards,
           total: finalTotal,
           bet: currentHand.bet,
-          busted: finalTotal > 21
+          busted: finalTotal > 21,
         });
       }
     }
-    
+
     // Dealer plays only if at least one player hand didn't bust
-    const anyPlayerHandsAlive = handResults.some(hand => !hand.busted && !hand.surrendered);
+    const anyPlayerHandsAlive = handResults.some(
+      (hand) => !hand.busted && !hand.surrendered,
+    );
     let dealerTotal = this.calculateHandValue(dealerHand);
-    
+
     if (anyPlayerHandsAlive) {
-      while (dealerTotal < 17 || (dealerTotal === 17 && this.config.dealerHitsSoft17 && this.isSoftHand(dealerHand))) {
+      while (
+        dealerTotal < 17 ||
+        (dealerTotal === 17 &&
+          this.config.dealerHitsSoft17 &&
+          this.isSoftHand(dealerHand))
+      ) {
         const dealerCard = this.dealCard();
         dealerHand.push(dealerCard);
         dealerTotal = this.calculateHandValue(dealerHand);
       }
     }
     // If all player hands busted/surrendered, dealer just reveals hole card (no additional draws)
-    
+
     // Determine results for each hand
     let totalWinnings = 0;
-    
-    handResults.forEach(hand => {
+
+    handResults.forEach((hand) => {
       if (hand.surrendered) {
         this.losses++;
         totalWinnings -= hand.bet / 2; // Lose half bet on surrender
@@ -548,12 +650,12 @@ export class BlackjackSimulation {
         // Push - no change to winnings
       }
     });
-    
+
     this.totalWon += totalWinnings;
     this.currentBankroll += totalWinnings;
     this.minBankroll = Math.min(this.minBankroll, this.currentBankroll);
     this.maxDrawdown = Math.max(this.maxDrawdown, -this.minBankroll);
-    
+
     // Complete hand tracking
     if (handDetail) {
       handDetail.runningCountEnd = this.runningCount;
@@ -563,9 +665,11 @@ export class BlackjackSimulation {
       handDetail.dealerTotal = dealerTotal;
       handDetail.playerBlackjack = playerBlackjack;
       handDetail.dealerBlackjack = dealerBlackjack;
-      handDetail.playerCardsFinal = handResults.map(h => h.cards.join(', ')).join(' | ');
+      handDetail.playerCardsFinal = handResults
+        .map((h) => h.cards.join(', '))
+        .join(' | ');
       handDetail.dealerCardsFinal = dealerHand;
-      
+
       if (totalWinnings > 0) {
         handDetail.outcome = 'win';
       } else if (totalWinnings < 0) {
@@ -573,14 +677,14 @@ export class BlackjackSimulation {
       } else {
         handDetail.outcome = 'push';
       }
-      
+
       this.handDetails.push(handDetail);
     }
-    
+
     // Store count from END of this hand for next hand's betting
     this.previousHandCount = this.runningCount;
     this.previousTrueCount = this.getTrueCount();
-    
+
     return totalWinnings;
   }
 
@@ -588,47 +692,48 @@ export class BlackjackSimulation {
     console.log('Simulation starting, hands:', this.config.hands);
     this.reset();
     console.log('Reset complete, starting loop...');
-    
+
     // Limit hands when tracking is enabled for performance
-    const maxHands = this.config.enableHandTracking ? 
-      Math.min(this.config.hands, 1000) : this.config.hands;
-    
+    const maxHands = this.config.enableHandTracking
+      ? Math.min(this.config.hands, 1000)
+      : this.config.hands;
+
     for (let i = 0; i < maxHands; i++) {
       if (i === 0) console.log('Playing first hand...');
-      
+
       try {
         this.playHand();
         this.handsPlayed++;
-        
+
         // Update progress every 1000 hands
         if (progressCallback && (i + 1) % 1000 === 0) {
           progressCallback(i + 1, maxHands);
         }
-        
+
         // Store session data every 1000 hands for charting
         if (i % 1000 === 0) {
           this.sessionResults.push({
             hand: i,
             bankroll: this.currentBankroll,
             runningCount: this.runningCount,
-            trueCount: this.getTrueCount()
+            trueCount: this.getTrueCount(),
           });
           // Yield control after storing data to keep UI responsive
-          await new Promise(resolve => setTimeout(resolve, 10));
+          await new Promise((resolve) => setTimeout(resolve, 10));
         }
-        
+
         if (i === 0) console.log('First hand completed successfully');
       } catch (error) {
         console.error('Error playing hand', i, ':', error);
         throw error;
       }
     }
-    
+
     // Final progress update
     if (progressCallback) {
       progressCallback(maxHands, maxHands);
     }
-    
+
     console.log('Simulation loop complete, getting results...');
     return this.getResults();
   }
@@ -636,16 +741,21 @@ export class BlackjackSimulation {
   getResults() {
     // Total outcomes includes split hands
     const totalOutcomes = this.wins + this.losses + this.pushes;
-    
+
     // Calculate percentages based on total outcomes (including splits)
-    const winPercentage = totalOutcomes > 0 ? (this.wins / totalOutcomes * 100) : 0;
-    const lossPercentage = totalOutcomes > 0 ? (this.losses / totalOutcomes * 100) : 0;
-    const pushPercentage = totalOutcomes > 0 ? (this.pushes / totalOutcomes * 100) : 0;
+    const winPercentage =
+      totalOutcomes > 0 ? (this.wins / totalOutcomes) * 100 : 0;
+    const lossPercentage =
+      totalOutcomes > 0 ? (this.losses / totalOutcomes) * 100 : 0;
+    const pushPercentage =
+      totalOutcomes > 0 ? (this.pushes / totalOutcomes) * 100 : 0;
     // Expected Value should be based on net profit (final bankroll)
     const netProfit = this.currentBankroll;
-    const expectedValue = this.totalWagered > 0 ? (netProfit / this.totalWagered * 100) : 0;
-    const avgBetSize = this.handsPlayed > 0 ? (this.totalInitialBets / this.handsPlayed) : 0;
-    
+    const expectedValue =
+      this.totalWagered > 0 ? (netProfit / this.totalWagered) * 100 : 0;
+    const avgBetSize =
+      this.handsPlayed > 0 ? this.totalInitialBets / this.handsPlayed : 0;
+
     return {
       handsPlayed: this.handsPlayed,
       totalOutcomes: totalOutcomes, // Include total outcomes for clarity
@@ -672,7 +782,7 @@ export class BlackjackSimulation {
       sessionResults: this.sessionResults,
       countingSystem: this.countingSystem.name,
       handsPerHour: this.handsPerHour,
-      handDetails: this.config.enableHandTracking ? this.handDetails : null
+      handDetails: this.config.enableHandTracking ? this.handDetails : null,
     };
   }
 }

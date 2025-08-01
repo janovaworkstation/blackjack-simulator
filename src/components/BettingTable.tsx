@@ -1,5 +1,4 @@
-import React from 'react';
-import { Card, CardHeader, CardContent, CardTitle, Input } from './UI';
+import { Card, CardHeader, CardContent, CardTitle } from './UI';
 
 const BettingTable = ({ bettingTable, setBettingTable, isRunning }) => {
   const updateBettingRow = (index, field, value) => {
@@ -13,7 +12,7 @@ const BettingTable = ({ bettingTable, setBettingTable, isRunning }) => {
     const newRow = {
       minCount: lastRow.maxCount + 0.1,
       maxCount: lastRow.maxCount + 1,
-      betAmount: lastRow.betAmount
+      betAmount: lastRow.betAmount,
     };
     setBettingTable([...bettingTable, newRow]);
   };
@@ -33,9 +32,10 @@ const BettingTable = ({ bettingTable, setBettingTable, isRunning }) => {
       <CardContent>
         <div className="space-y-4">
           <p className="text-sm text-gray-600">
-            Define your bet amounts for different true count ranges. The simulator will use these values instead of simple multiplication.
+            Define your bet amounts for different true count ranges. The
+            simulator will use these values instead of simple multiplication.
           </p>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -53,7 +53,9 @@ const BettingTable = ({ bettingTable, setBettingTable, isRunning }) => {
                         <input
                           type="number"
                           value={row.minCount}
-                          onChange={(e) => updateBettingRow(index, 'minCount', e.target.value)}
+                          onChange={(e) =>
+                            updateBettingRow(index, 'minCount', e.target.value)
+                          }
                           className="w-16 px-2 py-1 border rounded text-xs"
                           step="0.1"
                           disabled={isRunning}
@@ -62,7 +64,9 @@ const BettingTable = ({ bettingTable, setBettingTable, isRunning }) => {
                         <input
                           type="number"
                           value={row.maxCount}
-                          onChange={(e) => updateBettingRow(index, 'maxCount', e.target.value)}
+                          onChange={(e) =>
+                            updateBettingRow(index, 'maxCount', e.target.value)
+                          }
                           className="w-16 px-2 py-1 border rounded text-xs"
                           step="0.1"
                           disabled={isRunning}
@@ -73,7 +77,9 @@ const BettingTable = ({ bettingTable, setBettingTable, isRunning }) => {
                       <input
                         type="number"
                         value={row.betAmount}
-                        onChange={(e) => updateBettingRow(index, 'betAmount', e.target.value)}
+                        onChange={(e) =>
+                          updateBettingRow(index, 'betAmount', e.target.value)
+                        }
                         className="w-20 px-2 py-1 border rounded text-xs"
                         min="1"
                         disabled={isRunning}
@@ -93,7 +99,7 @@ const BettingTable = ({ bettingTable, setBettingTable, isRunning }) => {
               </tbody>
             </table>
           </div>
-          
+
           <button
             onClick={addBettingRow}
             disabled={isRunning}
@@ -101,13 +107,13 @@ const BettingTable = ({ bettingTable, setBettingTable, isRunning }) => {
           >
             Add Row
           </button>
-          
+
           <div className="mt-4 p-3 bg-gray-50 rounded text-xs">
             <h4 className="font-semibold mb-2">Tips:</h4>
             <ul className="space-y-1 text-gray-600">
               <li>• Negative counts indicate dealer advantage (bet smaller)</li>
               <li>• Positive counts indicate player advantage (bet larger)</li>
-              <li>• Ensure ranges don't overlap for consistent betting</li>
+              <li>• Ensure ranges don&apos;t overlap for consistent betting</li>
               <li>• Professional spreads typically range from 1:4 to 1:12</li>
             </ul>
           </div>

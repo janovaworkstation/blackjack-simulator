@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from './UI';
 import ConfigurationPanel from './ConfigurationPanel';
 import BettingTable from './BettingTable';
@@ -8,7 +8,7 @@ import { useSimulation } from '../hooks/useSimulation';
 
 const BlackjackSimulator = () => {
   const { isRunning, results, progress, runSimulation } = useSimulation();
-  
+
   const [config, setConfig] = useState({
     hands: 100000,
     decks: 6,
@@ -28,14 +28,14 @@ const BlackjackSimulator = () => {
       { minCount: 1, maxCount: 1.9, betAmount: 25 },
       { minCount: 2, maxCount: 2.9, betAmount: 50 },
       { minCount: 3, maxCount: 3.9, betAmount: 75 },
-      { minCount: 4, maxCount: 10, betAmount: 100 }
-    ]
+      { minCount: 4, maxCount: 10, betAmount: 100 },
+    ],
   });
 
   const countingSystems = [
     { value: 'HI_LO', label: 'Hi-Lo' },
     { value: 'KO', label: 'Knock-Out (KO)' },
-    { value: 'HI_OPT_I', label: 'Hi-Opt I' }
+    { value: 'HI_OPT_I', label: 'Hi-Opt I' },
   ];
 
   const handleRunSimulation = () => {
@@ -45,7 +45,7 @@ const BlackjackSimulator = () => {
   };
 
   const setBettingTable = (newBettingTable) => {
-    setConfig(prev => ({ ...prev, bettingTable: newBettingTable }));
+    setConfig((prev) => ({ ...prev, bettingTable: newBettingTable }));
   };
 
   return (
@@ -57,7 +57,8 @@ const BlackjackSimulator = () => {
             Blackjack Strategy Simulator
           </h1>
           <p className="text-xl text-gray-600">
-            Advanced simulation with multiple counting systems and comprehensive analysis
+            Advanced simulation with multiple counting systems and comprehensive
+            analysis
           </p>
         </div>
 
@@ -72,13 +73,13 @@ const BlackjackSimulator = () => {
                 countingSystems={countingSystems}
                 isRunning={isRunning}
               />
-              
+
               <BettingTable
                 bettingTable={config.bettingTable}
                 setBettingTable={setBettingTable}
                 isRunning={isRunning}
               />
-              
+
               {/* Run Button */}
               <div>
                 <Button
@@ -110,21 +111,27 @@ const BlackjackSimulator = () => {
         )}
 
         {/* Charts Section - Disabled due to rendering issues */}
-        {results && results.sessionResults && results.sessionResults.length > 0 && (
-          <div className="mb-8">
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              Chart feature temporarily disabled - Results displayed above
+        {results &&
+          results.sessionResults &&
+          results.sessionResults.length > 0 && (
+            <div className="mb-8">
+              <div className="text-center p-4 bg-blue-50 rounded-lg">
+                Chart feature temporarily disabled - Results displayed above
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Information Panel */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Simulator</h2>
-          
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            About This Simulator
+          </h2>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">Features</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                Features
+              </h3>
               <ul className="space-y-2 text-gray-600">
                 <li className="flex items-start">
                   <span className="text-green-500 mr-2">✓</span>
@@ -152,9 +159,11 @@ const BlackjackSimulator = () => {
                 </li>
               </ul>
             </div>
-            
+
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">Next Features</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                Next Features
+              </h3>
               <ul className="space-y-2 text-gray-600">
                 <li className="flex items-start">
                   <span className="text-blue-500 mr-2">→</span>
@@ -183,13 +192,14 @@ const BlackjackSimulator = () => {
               </ul>
             </div>
           </div>
-          
+
           <div className="mt-6 p-4 bg-blue-50 rounded-lg">
             <p className="text-blue-800 text-sm">
-              <strong>Note:</strong> This simulator is for educational purposes and strategy development. 
-              It implements mathematically correct basic strategy and card counting principles used by 
-              professional advantage players. Results assume perfect play and may not reflect real-world 
-              casino conditions.
+              <strong>Note:</strong> This simulator is for educational purposes
+              and strategy development. It implements mathematically correct
+              basic strategy and card counting principles used by professional
+              advantage players. Results assume perfect play and may not reflect
+              real-world casino conditions.
             </p>
           </div>
         </div>
