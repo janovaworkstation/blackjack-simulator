@@ -49,6 +49,13 @@ deployment-config/
 .cache
 *.tsbuildinfo
 
+# Test coverage reports
+coverage/
+*.lcov
+
+# Claude Code settings
+.claude/
+
 # Playwright
 /test-results/
 /playwright-report/
