@@ -1,0 +1,22 @@
+{
+  "status": "healthy",
+  "timestamp": "2025-01-01T00:00:00.000Z",
+  "version": "1.0.0",
+  "environment": "production",
+  "services": {
+    "frontend": {
+      "status": "healthy",
+      "version": "1.0.0"
+    }
+  },
+  "checks": {
+    "database": {
+      "status": "not_applicable",
+      "message": "Client-side application"
+    },
+    "external_apis": {
+      "status": "not_applicable",
+      "message": "No external dependencies"
+    }
+  }
+}

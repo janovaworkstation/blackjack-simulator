@@ -1,0 +1,143 @@
+name: Monitoring & Alerts
+
+on:
+  schedule:
+    # Run uptime checks every 15 minutes
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    inputs:
+      check_type:
+        description: 'Type of monitoring check to run'
+        required: true
+        default: 'uptime'
+        type: choice
+        options:
+        - uptime
+        - performance
+        - security
+
+jobs:
+  uptime-check:
+    name: Uptime Monitoring
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Check Production Site
+      run: |
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://blackjack-simulator.netlify.app/health.json)
+        if [ $response -ne 200 ]; then
+          echo "Health check failed with status: $response"
+          exit 1
+        fi
+        echo "Production site is healthy (HTTP $response)"
+        
+    - name: Check Staging Site
+      run: |
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://staging-blackjack-simulator.netlify.app/health.json || echo "404")
+        if [ $response -ne 200 ] && [ $response -ne 404 ]; then
+          echo "Staging health check failed with status: $response"
+          # Don't fail the job for staging issues
+        fi
+        echo "Staging site status: HTTP $response"
+        
+    - name: Alert on Failure
+      if: failure()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        channel: '#alerts'
+        text: |
+          🚨 PRODUCTION SITE DOWN
+          Health check failed for https://blackjack-simulator.netlify.app
+          Time: ${{ github.event.head_commit.timestamp }}
+          
+          Please investigate immediately!
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  performance-monitoring:
+    name: Performance Monitoring
+    runs-on: ubuntu-latest
+    if: github.event.inputs.check_type == 'performance' || github.event_name == 'schedule'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build application
+      run: npm run build
+      
+    - name: Run Lighthouse CI
+      uses: treosh/lighthouse-ci-action@v11
+      with:
+        configPath: './.lighthouserc.json'
+        uploadArtifacts: true
+        temporaryPublicStorage: true
+        
+    - name: Performance Budget Alert
+      if: failure()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        channel: '#performance'
+        text: |
+          ⚠️ Performance Budget Exceeded
+          Lighthouse CI failed performance checks
+          
+          Please review the performance report and optimize as needed.
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  security-monitoring:
+    name: Security Monitoring
+    runs-on: ubuntu-latest
+    if: github.event.inputs.check_type == 'security' || github.event_name == 'schedule'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run security audit
+      run: npm audit --audit-level moderate
+      
+    - name: Check for vulnerable dependencies
+      run: |
+        vulnerabilities=$(npm audit --audit-level moderate --json | jq '.metadata.vulnerabilities.total')
+        if [ "$vulnerabilities" -gt 0 ]; then
+          echo "Found $vulnerabilities security vulnerabilities"
+          npm audit --audit-level moderate
+          exit 1
+        fi
+        
+    - name: Security Alert
+      if: failure()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        channel: '#security'
+        text: |
+          🔒 Security Vulnerabilities Detected
+          npm audit found security issues in dependencies
+          
+          Please review and update vulnerable packages immediately.
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
