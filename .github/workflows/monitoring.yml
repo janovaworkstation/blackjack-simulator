@@ -42,7 +42,7 @@ jobs:
         echo "Staging site status: HTTP $response"
         
     - name: Alert on Failure
-      if: failure()
+      if: failure() && vars.SLACK_NOTIFICATIONS_ENABLED == 'true'
       uses: 8398a7/action-slack@v3
       with:
         status: failure
@@ -55,6 +55,13 @@ jobs:
           Please investigate immediately!
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        
+    - name: Log Failure (No Slack)
+      if: failure() && vars.SLACK_NOTIFICATIONS_ENABLED != 'true'
+      run: |
+        echo "::warning::Production site health check failed"
+        echo "Site: https://blackjack-simulator.netlify.app"
+        echo "Consider setting up Slack notifications by configuring SLACK_WEBHOOK_URL secret and SLACK_NOTIFICATIONS_ENABLED variable"
 
   performance-monitoring:
     name: Performance Monitoring
@@ -85,7 +92,7 @@ jobs:
         temporaryPublicStorage: true
         
     - name: Performance Budget Alert
-      if: failure()
+      if: failure() && vars.SLACK_NOTIFICATIONS_ENABLED == 'true'
       uses: 8398a7/action-slack@v3
       with:
         status: failure
@@ -97,6 +104,13 @@ jobs:
           Please review the performance report and optimize as needed.
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        
+    - name: Log Performance Issue (No Slack)
+      if: failure() && vars.SLACK_NOTIFICATIONS_ENABLED != 'true'
+      run: |
+        echo "::warning::Performance budget exceeded"
+        echo "Lighthouse CI checks failed"
+        echo "Consider setting up Slack notifications by configuring SLACK_WEBHOOK_URL secret and SLACK_NOTIFICATIONS_ENABLED variable"
 
   security-monitoring:
     name: Security Monitoring
@@ -129,7 +143,7 @@ jobs:
         fi
         
     - name: Security Alert
-      if: failure()
+      if: failure() && vars.SLACK_NOTIFICATIONS_ENABLED == 'true'
       uses: 8398a7/action-slack@v3
       with:
         status: failure
@@ -141,3 +155,10 @@ jobs:
           Please review and update vulnerable packages immediately.
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        
+    - name: Log Security Issue (No Slack)
+      if: failure() && vars.SLACK_NOTIFICATIONS_ENABLED != 'true'
+      run: |
+        echo "::warning::Security vulnerabilities detected"
+        echo "npm audit found security issues in dependencies"
+        echo "Consider setting up Slack notifications by configuring SLACK_WEBHOOK_URL secret and SLACK_NOTIFICATIONS_ENABLED variable"
