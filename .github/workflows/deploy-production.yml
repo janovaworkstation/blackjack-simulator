@@ -47,6 +47,10 @@ jobs:
       env:
         NODE_ENV: production
         VITE_APP_ENV: production
+        VITE_BUGSNAG_API_KEY: ${{ secrets.VITE_BUGSNAG_API_KEY_PRODUCTION }}
+        VITE_ENABLE_ERROR_TRACKING: true
+        VITE_ENABLE_PERFORMANCE_MONITORING: true
+        VITE_ENABLE_ANALYTICS: true
         
     - name: Deploy to Netlify
       uses: nwtgck/actions-netlify@v3.0

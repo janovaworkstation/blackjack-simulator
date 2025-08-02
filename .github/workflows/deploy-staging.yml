@@ -40,6 +40,9 @@ jobs:
       env:
         NODE_ENV: staging
         VITE_APP_ENV: staging
+        VITE_BUGSNAG_API_KEY: ${{ secrets.VITE_BUGSNAG_API_KEY_STAGING }}
+        VITE_ENABLE_ERROR_TRACKING: true
+        VITE_ENABLE_PERFORMANCE_MONITORING: true
         
     - name: Deploy to Netlify
       uses: nwtgck/actions-netlify@v3.0

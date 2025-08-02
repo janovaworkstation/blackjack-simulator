@@ -71,6 +71,12 @@ jobs:
       
     - name: Build application
       run: npm run build
+      env:
+        NODE_ENV: development
+        VITE_APP_ENV: development
+        VITE_BUGSNAG_API_KEY: ${{ secrets.VITE_BUGSNAG_API_KEY_DEVELOPMENT }}
+        VITE_ENABLE_ERROR_TRACKING: true
+        VITE_ENABLE_PERFORMANCE_MONITORING: true
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
