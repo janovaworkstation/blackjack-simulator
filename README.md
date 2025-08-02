@@ -22,6 +22,7 @@ A modern, web-based blackjack simulation tool that replicates and enhances the f
 - **Real-time Updates**: Live progress tracking during simulations
 - **Interactive Configuration**: Easy-to-use parameter adjustment
 - **Professional Styling**: Clean, modern UI with Tailwind CSS
+- **Monitoring & Alerts**: Comprehensive error tracking and uptime monitoring
 
 ## Quick Start
 
@@ -262,5 +263,5 @@ This simulator is designed for educational purposes and strategy development. It
 
 ---
 
-**Built with**: React, Vite, Tailwind CSS, Recharts, Storybook
+**Built with**: React, Vite, Tailwind CSS, Recharts, Storybook, Bugsnag/SmartBear Insight Hub, UptimeRobot
 **Inspired by**: CVData, CVCX, and the blackjack advantage play community

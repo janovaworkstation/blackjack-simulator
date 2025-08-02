@@ -1,6 +1,9 @@
 /**
  * Application monitoring and error tracking utilities
  */
+import Bugsnag from '@bugsnag/js';
+import BugsnagPluginReact from '@bugsnag/plugin-react';
+import BugsnagPerformance from '@bugsnag/browser-performance';
 
 // Types for monitoring configuration
 interface MonitoringConfig {
@@ -77,10 +80,13 @@ export const errorTracker = {
       console.error('Error Context:', context);
     }
 
-    // In production, send to error tracking service
-    if (import.meta.env.VITE_ENABLE_ERROR_TRACKING === 'true') {
-      // Send to Sentry or other error tracking service
-      // This would be implemented based on the chosen service
+    // Send to Bugsnag error tracking service
+    if (import.meta.env.VITE_ENABLE_ERROR_TRACKING === 'true' && Bugsnag.isStarted()) {
+      Bugsnag.notify(error, (event) => {
+        if (context) {
+          event.addMetadata('errorContext', context);
+        }
+      });
     }
   },
 
@@ -101,7 +107,10 @@ export const errorTracker = {
     userId: string,
     userData?: Record<string, unknown>,
   ): void => {
-    // This would set user context in the error tracking service
+    // Set user context in Bugsnag
+    if (import.meta.env.VITE_ENABLE_ERROR_TRACKING === 'true' && Bugsnag.isStarted()) {
+      Bugsnag.setUser(userId, undefined, userData);
+    }
     console.debug('User context set:', { userId, userData });
   },
 };
@@ -235,6 +244,29 @@ export const initializeMonitoring = (): void => {
       import.meta.env.VITE_ENABLE_PERFORMANCE_MONITORING === 'true',
     environment: import.meta.env.VITE_APP_ENV || 'development',
   };
+
+  // Initialize Bugsnag for error tracking
+  if (config.enableErrorTracking && import.meta.env.VITE_BUGSNAG_API_KEY) {
+    Bugsnag.start({
+      apiKey: import.meta.env.VITE_BUGSNAG_API_KEY,
+      environment: config.environment,
+      plugins: [new BugsnagPluginReact()],
+      enabledReleaseStages: ['development', 'staging', 'production'],
+      collectUserIp: false,
+    });
+
+    // Initialize performance monitoring if enabled
+    if (config.enablePerformanceMonitoring) {
+      try {
+        BugsnagPerformance.start({ 
+          apiKey: import.meta.env.VITE_BUGSNAG_API_KEY 
+        });
+        console.log('BugsnagPerformance started successfully');
+      } catch (error) {
+        console.warn('BugsnagPerformance failed to start:', error);
+      }
+    }
+  }
 
   console.log('Monitoring initialized:', config);
 

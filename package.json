@@ -17,6 +17,9 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@bugsnag/browser-performance": "^2.14.0",
+    "@bugsnag/js": "^8.4.0",
+    "@bugsnag/plugin-react": "^8.4.0",
     "clsx": "^2.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
