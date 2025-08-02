@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1754137320558" clover="3.2.0">
-  <project timestamp="1754137320558" name="All files">
-    <metrics statements="476" coveredstatements="36" conditionals="223" coveredconditionals="5" methods="98" coveredmethods="14" elements="797" coveredelements="55" complexity="0" loc="476" ncloc="476" packages="5" files="16" classes="16"/>
+<coverage generated="1754142098982" clover="3.2.0">
+  <project timestamp="1754142098982" name="All files">
+    <metrics statements="490" coveredstatements="14" conditionals="225" coveredconditionals="0" methods="112" coveredmethods="0" elements="827" coveredelements="14" complexity="0" loc="490" ncloc="490" packages="5" files="16" classes="16"/>
     <package name="src">
       <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
       <file name="App.tsx" path="C:\Users\jluse\Developer\blackjack-simulator\src\App.tsx">
@@ -12,31 +12,31 @@
       </file>
     </package>
     <package name="src.components">
-      <metrics statements="154" coveredstatements="36" conditionals="111" coveredconditionals="5" methods="60" coveredmethods="14"/>
+      <metrics statements="154" coveredstatements="14" conditionals="111" coveredconditionals="0" methods="60" coveredmethods="0"/>
       <file name="BettingTable.tsx" path="C:\Users\jluse\Developer\blackjack-simulator\src\components\BettingTable.tsx">
-        <metrics statements="22" coveredstatements="20" conditionals="4" coveredconditionals="3" methods="10" coveredmethods="8"/>
-        <line num="1" count="1" type="stmt"/>
-        <line num="2" count="1" type="stmt"/>
-        <line num="21" count="1" type="stmt"/>
-        <line num="26" count="8" type="stmt"/>
-        <line num="31" count="1" type="stmt"/>
-        <line num="32" count="1" type="stmt"/>
-        <line num="33" count="1" type="stmt"/>
-        <line num="36" count="8" type="stmt"/>
-        <line num="37" count="1" type="stmt"/>
-        <line num="38" count="1" type="stmt"/>
-        <line num="43" count="1" type="stmt"/>
-        <line num="46" count="8" type="stmt"/>
-        <line num="47" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="48" count="3" type="stmt"/>
-        <line num="49" count="1" type="stmt"/>
-        <line num="53" count="8" type="stmt"/>
-        <line num="78" count="22" type="stmt"/>
-        <line num="86" count="1" type="stmt"/>
-        <line num="98" count="0" type="stmt"/>
-        <line num="112" count="0" type="stmt"/>
-        <line num="121" count="1" type="stmt"/>
-        <line num="148" count="1" type="stmt"/>
+        <metrics statements="22" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="10" coveredmethods="0"/>
+        <line num="1" count="0" type="stmt"/>
+        <line num="2" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="47" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="84" count="0" type="stmt"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="104" count="0" type="stmt"/>
+        <line num="118" count="0" type="stmt"/>
+        <line num="127" count="0" type="stmt"/>
+        <line num="154" count="0" type="stmt"/>
       </file>
       <file name="BlackjackSimulator.tsx" path="C:\Users\jluse\Developer\blackjack-simulator\src\components\BlackjackSimulator.tsx">
         <metrics statements="20" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="4" coveredmethods="0"/>
@@ -84,10 +84,10 @@
         <line num="260" count="0" type="stmt"/>
       </file>
       <file name="HandDetailsTable.tsx" path="C:\Users\jluse\Developer\blackjack-simulator\src\components\HandDetailsTable.tsx">
-        <metrics statements="45" coveredstatements="0" conditionals="48" coveredconditionals="0" methods="15" coveredmethods="0"/>
-        <line num="1" count="0" type="stmt"/>
-        <line num="3" count="0" type="stmt"/>
-        <line num="14" count="0" type="stmt"/>
+        <metrics statements="45" coveredstatements="4" conditionals="48" coveredconditionals="0" methods="15" coveredmethods="0"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
         <line num="15" count="0" type="stmt"/>
         <line num="16" count="0" type="stmt"/>
         <line num="18" count="0" type="cond" truecount="0" falsecount="4"/>
@@ -129,7 +129,7 @@
         <line num="168" count="0" type="stmt"/>
         <line num="217" count="0" type="stmt"/>
         <line num="228" count="0" type="stmt"/>
-        <line num="241" count="0" type="stmt"/>
+        <line num="241" count="1" type="stmt"/>
       </file>
       <file name="ResultsChart.tsx" path="C:\Users\jluse\Developer\blackjack-simulator\src\components\ResultsChart.tsx">
         <metrics statements="15" coveredstatements="0" conditionals="15" coveredconditionals="0" methods="5" coveredmethods="0"/>
@@ -167,21 +167,21 @@
         <line num="345" count="0" type="stmt"/>
       </file>
       <file name="UI.tsx" path="C:\Users\jluse\Developer\blackjack-simulator\src\components\UI.tsx">
-        <metrics statements="19" coveredstatements="16" conditionals="7" coveredconditionals="2" methods="9" coveredmethods="6"/>
+        <metrics statements="19" coveredstatements="10" conditionals="7" coveredconditionals="0" methods="9" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
         <line num="14" count="1" type="stmt"/>
-        <line num="19" count="8" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
         <line num="29" count="1" type="stmt"/>
-        <line num="34" count="8" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
         <line num="44" count="1" type="stmt"/>
-        <line num="49" count="8" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
         <line num="59" count="1" type="stmt"/>
-        <line num="64" count="8" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
         <line num="81" count="1" type="stmt"/>
-        <line num="87" count="30" type="stmt"/>
+        <line num="87" count="0" type="stmt"/>
         <line num="114" count="1" type="stmt"/>
-        <line num="120" count="66" type="stmt"/>
+        <line num="120" count="0" type="stmt"/>
         <line num="144" count="1" type="stmt"/>
         <line num="152" count="0" type="stmt"/>
         <line num="161" count="0" type="stmt"/>
@@ -297,9 +297,9 @@
       </file>
     </package>
     <package name="src.utils">
-      <metrics statements="239" coveredstatements="0" conditionals="104" coveredconditionals="0" methods="23" coveredmethods="0"/>
+      <metrics statements="253" coveredstatements="0" conditionals="106" coveredconditionals="0" methods="37" coveredmethods="0"/>
       <file name="BlackjackEngine.ts" path="C:\Users\jluse\Developer\blackjack-simulator\src\utils\BlackjackEngine.ts">
-        <metrics statements="239" coveredstatements="0" conditionals="104" coveredconditionals="0" methods="23" coveredmethods="0"/>
+        <metrics statements="253" coveredstatements="0" conditionals="106" coveredconditionals="0" methods="37" coveredmethods="0"/>
         <line num="11" count="0" type="stmt"/>
         <line num="71" count="0" type="stmt"/>
         <line num="94" count="0" type="stmt"/>
@@ -539,6 +539,20 @@
         <line num="578" count="0" type="stmt"/>
         <line num="582" count="0" type="stmt"/>
         <line num="583" count="0" type="stmt"/>
+        <line num="615" count="0" type="stmt"/>
+        <line num="616" count="0" type="stmt"/>
+        <line num="617" count="0" type="stmt"/>
+        <line num="618" count="0" type="stmt"/>
+        <line num="619" count="0" type="stmt"/>
+        <line num="623" count="0" type="stmt"/>
+        <line num="627" count="0" type="stmt"/>
+        <line num="631" count="0" type="stmt"/>
+        <line num="635" count="0" type="stmt"/>
+        <line num="639" count="0" type="stmt"/>
+        <line num="643" count="0" type="stmt"/>
+        <line num="647" count="0" type="stmt"/>
+        <line num="651" count="0" type="stmt"/>
+        <line num="655" count="0" type="cond" truecount="0" falsecount="2"/>
       </file>
     </package>
   </project>

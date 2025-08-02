@@ -1,4 +1,4 @@
-import { Card, Hand, Rank, Suit, ranks, suits } from '../types/card';
+import { Card, Hand, ranks, suits } from '../types/card';
 
 /**
  * Creates a mock card.

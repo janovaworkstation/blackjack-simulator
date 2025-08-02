@@ -1,9 +1,16 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
-      "Bash(npm run test:*)"
+      "Bash(npm run test:*)",
+      "Bash(npm test:*)",
+      "Bash(npx jest:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run lint:*)",
+      "Bash(npx eslint:*)"
     ],
     "deny": []
-  },
-  "$schema": "https://json.schemastore.org/claude-code-settings.json"
+  }
 }

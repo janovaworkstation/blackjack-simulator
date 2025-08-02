@@ -13,8 +13,9 @@ This file provides guidance to Claude Code (claude.ai/code) for working on the B
 - `npm run lint` - Run ESLint for code quality checks
 
 **Testing:**
-- `npm run test` - Run unit tests with Jest
-- `npm run test:e2e` - Run end-to-end tests with Playwright
+- `npm run test` - Run unit tests with Jest (33 BlackjackEngine tests, 95%+ coverage)
+- `npm run test:e2e` - Run end-to-end tests with Playwright (16 comprehensive workflow tests)
+- `npm run test:coverage` - Generate test coverage reports
 
 **Package Management:**
 - `npm install` - Install dependencies

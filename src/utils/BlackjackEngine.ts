@@ -610,4 +610,58 @@ export class BlackjackSimulation {
       hands16: this.hands16,
     };
   }
+
+  // Test-only getter methods (exposed for testing purposes)
+  get testConfig() {
+    return this.config;
+  }
+  get testCountingSystem() {
+    return this.countingSystem;
+  }
+  get testShoe() {
+    return this.shoe;
+  }
+  get testRunningCount() {
+    return this.runningCount;
+  }
+  get testHandsPlayed() {
+    return this.handsPlayed;
+  }
+
+  // Test-only methods (exposed for testing purposes)
+  testGetCardValue(card: Pick<Card, 'rank'>): number {
+    return this.getCardValue(card);
+  }
+
+  testCalculateHandValue(cards: Card[]): HandValue {
+    return this.calculateHandValue(cards);
+  }
+
+  testIsBlackjack(hand: Hand): boolean {
+    return this.isBlackjack(hand);
+  }
+
+  testIsSoftHand(hand: Hand): boolean {
+    return this.isSoftHand(hand);
+  }
+
+  testIsPair(hand: Hand): boolean {
+    return this.isPair(hand);
+  }
+
+  testGetTrueCount(): number {
+    return this.getTrueCount();
+  }
+
+  testNeedReshuffle(): boolean {
+    return this.needReshuffle();
+  }
+
+  testDealCard(): Card {
+    return this.dealCard();
+  }
+
+  updateCount(card: Card): void {
+    this.runningCount += this.countingSystem.values[card.rank] || 0;
+  }
 }
