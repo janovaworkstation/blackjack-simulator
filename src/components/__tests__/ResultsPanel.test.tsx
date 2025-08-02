@@ -42,7 +42,7 @@ const mockProgress = {
 };
 
 describe('ResultsPanel', () => {
-  it.skip('displays loading state when simulation is running without progress', () => {
+  it('displays loading state when simulation is running without progress', () => {
     render(<ResultsPanel results={null} isRunning={true} progress={null} />);
 
     expect(screen.getByText('Running Simulation...')).toBeInTheDocument();
@@ -51,7 +51,7 @@ describe('ResultsPanel', () => {
     expect(document.querySelector('.animate-spin')).toBeInTheDocument();
   });
 
-  it.skip('displays progress when simulation is running with progress data', () => {
+  it('displays progress when simulation is running with progress data', () => {
     render(
       <ResultsPanel results={null} isRunning={true} progress={mockProgress} />,
     );
@@ -66,7 +66,7 @@ describe('ResultsPanel', () => {
     expect(progressBar).toBeInTheDocument();
   });
 
-  it.skip('displays empty state when no results and not running', () => {
+  it('displays empty state when no results and not running', () => {
     render(<ResultsPanel results={null} isRunning={false} progress={null} />);
 
     expect(screen.getByText('Simulation Results')).toBeInTheDocument();
@@ -77,7 +77,7 @@ describe('ResultsPanel', () => {
     ).toBeInTheDocument();
   });
 
-  it.skip('displays complete results when simulation is finished', () => {
+  it('displays complete results when simulation is finished', () => {
     render(
       <ResultsPanel results={mockResults} isRunning={false} progress={null} />,
     );
@@ -98,7 +98,7 @@ describe('ResultsPanel', () => {
     expect(screen.getByText('$-500.00')).toBeInTheDocument();
   });
 
-  it.skip('applies correct colors for positive and negative values', () => {
+  it('applies correct colors for positive and negative values', () => {
     const positiveResults = {
       ...mockResults,
       netResult: 1500,
@@ -122,7 +122,7 @@ describe('ResultsPanel', () => {
     expect(evValue).toHaveClass('text-green-600');
   });
 
-  it.skip('displays detailed statistics correctly', () => {
+  it('displays detailed statistics correctly', () => {
     render(
       <ResultsPanel results={mockResults} isRunning={false} progress={null} />,
     );
@@ -149,7 +149,7 @@ describe('ResultsPanel', () => {
     expect(screen.getByText('Hi-Lo')).toBeInTheDocument();
   });
 
-  it.skip('displays hand outcomes section correctly', () => {
+  it('displays hand outcomes section correctly', () => {
     render(
       <ResultsPanel results={mockResults} isRunning={false} progress={null} />,
     );
@@ -168,32 +168,42 @@ describe('ResultsPanel', () => {
     expect(screen.getByText('Pushes:')).toBeInTheDocument();
     expect(screen.getByText('20 (2.00%)')).toBeInTheDocument();
 
-    // Check blackjacks
+    // Check blackjacks - be more specific about which "45" we want
     expect(screen.getByText('Blackjacks:')).toBeInTheDocument();
-    expect(screen.getByText('45')).toBeInTheDocument();
+    const blackjacksContainer = screen.getByText('Blackjacks:').closest('div');
+    expect(blackjacksContainer).toHaveTextContent('45');
   });
 
-  it.skip('displays special hands section correctly', () => {
+  it('displays player actions section correctly', () => {
     render(
       <ResultsPanel results={mockResults} isRunning={false} progress={null} />,
     );
 
-    expect(screen.getByText('Special Hands')).toBeInTheDocument();
-
-    expect(screen.getByText('Player Busts:')).toBeInTheDocument();
-    expect(screen.getByText('180')).toBeInTheDocument();
-
-    expect(screen.getByText('Dealer Busts:')).toBeInTheDocument();
-    expect(screen.getByText('150')).toBeInTheDocument();
+    expect(screen.getByText('Player Actions')).toBeInTheDocument();
 
     expect(screen.getByText('Doubles:')).toBeInTheDocument();
     expect(screen.getByText('120')).toBeInTheDocument();
 
     expect(screen.getByText('Splits:')).toBeInTheDocument();
-    expect(screen.getByText('45')).toBeInTheDocument();
+    const splitsContainer = screen.getByText('Splits:').closest('div');
+    expect(splitsContainer).toHaveTextContent('45');
   });
 
-  it.skip('handles undefined or invalid numbers gracefully', () => {
+  it('displays bust information in hand outcomes section', () => {
+    render(
+      <ResultsPanel results={mockResults} isRunning={false} progress={null} />,
+    );
+
+    expect(screen.getByText('Player Busts:')).toBeInTheDocument();
+    const playerBustsContainer = screen.getByText('Player Busts:').closest('div');
+    expect(playerBustsContainer).toHaveTextContent('180');
+
+    expect(screen.getByText('Dealer Busts:')).toBeInTheDocument();
+    const dealerBustsContainer = screen.getByText('Dealer Busts:').closest('div');
+    expect(dealerBustsContainer).toHaveTextContent('150');
+  });
+
+  it('handles undefined or invalid numbers gracefully', () => {
     const invalidResults = {
       ...mockResults,
       handsPlayed: undefined as unknown as number,
@@ -210,14 +220,21 @@ describe('ResultsPanel', () => {
       />,
     );
 
-    // Should default to 0 for invalid numbers
-    expect(screen.getByText('0')).toBeInTheDocument(); // hands played
-    expect(screen.getByText('0.00%')).toBeInTheDocument(); // win percentage
-    expect(screen.getByText('0.0000%')).toBeInTheDocument(); // expected value
-    expect(screen.getByText('$0.00')).toBeInTheDocument(); // net result
+    // Should default to 0 for invalid numbers - check in specific containers
+    const handsPlayedContainer = screen.getByText('Hands Played').parentElement;
+    expect(handsPlayedContainer).toHaveTextContent('0');
+    
+    const winRateContainer = screen.getByText('Win Rate').parentElement;
+    expect(winRateContainer).toHaveTextContent('0.00%');
+    
+    const evContainer = screen.getByText('EV').parentElement;
+    expect(evContainer).toHaveTextContent('0.0000%');
+    
+    const netResultContainer = screen.getByText('Net Result').parentElement;
+    expect(netResultContainer).toHaveTextContent('$0.00');
   });
 
-  it.skip('uses default counting system when missing', () => {
+  it('uses default counting system when missing', () => {
     const noCountingSystemResults = {
       ...mockResults,
       countingSystem: undefined as unknown as string,
@@ -234,7 +251,7 @@ describe('ResultsPanel', () => {
     expect(screen.getByText('Unknown')).toBeInTheDocument();
   });
 
-  it.skip('uses default hands per hour when missing', () => {
+  it('uses default hands per hour when missing', () => {
     const noHandsPerHourResults = {
       ...mockResults,
       handsPerHour: undefined as unknown as number,
@@ -251,7 +268,7 @@ describe('ResultsPanel', () => {
     expect(screen.getByText('80')).toBeInTheDocument(); // default value
   });
 
-  it.skip('formats large numbers with commas correctly', () => {
+  it('formats large numbers with commas correctly', () => {
     const largeNumberResults = {
       ...mockResults,
       handsPlayed: 1000000,
@@ -272,7 +289,7 @@ describe('ResultsPanel', () => {
     expect(screen.getByText('480,000 (48.00%)')).toBeInTheDocument();
   });
 
-  it.skip('handles zero values correctly', () => {
+  it('handles zero values correctly', () => {
     const zeroResults = {
       ...mockResults,
       wins: 0,
@@ -288,11 +305,16 @@ describe('ResultsPanel', () => {
       <ResultsPanel results={zeroResults} isRunning={false} progress={null} />,
     );
 
-    expect(screen.getByText('0.00%')).toBeInTheDocument();
-    expect(screen.getByText('0 (0.00%)')).toBeInTheDocument();
+    // Check for zero percentages in win rate - look for the percentage value directly
+    const winRateSection = screen.getByText('Win Rate').parentElement;
+    expect(winRateSection).toHaveTextContent('0.00%');
+    
+    // Check for zero wins with percentage
+    const winsSection = screen.getByText('Wins:').closest('div');
+    expect(winsSection).toHaveTextContent('0 (0.00%)');
   });
 
-  it.skip('applies correct color classes for outcome types', () => {
+  it('applies correct color classes for outcome types', () => {
     render(
       <ResultsPanel results={mockResults} isRunning={false} progress={null} />,
     );
@@ -310,11 +332,12 @@ describe('ResultsPanel', () => {
     expect(pushesText).toHaveClass('text-gray-600');
 
     // Blackjacks should be yellow
-    const blackjacksText = screen.getByText('45');
-    expect(blackjacksText.closest('span')).toHaveClass('text-yellow-600');
+    const blackjacksLabel = screen.getByText('Blackjacks:');
+    const blackjacksText = blackjacksLabel.parentElement?.querySelector('.text-yellow-600');
+    expect(blackjacksText).toBeInTheDocument();
   });
 
-  it.skip('calculates total outcomes correctly when missing', () => {
+  it('calculates total outcomes correctly when missing', () => {
     const missingTotalResults = {
       ...mockResults,
       totalOutcomes: undefined as unknown as number,
@@ -328,9 +351,17 @@ describe('ResultsPanel', () => {
       />,
     );
 
-    // Should still display percentages calculated from wins + losses + pushes
-    expect(screen.getByText('48.00%')).toBeInTheDocument();
-    expect(screen.getByText('50.00%')).toBeInTheDocument();
-    expect(screen.getByText('2.00%')).toBeInTheDocument();
+    // Should still display percentages - check in specific containers to avoid ambiguity
+    const winRateContainer = screen.getByText('Win Rate').parentElement;
+    expect(winRateContainer).toHaveTextContent('48.00%');
+    
+    const winsContainer = screen.getByText('Wins:').closest('div');
+    expect(winsContainer).toHaveTextContent('48.00%');
+    
+    const lossesContainer = screen.getByText('Losses:').closest('div');
+    expect(lossesContainer).toHaveTextContent('50.00%');
+    
+    const pushesContainer = screen.getByText('Pushes:').closest('div');
+    expect(pushesContainer).toHaveTextContent('2.00%');
   });
 });

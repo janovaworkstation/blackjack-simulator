@@ -20,25 +20,16 @@ export const useSimulation = () => {
     // Use setTimeout to allow UI to update
     setTimeout(async () => {
       try {
-        console.log('Starting simulation with config:', config);
         const simulation = new BlackjackSimulation(config);
 
         const progressCallback = (current: number, total: number) => {
-          console.log(`Progress: ${current} of ${total}`);
           setProgress({ current, total });
         };
 
-        console.log('About to start simulation...');
         const simulationResults = await simulation.simulate(progressCallback);
-        console.log('Simulation completed:', simulationResults);
 
         // Validate results before setting
         if (simulationResults && typeof simulationResults === 'object') {
-          console.log('Setting results:', simulationResults);
-          console.log(
-            'Hand details length:',
-            simulationResults.handDetails?.length,
-          );
           setResults(simulationResults);
         } else {
           console.error('Invalid simulation results:', simulationResults);

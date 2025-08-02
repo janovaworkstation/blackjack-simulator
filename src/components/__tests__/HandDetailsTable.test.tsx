@@ -63,19 +63,19 @@ describe('HandDetailsTable', () => {
     jest.clearAllMocks();
   });
 
-  it.skip('renders null when no hand details are provided', () => {
+  it('renders null when no hand details are provided', () => {
     const { container } = render(<HandDetailsTable handDetails={[]} />);
     expect(container.firstChild).toBeNull();
   });
 
-  it.skip('renders null when handDetails is undefined', () => {
+  it('renders null when handDetails is undefined', () => {
     const { container } = render(
       <HandDetailsTable handDetails={undefined as unknown as HandDetails[]} />,
     );
     expect(container.firstChild).toBeNull();
   });
 
-  it.skip('renders the table with correct headers', () => {
+  it('renders the table with correct headers', () => {
     render(<HandDetailsTable handDetails={mockHandDetails} />);
 
     expect(
@@ -92,7 +92,7 @@ describe('HandDetailsTable', () => {
     expect(screen.getByText('Bankroll')).toBeInTheDocument();
   });
 
-  it.skip('displays hand data correctly', () => {
+  it('displays hand data correctly', () => {
     render(<HandDetailsTable handDetails={mockHandDetails} />);
 
     // Check that basic hand data is displayed
@@ -103,7 +103,7 @@ describe('HandDetailsTable', () => {
     expect(screen.getByText('Split')).toBeInTheDocument();
   });
 
-  it.skip('shows positive winnings in green and negative in red', () => {
+  it('shows positive winnings in green and negative in red', () => {
     render(<HandDetailsTable handDetails={mockHandDetails} />);
 
     // Just check that there are elements with the correct color classes
@@ -114,7 +114,7 @@ describe('HandDetailsTable', () => {
     expect(redElements.length).toBeGreaterThan(0);
   });
 
-  it.skip('handles shuffle indicators correctly', () => {
+  it('handles shuffle indicators correctly', () => {
     const shuffleHandDetails: HandDetails[] = [
       {
         ...mockHandDetails[0],
@@ -126,7 +126,7 @@ describe('HandDetailsTable', () => {
     expect(screen.getByText('Shuffle')).toBeInTheDocument();
   });
 
-  it.skip('displays running bankroll correctly', () => {
+  it('displays running bankroll correctly', () => {
     render(<HandDetailsTable handDetails={mockHandDetails} />);
 
     // First hand: -25
@@ -137,7 +137,7 @@ describe('HandDetailsTable', () => {
     expect(screen.getByText('$37.50')).toBeInTheDocument();
   });
 
-  it.skip('implements pagination correctly', () => {
+  it('implements pagination correctly', () => {
     // Create more than 50 hands to test pagination
     const manyHands = Array.from({ length: 75 }, (_, i) => ({
       ...mockHandDetails[0],
@@ -167,7 +167,7 @@ describe('HandDetailsTable', () => {
     expect(nextButton).toBeDisabled();
   });
 
-  it.skip('handles CSV download correctly', () => {
+  it('handles CSV download correctly', () => {
     render(<HandDetailsTable handDetails={mockHandDetails} />);
 
     const downloadButton = screen.getByText('Download CSV');
@@ -177,16 +177,16 @@ describe('HandDetailsTable', () => {
     expect(() => fireEvent.click(downloadButton)).not.toThrow();
   });
 
-  it.skip('formats cards correctly', () => {
+  it('formats cards correctly', () => {
     render(<HandDetailsTable handDetails={mockHandDetails} />);
 
-    // Check that card data is displayed in some form
-    expect(screen.getByText(/K, 7/)).toBeInTheDocument();
-    expect(screen.getByText(/A, K/)).toBeInTheDocument();
+    // Check that card data is displayed in some form - use getAllByText for multiple matches
+    expect(screen.getAllByText(/K, 7/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/A, K/).length).toBeGreaterThan(0);
     expect(screen.getByText(/BJ/)).toBeInTheDocument();
   });
 
-  it.skip('shows dealer blackjack indicator', () => {
+  it('shows dealer blackjack indicator', () => {
     const dealerBlackjackHand: HandDetails[] = [
       {
         ...mockHandDetails[0],
@@ -200,7 +200,7 @@ describe('HandDetailsTable', () => {
     expect(screen.getAllByText(/BJ/).length).toBeGreaterThan(0);
   });
 
-  it.skip('handles edge case with no winnings data', () => {
+  it('handles edge case with no winnings data', () => {
     const noWinningsHand: HandDetails[] = [
       {
         ...mockHandDetails[0],
@@ -214,10 +214,10 @@ describe('HandDetailsTable', () => {
     expect(
       screen.getByText('Hand-by-Hand Details (1 hands tracked)'),
     ).toBeInTheDocument();
-    expect(screen.getByText('Push')).toBeInTheDocument();
+    expect(screen.getByText(/Push/)).toBeInTheDocument();
   });
 
-  it.skip('displays true count with proper formatting', () => {
+  it('displays true count with proper formatting', () => {
     render(<HandDetailsTable handDetails={mockHandDetails} />);
 
     // Just verify the component renders without error
@@ -227,7 +227,7 @@ describe('HandDetailsTable', () => {
     expect(screen.getByText('True Count')).toBeInTheDocument();
   });
 
-  it.skip('shows N/A for missing true count data', () => {
+  it('shows N/A for missing true count data', () => {
     const noTrueCountHand: HandDetails[] = [
       {
         ...mockHandDetails[0],

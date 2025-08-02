@@ -182,11 +182,8 @@ describe('useSimulation', () => {
       await Promise.resolve();
     });
 
-    // Progress should be updated to final state
-    expect(result.current.progress).toEqual({
-      current: 100,
-      total: 100,
-    });
+    // Progress should be cleared when simulation completes
+    expect(result.current.progress).toBeNull();
   });
 
   it('sets results and stops running when simulation completes', async () => {
@@ -301,67 +298,6 @@ describe('useSimulation', () => {
       current: 0,
       total: 200,
     });
-  });
-
-  it('logs simulation start correctly', async () => {
-    const { result } = renderHook(() => useSimulation());
-
-    const consoleLogSpy = jest
-      .spyOn(console, 'log')
-      .mockImplementation(() => {});
-    mockSimulationInstance.simulate.mockResolvedValue(mockResults);
-
-    act(() => {
-      result.current.runSimulation(mockConfig);
-    });
-
-    act(() => {
-      jest.runAllTimers();
-    });
-
-    await act(async () => {
-      await Promise.resolve();
-    });
-
-    expect(consoleLogSpy).toHaveBeenCalledWith(
-      'Starting simulation with config:',
-      mockConfig,
-    );
-
-    consoleLogSpy.mockRestore();
-  });
-
-  it('logs progress updates correctly', async () => {
-    const { result } = renderHook(() => useSimulation());
-
-    const consoleLogSpy = jest
-      .spyOn(console, 'log')
-      .mockImplementation(() => {});
-
-    const mockSimulate = jest.fn().mockImplementation((callback) => {
-      if (callback) {
-        callback(50, 100);
-      }
-      return Promise.resolve(mockResults);
-    });
-
-    mockSimulationInstance.simulate = mockSimulate;
-
-    act(() => {
-      result.current.runSimulation(mockConfig);
-    });
-
-    act(() => {
-      jest.runAllTimers();
-    });
-
-    await act(async () => {
-      await Promise.resolve();
-    });
-
-    expect(consoleLogSpy).toHaveBeenCalledWith('Progress: 50 of 100');
-
-    consoleLogSpy.mockRestore();
   });
 
   it('maintains function reference stability', () => {
