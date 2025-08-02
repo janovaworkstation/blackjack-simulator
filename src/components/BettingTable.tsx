@@ -65,12 +65,18 @@ const BettingTable: React.FC<BettingTableProps> = ({
           </p>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm table-fixed">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left py-2 px-2">True Count Range</th>
-                  <th className="text-left py-2 px-2">Bet Amount ($)</th>
-                  <th className="text-left py-2 px-2">Actions</th>
+                  <th className="text-left py-2 px-2 whitespace-nowrap w-40">
+                    True Count Range
+                  </th>
+                  <th className="text-left py-2 px-2 whitespace-nowrap w-24">
+                    Wager ($)
+                  </th>
+                  <th className="text-left py-2 px-2 whitespace-nowrap w-20">
+                    Delete?
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -85,7 +91,7 @@ const BettingTable: React.FC<BettingTableProps> = ({
                           onChange={(e) =>
                             updateBettingRow(index, 'minCount', e.target.value)
                           }
-                          className="w-20 px-2 py-1 border rounded text-xs"
+                          className="w-14 px-2 py-1 border rounded text-xs"
                           step="0.1"
                           disabled={isRunning}
                         />
@@ -97,7 +103,7 @@ const BettingTable: React.FC<BettingTableProps> = ({
                           onChange={(e) =>
                             updateBettingRow(index, 'maxCount', e.target.value)
                           }
-                          className="w-20 px-2 py-1 border rounded text-xs"
+                          className="w-14 px-2 py-1 border rounded text-xs"
                           step="0.1"
                           disabled={isRunning}
                         />
@@ -111,7 +117,7 @@ const BettingTable: React.FC<BettingTableProps> = ({
                         onChange={(e) =>
                           updateBettingRow(index, 'betAmount', e.target.value)
                         }
-                        className="w-24 px-2 py-1 border rounded text-xs"
+                        className="w-16 px-2 py-1 border rounded text-xs"
                         min="1"
                         disabled={isRunning}
                       />
@@ -121,9 +127,9 @@ const BettingTable: React.FC<BettingTableProps> = ({
                         onClick={() => removeBettingRow(index)}
                         disabled={isRunning || bettingTable.length <= 1}
                         variant="secondary"
-                        className="text-xs"
+                        className="text-xs px-1 py-0.5 !text-red-500 hover:!text-red-700 hover:font-bold transition-transform hover:scale-110"
                       >
-                        Remove
+                        X
                       </Button>
                     </td>
                   </tr>
@@ -137,7 +143,7 @@ const BettingTable: React.FC<BettingTableProps> = ({
             disabled={isRunning}
             className="mt-4 w-full"
           >
-            Add Bet Tier
+            Add True Count Range
           </Button>
         </div>
       </CardContent>

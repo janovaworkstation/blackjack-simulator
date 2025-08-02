@@ -380,7 +380,7 @@ export class BlackjackSimulation {
     const dealerInitialCards = [this.dealCard(), this.dealCard()];
 
     const playerHand: Hand = {
-      cards: playerInitialCards,
+      cards: [...playerInitialCards],
       value: this.calculateHandValue(playerInitialCards),
       isBlackjack: this.isBlackjack({
         cards: playerInitialCards,
@@ -390,7 +390,7 @@ export class BlackjackSimulation {
     };
 
     const dealerHand: Hand = {
-      cards: dealerInitialCards,
+      cards: [...dealerInitialCards],
       value: this.calculateHandValue(dealerInitialCards),
       isBlackjack: this.isBlackjack({
         cards: dealerInitialCards,
@@ -523,22 +523,25 @@ export class BlackjackSimulation {
       this.currentBankroll - this.minBankroll,
     );
 
-    this.handDetails.push({
-      handNumber: this.handsPlayed + 1,
-      runningCountStart,
-      trueCountStart,
-      betAmount: betSize,
-      playerCardsInitial: playerInitialCards.map((c) => c.rank),
-      dealerCardsInitial: dealerInitialCards.map((c) => c.rank),
-      playerBlackjack: playerHand.isBlackjack,
-      dealerBlackjack: dealerHand.isBlackjack,
-      initialAction,
-      totalBet,
-      playerCardsFinal: playerHand.cards.map((c) => c.rank),
-      dealerCardsFinal: dealerHand.cards.map((c) => c.rank),
-      winnings,
-      shuffleOccurred: this.lastHandWasShuffle,
-    });
+    // Only track hand details if enabled and under limit
+    if (this.config.enableHandTracking && this.handDetails.length < 1000) {
+      this.handDetails.push({
+        handNumber: this.handsPlayed + 1,
+        runningCountStart,
+        trueCountStart,
+        betAmount: betSize,
+        playerCardsInitial: playerInitialCards.map((c) => c.rank),
+        dealerCardsInitial: dealerInitialCards.map((c) => c.rank),
+        playerBlackjack: playerHand.isBlackjack,
+        dealerBlackjack: dealerHand.isBlackjack,
+        initialAction,
+        totalBet,
+        playerCardsFinal: playerHand.cards.map((c) => c.rank),
+        dealerCardsFinal: dealerHand.cards.map((c) => c.rank),
+        winnings,
+        shuffleOccurred: this.lastHandWasShuffle,
+      });
+    }
 
     this.previousTrueCount = this.getTrueCount();
     this.handsPlayed++;

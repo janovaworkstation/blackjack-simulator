@@ -54,6 +54,7 @@ const BlackjackSimulator = () => {
       playerCanSplit: config.playerCanSplit,
       playerCanSurrender: config.playerCanSurrender,
       numberOfSimulations: config.numberOfSimulations,
+      enableHandTracking: config.enableHandTracking,
     };
     console.log('runSimulation function:', runSimulation);
     runSimulation(simulationConfig);

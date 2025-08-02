@@ -55,6 +55,7 @@ export interface SimulationConfig {
   playerCanSplit: boolean;
   playerCanSurrender: boolean;
   numberOfSimulations: number;
+  enableHandTracking?: boolean;
 }
 
 /**
