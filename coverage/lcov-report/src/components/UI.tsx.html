@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.66% </span>
+                <span class="strong">81.48% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>18/27</span>
+                <span class='fraction'>22/27</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">44.44% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/9</span>
+                <span class='fraction'>4/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">52.63% </span>
+                <span class="strong">73.68% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>10/19</span>
+                <span class='fraction'>14/19</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -272,7 +272,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -287,7 +287,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -302,7 +302,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -317,7 +317,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -458,12 +458,12 @@ export interface CardProps {
  * @param {CardProps} props - The props for the component.
  * @returns {JSX.Element} The rendered component.
  */
-export const Card: React.FC&lt;CardProps&gt; = <span class="fstat-no" title="function not covered" >({</span>
+export const Card: React.FC&lt;CardProps&gt; = ({
   children,
   className,
   ...props
 }) =&gt; (
-<span class="cstat-no" title="statement not covered" >  &lt;div className={clsx('card', className)} {...props}&gt;</span>
+  &lt;div className={clsx('card', className)} {...props}&gt;
     {children}
   &lt;/div&gt;
 );
@@ -473,12 +473,12 @@ export const Card: React.FC&lt;CardProps&gt; = <span class="fstat-no" title="fun
  * @param {CardProps} props - The props for the component.
  * @returns {JSX.Element} The rendered component.
  */
-export const CardHeader: React.FC&lt;CardProps&gt; = <span class="fstat-no" title="function not covered" >({</span>
+export const CardHeader: React.FC&lt;CardProps&gt; = ({
   children,
   className,
   ...props
 }) =&gt; (
-<span class="cstat-no" title="statement not covered" >  &lt;div className={clsx('card-header', className)} {...props}&gt;</span>
+  &lt;div className={clsx('card-header', className)} {...props}&gt;
     {children}
   &lt;/div&gt;
 );
@@ -488,12 +488,12 @@ export const CardHeader: React.FC&lt;CardProps&gt; = <span class="fstat-no" titl
  * @param {CardProps} props - The props for the component.
  * @returns {JSX.Element} The rendered component.
  */
-export const CardContent: React.FC&lt;CardProps&gt; = <span class="fstat-no" title="function not covered" >({</span>
+export const CardContent: React.FC&lt;CardProps&gt; = ({
   children,
   className,
   ...props
 }) =&gt; (
-<span class="cstat-no" title="statement not covered" >  &lt;div className={clsx('card-content', className)} {...props}&gt;</span>
+  &lt;div className={clsx('card-content', className)} {...props}&gt;
     {children}
   &lt;/div&gt;
 );
@@ -503,12 +503,12 @@ export const CardContent: React.FC&lt;CardProps&gt; = <span class="fstat-no" tit
  * @param {CardProps} props - The props for the component.
  * @returns {JSX.Element} The rendered component.
  */
-export const CardTitle: React.FC&lt;CardProps&gt; = <span class="fstat-no" title="function not covered" >({</span>
+export const CardTitle: React.FC&lt;CardProps&gt; = ({
   children,
   className,
   ...props
 }) =&gt; (
-<span class="cstat-no" title="statement not covered" >  &lt;h3 className={clsx('card-title', className)} {...props}&gt;</span>
+  &lt;h3 className={clsx('card-title', className)} {...props}&gt;
     {children}
   &lt;/h3&gt;
 );
@@ -643,7 +643,7 @@ export const Alert: React.FC&lt;AlertProps&gt; = <span class="fstat-no" title="f
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-08-02T13:41:38.951Z
+                at 2025-08-02T15:19:43.892Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
