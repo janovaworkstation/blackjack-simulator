@@ -102,13 +102,13 @@ This document serves as the master task list for developing the Blackjack Strate
     - [✅] Enhance PWA configuration with offline functionality
     - [✅] Configure service worker caching strategies
   
-  - [✅] **Phase 4**: Monitoring & Observability (20 mins)
-    - [✅] Integrate error tracking (Sentry or alternative)
-    - [✅] Set up web analytics (Google Analytics/Plausible)
-    - [✅] Configure performance monitoring and budgets
-    - [✅] Implement application health endpoints
-    - [✅] Set up uptime monitoring
-    - [✅] Create alert system for critical errors
+  - [🚧] **Phase 4**: Monitoring & Observability (20 mins)
+    - [🚧] Integrate error tracking (Sentry or alternative)
+    - [🚧] Set up web analytics (Google Analytics/Plausible)
+    - [🚧] Configure performance monitoring and budgets
+    - [🚧] Implement application health endpoints
+    - [🚧] Set up uptime monitoring
+    - [🚧] Create alert system for critical errors
   
   **Success Criteria**:
   - ✅ Formal branching strategy documented and enforced
@@ -766,6 +766,34 @@ This document serves as the master task list for developing the Blackjack Strate
   - [ ] Add goal-based betting systems
   - [ ] Create risk-adjusted strategies
   - [ ] Build professional money management tools
+
+---
+
+## Milestone 3.7: Fix Skipped Tests and Technical Debt
+**Target Completion**: Before Phase 4  
+**Status**: ❌ Not Started
+
+### Test Suite Restoration
+- [ ] **3.7.1** Fix component unit tests
+  - [ ] Fix ResultsPanel test issues with duplicate elements
+  - [ ] Restore HandDetailsTable tests
+  - [ ] Remove .skip() from all component tests
+  - [ ] Ensure 90%+ test coverage for components
+  - [ ] Update tests to match current component implementations
+
+- [ ] **3.7.2** Fix integration test failures
+  - [ ] Resolve useSimulation hook test issues
+  - [ ] Fix any remaining JSDOM environment problems
+  - [ ] Ensure all hooks have proper test coverage
+  - [ ] Add missing tests for new monitoring utilities
+
+### Technical Debt Cleanup
+- [ ] **3.7.3** Code quality improvements
+  - [ ] Resolve any remaining TypeScript `any` types
+  - [ ] Fix ESLint warnings and errors
+  - [ ] Update deprecated dependencies
+  - [ ] Improve error handling in components
+  - [ ] Add proper loading and error states
 
 ---
 
