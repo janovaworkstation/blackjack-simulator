@@ -71,11 +71,59 @@ This document serves as the master task list for developing the Blackjack Strate
     - ✅ Comprehensive E2E test suite with 98% pass rate (53/54 tests)
     - ✅ Covers all major user workflows and edge cases
 
-- [ ] **1.1.4** Version control and deployment setup
-  - [ ] Configure Git repository with proper branching strategy
-  - [ ] Set up CI/CD pipeline (GitHub Actions/GitLab CI)
-  - [ ] Configure staging and production deployment environments
-  - [ ] Set up environment variable management
+- [✅] **1.1.4** Version control and deployment setup
+  **Timeline**: 2.5 hours | **Dependencies**: None
+  
+  - [✅] **Phase 1**: Git Repository & Branching Strategy (30 mins)
+    - [✅] Implement GitFlow workflow (main/develop/feature/release/hotfix branches)
+    - [✅] Configure branch protection rules for main and develop
+    - [✅] Create .gitmessage template for consistent commit messages
+    - [✅] Update .gitignore with deployment-specific patterns
+    - [✅] Create CONTRIBUTING.md with branching workflow guidelines
+    - [✅] Set up automatic deletion of merged feature branches
+  
+  - [✅] **Phase 2**: Comprehensive CI/CD Pipeline (45 mins)
+    - [✅] Create `ci.yml` → Main CI pipeline with Node.js matrix testing
+    - [✅] Enhance `e2e.yml` → Cross-browser testing with performance integration
+    - [✅] Create `deploy-staging.yml` → Auto-deploy to staging from develop branch
+    - [✅] Create `deploy-production.yml` → Production deployment from main branch
+    - [✅] Configure Dependabot for automatic dependency updates
+    - [✅] Set up code coverage thresholds (minimum 80%)
+    - [✅] Implement security vulnerability scanning
+    - [✅] Configure deployment notifications (Slack/Discord)
+  
+  - [✅] **Phase 3**: Environment & Deployment Configuration (35 mins)
+    - [✅] Create .env.example template for required variables
+    - [✅] Set up .env.development, .env.staging configurations
+    - [✅] Configure GitHub Secrets for production environment variables
+    - [✅] Configure Vite for environment-specific builds
+    - [✅] Set up staging environment (Netlify with auto-deploy from develop)
+    - [✅] Configure production environment (deploy from main branch only)
+    - [✅] Enhance PWA configuration with offline functionality
+    - [✅] Configure service worker caching strategies
+  
+  - [✅] **Phase 4**: Monitoring & Observability (20 mins)
+    - [✅] Integrate error tracking (Sentry or alternative)
+    - [✅] Set up web analytics (Google Analytics/Plausible)
+    - [✅] Configure performance monitoring and budgets
+    - [✅] Implement application health endpoints
+    - [✅] Set up uptime monitoring
+    - [✅] Create alert system for critical errors
+  
+  **Success Criteria**:
+  - ✅ Formal branching strategy documented and enforced
+  - ✅ CI/CD pipeline with <5min feedback loop
+  - ✅ Automated staging and production deployments
+  - ✅ Environment-specific configuration management
+  - ✅ Error tracking and monitoring operational
+  - ✅ 100% test coverage in CI pipeline
+  - ✅ Security scanning integrated
+  - ✅ Performance budgets enforced
+  
+  **Key Decisions Needed**:
+  - Deployment Platform: Netlify vs Vercel vs GitHub Pages
+  - Error Tracking: Sentry vs LogRocket vs alternatives
+  - Analytics: Google Analytics vs Plausible vs Mixpanel
 
 ### Architecture Planning
 - [ ] **1.1.5** Design system architecture

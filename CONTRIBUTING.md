@@ -24,14 +24,65 @@ If you have an idea for a new feature or an improvement to an existing one, plea
 
 ### Pull Requests
 
-If you'd like to contribute code, please follow these steps:
+We use GitFlow workflow for managing contributions. Please follow these branching conventions:
 
-1.  **Fork the repository** and create a new branch from `main`.
-2.  **Set up your development environment** by following the instructions in the `README.md` file.
-3.  **Make your changes** in your branch. Ensure your code follows the project's coding style.
-4.  **Write tests** for any new functionality.
-5.  **Ensure all tests pass** by running `npm test`.
-6.  **Submit a pull request** to the `main` branch of the main repository.
+#### Branch Types
+
+- **main** - Production-ready code, protected branch
+- **develop** - Integration branch for features, auto-deploys to staging  
+- **feature/** - Feature development branches (e.g., `feature/new-counting-system`)
+- **release/** - Release preparation branches (e.g., `release/v1.2.0`)
+- **hotfix/** - Critical bug fixes for production (e.g., `hotfix/fix-scoring-bug`)
+
+#### Contributing Process
+
+1.  **Fork the repository** and clone your fork locally
+2.  **Create a feature branch** from `develop`:
+    ```bash
+    git checkout develop
+    git pull origin develop  
+    git checkout -b feature/your-feature-name
+    ```
+3.  **Set up your development environment** by following the instructions in the `README.md` file.
+4.  **Make your changes** in your branch. Ensure your code follows the project's coding style.
+5.  **Write tests** for any new functionality.
+6.  **Ensure all tests pass** by running `npm test && npm run test:e2e`.
+7.  **Run linting** with `npm run lint` to ensure code quality.
+8.  **Use conventional commit messages** (see Commit Message Format below).
+9.  **Submit a pull request** from your feature branch to our `develop` branch.
+
+#### Commit Message Format
+
+We use conventional commit messages. Please follow this format:
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+**Types:**
+- `feat` - New feature
+- `fix` - Bug fix  
+- `docs` - Documentation changes
+- `style` - Code style changes (formatting, etc.)
+- `refactor` - Code refactoring
+- `test` - Adding or updating tests
+- `chore` - Build process or auxiliary tool changes
+
+**Example:**
+```
+feat(engine): add Spanish 21 game variant
+
+Implement Spanish 21 rules including:
+- 48-card deck (no 10s)
+- Special bonus payouts  
+- Player blackjack always wins
+
+Closes #123
+```
 
 ## Development Guidelines
 
@@ -57,6 +108,6 @@ This project uses **Storybook** for component development and documentation. Whe
 -   **Component Documentation**: All new components should have corresponding Storybook stories and MDX documentation
 -   **Testing**: Write tests for any new functionality and ensure all tests pass with `npm test`
 -   **Commit Messages**: Please write clear and concise commit messages.
--   **Branching**: Create a new branch for each feature or bug fix. Use a descriptive name for your branch (e.g., `feat/add-new-counting-system` or `fix/results-panel-bug`).
+-   **Branching**: Follow GitFlow conventions. Create feature branches from `develop` using the `feature/` prefix (e.g., `feature/add-new-counting-system` or `feature/fix-results-panel-bug`).
 
 Thank you for your contributions!

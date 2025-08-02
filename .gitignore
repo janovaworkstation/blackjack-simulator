@@ -33,6 +33,17 @@ dist-ssr
 # Build outputs
 build/
 out/
+dist-ssr/
+
+# Deployment
+.netlify/
+.vercel/
+.now/
+.firebase/
+deployment-config/
+
+# CI/CD
+.github/workflows/*.local.yml
 
 # Misc
 .cache
@@ -46,3 +57,15 @@ out/
 
 *storybook.log
 storybook-static
+
+# Monitoring & Analytics
+sentry.properties
+.sentryclirc
+
+# Performance
+lighthouse-report/
+performance-results/
+
+# Security
+.snyk
+security-report/
