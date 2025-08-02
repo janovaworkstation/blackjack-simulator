@@ -61,12 +61,12 @@ jobs:
         NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
         NETLIFY_SITE_ID: ${{ secrets.NETLIFY_PRODUCTION_SITE_ID }}
         
-    - name: Create deployment
-      uses: chrnorm/deployment-action@v2
-      with:
-        token: '${{ github.token }}'
-        environment-url: 'https://blackjack-simulator.netlify.app'
-        environment: production
+    - name: Log deployment success
+      run: |
+        echo "::notice::🚀 Production deployment successful!"
+        echo "URL: https://blackjack-simulator.netlify.app"
+        echo "Commit: ${{ github.sha }}"
+        echo "Branch: ${{ github.ref }}"
         
     - name: Run production smoke tests
       run: |
