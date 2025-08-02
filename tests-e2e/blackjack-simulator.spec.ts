@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Blackjack Simulator', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:5174');
+    await page.goto('/');
   });
 
   test('has correct title', async ({ page }) => {
