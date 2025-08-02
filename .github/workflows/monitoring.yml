@@ -1,9 +1,9 @@
 name: Monitoring & Alerts
 
 on:
-  schedule:
-    # Run uptime checks every 15 minutes
-    - cron: '*/15 * * * *'
+  # schedule:
+  #   # Run uptime checks every 15 minutes  
+  #   - cron: '*/15 * * * *'
   workflow_dispatch:
     inputs:
       check_type:
