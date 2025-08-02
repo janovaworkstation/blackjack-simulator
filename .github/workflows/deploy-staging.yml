@@ -61,7 +61,7 @@ jobs:
         # Add smoke test commands here
         
     - name: Notify deployment status
-      if: always()
+      if: always() && vars.SLACK_NOTIFICATIONS_ENABLED == 'true'
       uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -73,3 +73,12 @@ jobs:
           Author: ${{ github.actor }}
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        
+    - name: Log deployment status (No Slack)
+      if: always() && vars.SLACK_NOTIFICATIONS_ENABLED != 'true'
+      run: |
+        echo "::notice::Staging deployment ${{ job.status }}"
+        echo "Branch: ${{ github.ref }}"
+        echo "Commit: ${{ github.sha }}"
+        echo "Author: ${{ github.actor }}"
+        echo "Consider setting up Slack notifications by configuring SLACK_WEBHOOK_URL secret and SLACK_NOTIFICATIONS_ENABLED variable"

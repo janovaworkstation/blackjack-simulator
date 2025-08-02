@@ -74,7 +74,7 @@ jobs:
         # Add production smoke test commands here
         
     - name: Notify deployment status
-      if: always()
+      if: always() && vars.SLACK_NOTIFICATIONS_ENABLED == 'true'
       uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -87,3 +87,13 @@ jobs:
           URL: https://blackjack-simulator.netlify.app
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        
+    - name: Log deployment status (No Slack)
+      if: always() && vars.SLACK_NOTIFICATIONS_ENABLED != 'true'
+      run: |
+        echo "::notice::🚀 Production deployment ${{ job.status }}"
+        echo "Branch: ${{ github.ref }}"
+        echo "Commit: ${{ github.sha }}"
+        echo "Author: ${{ github.actor }}"
+        echo "URL: https://blackjack-simulator.netlify.app"
+        echo "Consider setting up Slack notifications by configuring SLACK_WEBHOOK_URL secret and SLACK_NOTIFICATIONS_ENABLED variable"
