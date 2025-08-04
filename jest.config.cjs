@@ -6,7 +6,7 @@ module.exports = {
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
-  testPathIgnorePatterns: ['/node_modules/', '/tests-e2e/'],
+  testPathIgnorePatterns: ['/node_modules/', '/tests-e2e/', '<rootDir>/tests-e2e/'],
   collectCoverage: true,
   coverageReporters: ['json', 'lcov', 'text', 'clover'],
   collectCoverageFrom: [
