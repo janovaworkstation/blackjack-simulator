@@ -10,34 +10,35 @@ const __dirname = path.dirname(__filename);
 const chipData = {
   1: {
     main: '#F5F5F5',
-    edge: '#CCCCCC', 
+    edge: '#CCCCCC',
     accent: '#1565C0',
     text: '#000000',
     name: 'WHITE',
     // Using a simple but effective base64 PNG
-    base64: 'iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAA=='
+    base64:
+      'iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAA==',
   },
   5: {
     main: '#D32F2F',
     edge: '#B71C1C',
-    accent: '#FFD700', 
+    accent: '#FFD700',
     text: '#FFFFFF',
-    name: 'RED'
+    name: 'RED',
   },
   25: {
     main: '#388E3C',
     edge: '#1B5E20',
     accent: '#FFD700',
-    text: '#FFFFFF', 
-    name: 'GREEN'
+    text: '#FFFFFF',
+    name: 'GREEN',
   },
   100: {
     main: '#424242',
     edge: '#212121',
     accent: '#FFD700',
     text: '#FFFFFF',
-    name: 'BLACK'
-  }
+    name: 'BLACK',
+  },
 };
 
 function createSimplePNG(value) {
@@ -110,12 +111,14 @@ function createSimplePNG(value) {
           opacity="0.8">${config.name}</text>
     
     <!-- Edge spots -->
-    ${Array.from({length: 16}, (_, i) => {
-      const angle = (i * 22.5) * Math.PI / 180;
+    ${Array.from({ length: 16 }, (_, i) => {
+      const angle = (i * 22.5 * Math.PI) / 180;
       const spotRadius = radius - 10;
       const x = center + Math.cos(angle) * spotRadius;
       const y = center + Math.sin(angle) * spotRadius;
-      return i % 2 === 0 ? `<circle cx="${x}" cy="${y}" r="4" fill="${config.accent}" opacity="0.9"/>` : '';
+      return i % 2 === 0
+        ? `<circle cx="${x}" cy="${y}" r="4" fill="${config.accent}" opacity="0.9"/>`
+        : '';
     }).join('')}
   </svg>`;
 
@@ -131,7 +134,7 @@ if (!fs.existsSync(outputDir)) {
 }
 
 // Create improved SVG chips for now
-[1, 5, 25, 100].forEach(value => {
+[1, 5, 25, 100].forEach((value) => {
   const svg = createSimplePNG(value);
   const filename = path.join(outputDir, `chip-${value}-hq.svg`);
   fs.writeFileSync(filename, svg);
@@ -173,5 +176,8 @@ function convertSVGToPNG(svgText, filename) {
 // convertSVGToPNG(svgContent, 'chip-25.png');
 `;
 
-fs.writeFileSync(path.join(outputDir, 'svg-to-png-converter.js'), conversionScript);
+fs.writeFileSync(
+  path.join(outputDir, 'svg-to-png-converter.js'),
+  conversionScript,
+);
 console.log('📝 Created SVG to PNG conversion script');

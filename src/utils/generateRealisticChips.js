@@ -8,59 +8,64 @@ const __dirname = path.dirname(__filename);
 
 // Enhanced chip generation with realistic casino styling
 function createRealisticChipDataURL(value, size = 512) {
-    // This will be used in the browser environment
-    // For now, create optimized SVG with much better styling
-    
-    const getChipConfig = (value) => {
-        switch (value) {
-            case 1: return {
-                main: '#FEFEFE',
-                edge: '#E0E0E0', 
-                accent: '#1976D2',
-                text: '#000000',
-                secondary: '#F5F5F5',
-                name: 'WHITE'
-            };
-            case 5: return {
-                main: '#D32F2F',
-                edge: '#B71C1C',
-                accent: '#FFD700',
-                text: '#FFFFFF', 
-                secondary: '#F44336',
-                name: 'RED'
-            };
-            case 25: return {
-                main: '#388E3C',
-                edge: '#1B5E20',
-                accent: '#FFD700',
-                text: '#FFFFFF',
-                secondary: '#4CAF50', 
-                name: 'GREEN'
-            };
-            case 100: return {
-                main: '#424242',
-                edge: '#212121',
-                accent: '#FFD700',
-                text: '#FFFFFF',
-                secondary: '#616161',
-                name: 'BLACK'
-            };
-            default: return {
-                main: '#FF8F00',
-                edge: '#E65100',
-                accent: '#1976D2',
-                text: '#000000',
-                secondary: '#FFA726',
-                name: 'GOLD'
-            };
-        }
-    };
+  // This will be used in the browser environment
+  // For now, create optimized SVG with much better styling
 
-    const config = getChipConfig(value);
-    const radius = size * 0.45;
-    const center = size / 2;
+  const getChipConfig = (value) => {
+    switch (value) {
+      case 1:
+        return {
+          main: '#FEFEFE',
+          edge: '#E0E0E0',
+          accent: '#1976D2',
+          text: '#000000',
+          secondary: '#F5F5F5',
+          name: 'WHITE',
+        };
+      case 5:
+        return {
+          main: '#D32F2F',
+          edge: '#B71C1C',
+          accent: '#FFD700',
+          text: '#FFFFFF',
+          secondary: '#F44336',
+          name: 'RED',
+        };
+      case 25:
+        return {
+          main: '#388E3C',
+          edge: '#1B5E20',
+          accent: '#FFD700',
+          text: '#FFFFFF',
+          secondary: '#4CAF50',
+          name: 'GREEN',
+        };
+      case 100:
+        return {
+          main: '#424242',
+          edge: '#212121',
+          accent: '#FFD700',
+          text: '#FFFFFF',
+          secondary: '#616161',
+          name: 'BLACK',
+        };
+      default:
+        return {
+          main: '#FF8F00',
+          edge: '#E65100',
+          accent: '#1976D2',
+          text: '#000000',
+          secondary: '#FFA726',
+          name: 'GOLD',
+        };
+    }
+  };
 
-    return `<svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+  const config = getChipConfig(value);
+  const radius = size * 0.45;
+  const center = size / 2;
+
+  return `<svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <!-- Main chip gradient -->
             <radialGradient id="chipGradient${value}" cx="35%" cy="35%" r="65%">
@@ -138,12 +143,12 @@ function createRealisticChipDataURL(value, size = 512) {
               opacity="0.8">CASINO</text>
         
         <!-- Edge denomination markings -->
-        ${Array.from({length: 8}, (_, i) => {
-            const angle = (i * 45) - 90; // Start from top
-            const textRadius = radius * 0.75;
-            const x = center + Math.cos(angle * Math.PI / 180) * textRadius;
-            const y = center + Math.sin(angle * Math.PI / 180) * textRadius;
-            return `<text x="${x}" y="${y + radius * 0.03}" 
+        ${Array.from({ length: 8 }, (_, i) => {
+          const angle = i * 45 - 90; // Start from top
+          const textRadius = radius * 0.75;
+          const x = center + Math.cos((angle * Math.PI) / 180) * textRadius;
+          const y = center + Math.sin((angle * Math.PI) / 180) * textRadius;
+          return `<text x="${x}" y="${y + radius * 0.03}" 
                          text-anchor="middle" 
                          font-family="Arial, sans-serif" 
                          font-size="${radius * 0.06}" 
@@ -153,15 +158,15 @@ function createRealisticChipDataURL(value, size = 512) {
         }).join('')}
         
         <!-- Edge spots for authenticity -->
-        ${Array.from({length: 32}, (_, i) => {
-            if (i % 2 === 0) {
-                const angle = (i * 11.25) * Math.PI / 180;
-                const spotRadius = radius * 0.92;
-                const x = center + Math.cos(angle) * spotRadius;
-                const y = center + Math.sin(angle) * spotRadius;
-                return `<circle cx="${x}" cy="${y}" r="2.5" fill="${config.accent}" opacity="0.8"/>`;
-            }
-            return '';
+        ${Array.from({ length: 32 }, (_, i) => {
+          if (i % 2 === 0) {
+            const angle = (i * 11.25 * Math.PI) / 180;
+            const spotRadius = radius * 0.92;
+            const x = center + Math.cos(angle) * spotRadius;
+            const y = center + Math.sin(angle) * spotRadius;
+            return `<circle cx="${x}" cy="${y}" r="2.5" fill="${config.accent}" opacity="0.8"/>`;
+          }
+          return '';
         }).join('')}
         
         <!-- Inner highlight for 3D effect -->
@@ -187,14 +192,16 @@ const outputDir = path.join(__dirname, '../../public/chips');
 
 // Ensure directory exists
 if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
+  fs.mkdirSync(outputDir, { recursive: true });
 }
 
-chipValues.forEach(value => {
-    const svg = createRealisticChipDataURL(value, 512);
-    const filename = path.join(outputDir, `chip-${value}.svg`);
-    fs.writeFileSync(filename, svg);
-    console.log(`✅ Created realistic chip: ${filename}`);
+chipValues.forEach((value) => {
+  const svg = createRealisticChipDataURL(value, 512);
+  const filename = path.join(outputDir, `chip-${value}.svg`);
+  fs.writeFileSync(filename, svg);
+  console.log(`✅ Created realistic chip: ${filename}`);
 });
 
-console.log('🎰 All realistic casino chip SVGs created with professional styling!');
+console.log(
+  '🎰 All realistic casino chip SVGs created with professional styling!',
+);

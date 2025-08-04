@@ -10,10 +10,34 @@ const __dirname = path.dirname(__filename);
 
 // Professional casino chip configurations
 const chipConfigs = {
-  1: { main: '#F8F8F8', edge: '#DDDDDD', accent: '#1976D2', text: '#000000', name: 'WHITE' },
-  5: { main: '#E53935', edge: '#B71C1C', accent: '#FFD700', text: '#FFFFFF', name: 'RED' },
-  25: { main: '#43A047', edge: '#1B5E20', accent: '#FFD700', text: '#FFFFFF', name: 'GREEN' },
-  100: { main: '#424242', edge: '#212121', accent: '#FFD700', text: '#FFFFFF', name: 'BLACK' }
+  1: {
+    main: '#F8F8F8',
+    edge: '#DDDDDD',
+    accent: '#1976D2',
+    text: '#000000',
+    name: 'WHITE',
+  },
+  5: {
+    main: '#E53935',
+    edge: '#B71C1C',
+    accent: '#FFD700',
+    text: '#FFFFFF',
+    name: 'RED',
+  },
+  25: {
+    main: '#43A047',
+    edge: '#1B5E20',
+    accent: '#FFD700',
+    text: '#FFFFFF',
+    name: 'GREEN',
+  },
+  100: {
+    main: '#424242',
+    edge: '#212121',
+    accent: '#FFD700',
+    text: '#FFFFFF',
+    name: 'BLACK',
+  },
 };
 
 function createChipSVG(value, size = 512) {
@@ -99,9 +123,9 @@ function createChipSVG(value, size = 512) {
         opacity="0.8">${config.name}</text>
   
   <!-- Edge spots for authenticity -->
-  ${Array.from({length: 24}, (_, i) => {
+  ${Array.from({ length: 24 }, (_, i) => {
     if (i % 2 === 0) {
-      const angle = (i * 15) * Math.PI / 180;
+      const angle = (i * 15 * Math.PI) / 180;
       const spotRadius = radius - 12;
       const x = center + Math.cos(angle) * spotRadius;
       const y = center + Math.sin(angle) * spotRadius;
@@ -126,7 +150,7 @@ if (!fs.existsSync(outputDir)) {
 
 // Generate high-quality SVG chips
 const values = [1, 5, 25, 100];
-values.forEach(value => {
+values.forEach((value) => {
   const svg = createChipSVG(value, 512);
   const filename = path.join(outputDir, `chip-${value}-hq.svg`);
   fs.writeFileSync(filename, svg);
@@ -181,13 +205,18 @@ async function createAllPNGs() {
 createAllPNGs();
 `;
 
-fs.writeFileSync(path.join(outputDir, 'browser-png-generator.js'), browserScript);
+fs.writeFileSync(
+  path.join(outputDir, 'browser-png-generator.js'),
+  browserScript,
+);
 
 console.log('🎰 High-quality SVG chips created!');
 console.log('💡 To create PNG files:');
 console.log('1. Open browser to localhost:5174');
 console.log('2. Open developer console (F12)');
-console.log('3. Copy and paste the script from public/chips/browser-png-generator.js');
+console.log(
+  '3. Copy and paste the script from public/chips/browser-png-generator.js',
+);
 console.log('4. Or use the existing create-png-chips.html page');
 console.log('');
 console.log('✅ For now, the app will use the improved SVG files as fallback');

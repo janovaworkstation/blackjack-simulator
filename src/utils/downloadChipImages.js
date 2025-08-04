@@ -13,33 +13,33 @@ const chipImageData = {
     edgeColor: '#E0E0E0',
     accentColor: '#0066CC',
     textColor: '#000000',
-    name: 'WHITE'
+    name: 'WHITE',
   },
   5: {
     color: '#DC143C',
     edgeColor: '#8B0000',
     accentColor: '#FFD700',
     textColor: '#FFFFFF',
-    name: 'RED'
+    name: 'RED',
   },
   25: {
     color: '#228B22',
     edgeColor: '#006400',
     accentColor: '#FFD700',
     textColor: '#FFFFFF',
-    name: 'GREEN'
+    name: 'GREEN',
   },
   100: {
     color: '#1C1C1C',
     edgeColor: '#000000',
     accentColor: '#FFD700',
     textColor: '#FFFFFF',
-    name: 'BLACK'
-  }
+    name: 'BLACK',
+  },
 };
 
 // Create high-quality PNG data URLs for casino chips
-function createChipPNG(value, size = 512) {
+function _createChipPNG(value, size = 512) {
   const config = chipImageData[value];
   if (!config) return null;
 
@@ -62,14 +62,14 @@ function createChipPNG(value, size = 512) {
     </defs>
     
     <!-- Main chip body -->
-    <circle cx="${size/2}" cy="${size/2}" r="${size*0.45}" 
+    <circle cx="${size / 2}" cy="${size / 2}" r="${size * 0.45}" 
             fill="url(#chipGradient${value})" 
             stroke="${config.edgeColor}" 
-            stroke-width="${size*0.02}"
+            stroke-width="${size * 0.02}"
             filter="url(#shadow${value})" />
     
     <!-- Edge pattern -->
-    <circle cx="${size/2}" cy="${size/2}" r="${size*0.42}" 
+    <circle cx="${size / 2}" cy="${size / 2}" r="${size * 0.42}" 
             fill="none" 
             stroke="${config.accentColor}" 
             stroke-width="3" 
@@ -77,44 +77,46 @@ function createChipPNG(value, size = 512) {
             opacity="0.8" />
     
     <!-- Center medallion -->
-    <circle cx="${size/2}" cy="${size/2}" r="${size*0.25}" 
+    <circle cx="${size / 2}" cy="${size / 2}" r="${size * 0.25}" 
             fill="url(#centerGradient${value})" 
             stroke="${config.edgeColor}" 
             stroke-width="2" />
     
     <!-- Value text -->
-    <text x="${size/2}" y="${size/2 + size*0.05}" 
+    <text x="${size / 2}" y="${size / 2 + size * 0.05}" 
           text-anchor="middle" 
           font-family="Arial Black, sans-serif" 
-          font-size="${size*0.12}" 
+          font-size="${size * 0.12}" 
           font-weight="900" 
           fill="${config.textColor}">$${value}</text>
     
     <!-- Casino text -->
-    <text x="${size/2}" y="${size/2 + size*0.15}" 
+    <text x="${size / 2}" y="${size / 2 + size * 0.15}" 
           text-anchor="middle" 
           font-family="Arial, sans-serif" 
-          font-size="${size*0.04}" 
+          font-size="${size * 0.04}" 
           font-weight="bold" 
           fill="${config.textColor}"
           opacity="0.9">CASINO</text>
     
     <!-- Chip name -->
-    <text x="${size/2}" y="${size/2 - size*0.12}" 
+    <text x="${size / 2}" y="${size / 2 - size * 0.12}" 
           text-anchor="middle" 
           font-family="Arial, sans-serif" 
-          font-size="${size*0.035}" 
+          font-size="${size * 0.035}" 
           font-weight="bold" 
           fill="${config.textColor}"
           opacity="0.8">${config.name}</text>
     
     <!-- Edge spots -->
-    ${Array.from({length: 24}, (_, i) => {
-      const angle = (i * 15) * Math.PI / 180;
+    ${Array.from({ length: 24 }, (_, i) => {
+      const angle = (i * 15 * Math.PI) / 180;
       const spotRadius = size * 0.4;
-      const x = size/2 + Math.cos(angle) * spotRadius;
-      const y = size/2 + Math.sin(angle) * spotRadius;
-      return i % 2 === 0 ? `<circle cx="${x}" cy="${y}" r="3" fill="${config.accentColor}" opacity="0.9"/>` : '';
+      const x = size / 2 + Math.cos(angle) * spotRadius;
+      const y = size / 2 + Math.sin(angle) * spotRadius;
+      return i % 2 === 0
+        ? `<circle cx="${x}" cy="${y}" r="3" fill="${config.accentColor}" opacity="0.9"/>`
+        : '';
     }).join('')}
   </svg>`;
 
@@ -124,7 +126,7 @@ function createChipPNG(value, size = 512) {
 // Function to create actual PNG files using the HTML Canvas API
 function generateChipPNGFiles() {
   const outputDir = path.join(__dirname, '../../public/chips');
-  
+
   // Ensure directory exists
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
@@ -287,4 +289,6 @@ function generateChipPNGFiles() {
 generateChipPNGFiles();
 
 console.log('🎰 Chip PNG generator created!');
-console.log('📂 Open public/chips/generate-png-chips.html in a browser to download PNG files');
+console.log(
+  '📂 Open public/chips/generate-png-chips.html in a browser to download PNG files',
+);
