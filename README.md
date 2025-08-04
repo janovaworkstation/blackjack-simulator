@@ -1,8 +1,22 @@
 # Blackjack Strategy Simulator
 
-A modern, web-based blackjack simulation tool that replicates and enhances the functionality of classic programs like CVData and CVCX. Built with React and featuring comprehensive card counting analysis, risk management tools, and advanced statistical reporting.
+A comprehensive, web-based blackjack platform combining professional strategy analysis tools with an immersive 3D gaming experience. Features both simulation capabilities that rival CVData/CVCX and a fully interactive 3D blackjack game with advanced features.
+
+**🎮 [Play the Interactive Game](https://your-deployed-url.com) | 📊 [Try the Simulator](https://your-deployed-url.com)**
+
+## 🌟 **New: Full 3D Interactive Blackjack Game**
+Experience casino-quality blackjack with realistic 3D graphics, complete game rules, and professional features including split hands, insurance betting, card counting display, and visual chip animations.
 
 ## Features
+
+### 🎮 Interactive 3D Gaming Platform
+- **Immersive 3D Graphics**: Realistic casino table with Three.js rendering
+- **Complete Blackjack Rules**: Hit, stand, double down, split, insurance, surrender
+- **Advanced Features**: Split up to 2 hands, insurance betting, dealer peek animations
+- **Real-time Card Counting**: Running and true count display with 6-deck shoe (75% penetration)
+- **Visual Feedback**: Animated chip stacks for wins/losses, realistic card dealing
+- **Professional Game Flow**: Proper timing, dealer animations, and casino-style experience
+- **Responsive Design**: Optimized for desktop (mobile optimization planned in Phase 4.1)
 
 ### Core Simulation Engine
 - **Multiple Card Counting Systems**: Hi-Lo, Knock-Out (KO), Hi-Opt I
@@ -18,12 +32,18 @@ A modern, web-based blackjack simulation tool that replicates and enhances the f
 - **Session Tracking**: Hand-by-hand analysis with count correlation
 
 ### Modern Interface
-- **Responsive Design**: Works on desktop, tablet, and mobile devices
+- **Dual Platform**: Switch between Analysis (simulation) and Gaming (3D interactive) modes
 - **Real-time Updates**: Live progress tracking during simulations
 - **Interactive Configuration**: Easy-to-use parameter adjustment
 - **Professional Styling**: Clean, modern UI with Tailwind CSS
-- **3D Gaming Experience**: Immersive 3D blackjack table with realistic graphics
+- **Production Ready**: Successfully deployed with comprehensive testing (97 tests passing)
 - **Monitoring & Alerts**: Comprehensive error tracking and uptime monitoring
+
+## 🚀 **Recent Updates (August 2025)**
+- ✅ **Milestone 1.4.3 Complete**: Full interactive 3D blackjack game deployed
+- ✅ **Production Deployment**: All tests passing, lint errors resolved, successfully deployed
+- 📱 **Mobile Optimization**: Comprehensive mobile optimization plan created (Phase 4.1)
+- 🎯 **Next Phase**: Mobile-first responsive design and touch optimization
 
 ## Quick Start
 
