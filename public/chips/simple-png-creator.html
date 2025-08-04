@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple PNG Chip Creator</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #1a1a1a; 
+            color: white;
+        }
+        .chip-container { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 20px; 
+            margin: 20px 0;
+        }
+        .chip-preview { 
+            text-align: center; 
+            background: #2a2a2a; 
+            padding: 15px; 
+            border-radius: 10px;
+        }
+        button {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+    <h1>🎰 Simple PNG Chip Creator</h1>
+    <p>Creates PNG chip files that work offline without a server.</p>
+    
+    <button onclick="createAllChips()">🎲 Create & Download All PNG Chips (One by One)</button>
+    <button onclick="previewChips()">👁️ Preview Chips</button>
+    
+    <h3>Or Download Individual Chips:</h3>
+    <button onclick="createSingleChip(1)">💰 $1 White Chip</button>
+    <button onclick="createSingleChip(5)">🔴 $5 Red Chip</button>
+    <button onclick="createSingleChip(25)">🟢 $25 Green Chip</button>
+    <button onclick="createSingleChip(100)">⚫ $100 Black Chip</button>
+    
+    <div id="chipContainer" class="chip-container"></div>
+
+    <script>
+        // Professional casino chip configurations
+        const chipConfigs = {
+            1: { main: '#F8F8F8', edge: '#DDDDDD', accent: '#1976D2', text: '#000000', name: 'WHITE' },
+            5: { main: '#E53935', edge: '#B71C1C', accent: '#FFD700', text: '#FFFFFF', name: 'RED' },
+            25: { main: '#43A047', edge: '#1B5E20', accent: '#FFD700', text: '#FFFFFF', name: 'GREEN' },
+            100: { main: '#424242', edge: '#212121', accent: '#FFD700', text: '#FFFFFF', name: 'BLACK' }
+        };
+
+        function createChip(value, size = 512) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const radius = size * 0.46;
+            const config = chipConfigs[value];
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Draw shadow
+            ctx.save();
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            ctx.shadowBlur = 12;
+            ctx.shadowOffsetX = 6;
+            ctx.shadowOffsetY = 6;
+            
+            // Main chip body with gradient
+            const gradient = ctx.createRadialGradient(
+                centerX - radius * 0.3, centerY - radius * 0.3, 0,
+                centerX, centerY, radius
+            );
+            gradient.addColorStop(0, config.main);
+            gradient.addColorStop(0.6, config.main);
+            gradient.addColorStop(1, config.edge);
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.restore();
+            
+            // Outer edge ring
+            ctx.strokeStyle = config.edge;
+            ctx.lineWidth = 8;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius - 4, 0, 2 * Math.PI);
+            ctx.stroke();
+            
+            // Decorative rings
+            ctx.strokeStyle = config.accent;
+            ctx.lineWidth = 4;
+            ctx.setLineDash([16, 6]);
+            ctx.globalAlpha = 0.9;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius - 25, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.globalAlpha = 1;
+            
+            // Center medallion
+            const centerRadius = radius * 0.4;
+            const centerGradient = ctx.createRadialGradient(
+                centerX - centerRadius * 0.2, centerY - centerRadius * 0.2, 0,
+                centerX, centerY, centerRadius
+            );
+            centerGradient.addColorStop(0, config.accent);
+            centerGradient.addColorStop(0.8, config.accent);
+            centerGradient.addColorStop(1, config.edge);
+            
+            ctx.fillStyle = centerGradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Center medallion border
+            ctx.strokeStyle = config.edge;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
+            ctx.stroke();
+            
+            // Main text with shadow
+            ctx.save();
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+            ctx.shadowBlur = 4;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+            
+            ctx.fillStyle = config.text;
+            ctx.font = `900 ${radius * 0.35}px Arial Black`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('$' + value, centerX, centerY + radius * 0.02);
+            ctx.restore();
+            
+            // Casino text
+            ctx.fillStyle = config.text;
+            ctx.font = `bold ${radius * 0.1}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.globalAlpha = 0.9;
+            ctx.fillText('CASINO', centerX, centerY + radius * 0.25);
+            ctx.globalAlpha = 1;
+            
+            // Chip color name
+            ctx.font = `bold ${radius * 0.08}px Arial`;
+            ctx.globalAlpha = 0.8;
+            ctx.fillText(config.name, centerX, centerY - radius * 0.22);
+            ctx.globalAlpha = 1;
+            
+            // Edge spots
+            ctx.fillStyle = config.accent;
+            for (let i = 0; i < 24; i++) {
+                if (i % 2 === 0) {
+                    const angle = (i * 15) * Math.PI / 180;
+                    const spotRadius = radius - 12;
+                    const x = centerX + Math.cos(angle) * spotRadius;
+                    const y = centerY + Math.sin(angle) * spotRadius;
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, y, 4, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+            }
+            
+            // Highlight for 3D effect
+            ctx.save();
+            ctx.globalAlpha = 0.3;
+            const highlightGradient = ctx.createRadialGradient(
+                centerX - radius * 0.3, centerY - radius * 0.3, 0,
+                centerX, centerY, radius * 0.7
+            );
+            highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
+            highlightGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            
+            ctx.fillStyle = highlightGradient;
+            ctx.beginPath();
+            ctx.arc(centerX - radius * 0.15, centerY - radius * 0.15, radius * 0.5, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.restore();
+            
+            return canvas.toDataURL('image/png');
+        }
+        
+        let currentChipIndex = 0;
+        const chipValues = [1, 5, 25, 100];
+        
+        function createAllChips() {
+            currentChipIndex = 0;
+            createNextChip();
+        }
+        
+        function createNextChip() {
+            if (currentChipIndex >= chipValues.length) {
+                alert('✅ All PNG chip files downloaded! Save them to your public/chips/ folder.');
+                return;
+            }
+            
+            const value = chipValues[currentChipIndex];
+            const dataUrl = createChip(value, 512);
+            const link = document.createElement('a');
+            link.download = `chip-${value}.png`;
+            link.href = dataUrl;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            currentChipIndex++;
+            
+            // Wait a moment, then create next chip
+            setTimeout(() => {
+                if (currentChipIndex < chipValues.length) {
+                    const nextValue = chipValues[currentChipIndex];
+                    if (confirm(`Downloaded chip-${value}.png. Click OK to download chip-${nextValue}.png`)) {
+                        createNextChip();
+                    }
+                } else {
+                    alert('✅ All PNG chip files downloaded!');
+                }
+            }, 500);
+        }
+        
+        function createSingleChip(value) {
+            const dataUrl = createChip(value, 512);
+            const link = document.createElement('a');
+            link.download = `chip-${value}.png`;
+            link.href = dataUrl;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        function previewChips() {
+            const values = [1, 5, 25, 100];
+            const container = document.getElementById('chipContainer');
+            container.innerHTML = '';
+            
+            values.forEach(value => {
+                const dataUrl = createChip(value, 200);
+                const div = document.createElement('div');
+                div.className = 'chip-preview';
+                div.innerHTML = `
+                    <img src="${dataUrl}" width="150" height="150" style="border-radius: 50%; box-shadow: 0 8px 16px rgba(0,0,0,0.6);">
+                    <h3>$${value} Chip</h3>
+                    <p>Professional casino quality</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        // Auto-preview on load
+        window.onload = () => previewChips();
+    </script>
+</body>
+</html>

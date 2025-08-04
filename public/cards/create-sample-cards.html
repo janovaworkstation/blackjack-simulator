@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Sample Playing Cards</title>
+</head>
+<body>
+    <canvas id="canvas" width="250" height="350"></canvas>
+    <div id="links"></div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const linksDiv = document.getElementById('links');
+
+        // Card suits and ranks
+        const suits = [
+            { name: 'hearts', symbol: '♥', color: '#DC143C' },
+            { name: 'diamonds', symbol: '♦', color: '#DC143C' },
+            { name: 'clubs', symbol: '♣', color: '#000000' },
+            { name: 'spades', symbol: '♠', color: '#000000' }
+        ];
+
+        const ranks = [
+            { name: 'ace', symbol: 'A' },
+            { name: '2', symbol: '2' },
+            { name: '3', symbol: '3' },
+            { name: '4', symbol: '4' },
+            { name: '5', symbol: '5' },
+            { name: '6', symbol: '6' },
+            { name: '7', symbol: '7' },
+            { name: '8', symbol: '8' },
+            { name: '9', symbol: '9' },
+            { name: '10', symbol: '10' },
+            { name: 'jack', symbol: 'J' },
+            { name: 'queen', symbol: 'Q' },
+            { name: 'king', symbol: 'K' }
+        ];
+
+        function createCard(rank, suit) {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // White background
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Border
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(3, 3, canvas.width - 6, canvas.height - 6);
+            
+            // Set text color
+            ctx.fillStyle = suit.color;
+            
+            // Top-left rank and suit
+            ctx.font = 'bold 32px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(rank.symbol, 20, 45);
+            ctx.font = 'bold 28px Arial';
+            ctx.fillText(suit.symbol, 20, 80);
+            
+            // Center suit symbol
+            ctx.font = 'bold 80px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(suit.symbol, canvas.width / 2, canvas.height / 2 + 20);
+            
+            // Bottom-right rank and suit (rotated)
+            ctx.save();
+            ctx.translate(canvas.width - 20, canvas.height - 20);
+            ctx.rotate(Math.PI);
+            ctx.font = 'bold 32px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(rank.symbol, 0, 35);
+            ctx.font = 'bold 28px Arial';
+            ctx.fillText(suit.symbol, 0, 70);
+            ctx.restore();
+            
+            // Create download link
+            const filename = `${rank.name}_of_${suit.name}.png`;
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = url;
+                link.textContent = `Download ${filename}`;
+                link.style.display = 'block';
+                link.style.margin = '5px 0';
+                linksDiv.appendChild(link);
+            });
+        }
+
+        // Create card back
+        function createCardBack() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Dark green background
+            ctx.fillStyle = '#1a472a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Border
+            ctx.strokeStyle = '#FFFFFF';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(3, 3, canvas.width - 6, canvas.height - 6);
+            
+            // Pattern
+            ctx.fillStyle = '#2d5a2d';
+            for (let x = 20; x < canvas.width - 20; x += 30) {
+                for (let y = 20; y < canvas.height - 20; y += 30) {
+                    ctx.fillRect(x, y, 15, 15);
+                }
+            }
+            
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = 'card_back.png';
+                link.href = url;
+                link.textContent = 'Download card_back.png';
+                link.style.display = 'block';
+                link.style.margin = '5px 0';
+                link.style.fontWeight = 'bold';
+                linksDiv.appendChild(link);
+            });
+        }
+
+        // Create a few sample cards for testing
+        const sampleCards = [
+            { rank: ranks[0], suit: suits[3] }, // Ace of Spades
+            { rank: ranks[4], suit: suits[0] }, // 5 of Hearts  
+            { rank: ranks[12], suit: suits[2] }, // King of Clubs
+            { rank: ranks[3], suit: suits[1] }  // 4 of Diamonds
+        ];
+
+        // Create sample cards
+        sampleCards.forEach((card, index) => {
+            setTimeout(() => {
+                createCard(card.rank, card.suit);
+            }, index * 500);
+        });
+
+        // Create card back
+        setTimeout(() => {
+            createCardBack();
+        }, sampleCards.length * 500);
+
+        // Instructions
+        const instructions = document.createElement('div');
+        instructions.innerHTML = `
+            <h3>Instructions:</h3>
+            <p>1. Wait for all cards to be generated</p>
+            <p>2. Right-click each download link and save the PNG files</p>
+            <p>3. Save them to the /public/cards/ directory</p>
+            <p>4. These sample cards will demonstrate the texture system</p>
+        `;
+        instructions.style.marginTop = '20px';
+        instructions.style.padding = '20px';
+        instructions.style.border = '1px solid #ccc';
+        instructions.style.backgroundColor = '#f9f9f9';
+        linksDiv.appendChild(instructions);
+    </script>
+</body>
+</html>

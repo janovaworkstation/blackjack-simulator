@@ -20,6 +20,7 @@
     "@bugsnag/browser-performance": "^2.14.0",
     "@bugsnag/js": "^8.4.0",
     "@bugsnag/plugin-react": "^8.4.0",
+    "@react-spring/three": "^10.0.1",
     "@react-three/drei": "^9.117.3",
     "@react-three/fiber": "^8.17.10",
     "@types/three": "^0.170.0",

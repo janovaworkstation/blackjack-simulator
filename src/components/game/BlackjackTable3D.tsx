@@ -1,27 +1,25 @@
 import React, { useRef, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei';
+import { PerspectiveCamera, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import Card3D from './Card3D';
 import Chip3D from './Chip3D';
 
-// Table Component
+// Table Component - Smaller to fit the red border area
 function Table() {
-  const tableGeometry = new THREE.BoxGeometry(8, 0.2, 5);
-  
   return (
-    <mesh position={[0, 0, 0]} receiveShadow>
-      <boxGeometry args={[8, 0.2, 5]} />
+    <mesh position={[0, 2, 0]} receiveShadow>
+      <boxGeometry args={[18, 0.2, 12]} />
       <meshStandardMaterial color="#1a472a" />
     </mesh>
   );
 }
 
-// Felt Surface Component
+// Felt Surface Component - Much larger to fill the space
 function Felt() {
   return (
-    <mesh position={[0, 0.11, 0]} receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
-      <planeGeometry args={[7.5, 4.5]} />
+    <mesh position={[0, 2.11, 0]} receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
+      <planeGeometry args={[16, 10]} />
       <meshStandardMaterial 
         color="#2d5a2d"
         roughness={0.8}
@@ -31,14 +29,42 @@ function Felt() {
   );
 }
 
-// Betting Circles Component
+// Table Border Component - Gold/brown border around entire table
+function TableBorder() {
+  return (
+    <>
+      {/* Top border */}
+      <mesh position={[0, 2.13, -5.5]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[17, 0.6]} />
+        <meshBasicMaterial color="#B8860B" />
+      </mesh>
+      {/* Bottom border */}
+      <mesh position={[0, 2.13, 5.5]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[17, 0.6]} />
+        <meshBasicMaterial color="#B8860B" />
+      </mesh>
+      {/* Left border */}
+      <mesh position={[-8.5, 2.13, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[0.6, 11]} />
+        <meshBasicMaterial color="#B8860B" />
+      </mesh>
+      {/* Right border */}
+      <mesh position={[8.5, 2.13, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[0.6, 11]} />
+        <meshBasicMaterial color="#B8860B" />
+      </mesh>
+    </>
+  );
+}
+
+// Betting Circles Component - Moved away from dark green border
 function BettingCircles() {
   const positions = [
-    [-2.5, 0.12, 1.5],
-    [-1.25, 0.12, 1.5],
-    [0, 0.12, 1.5],
-    [1.25, 0.12, 1.5],
-    [2.5, 0.12, 1.5],
+    [-6, 2.12, 3.5],
+    [-3, 2.12, 3.5],
+    [0, 2.12, 3.5],
+    [3, 2.12, 3.5],
+    [6, 2.12, 3.5],
   ];
 
   return (
@@ -47,12 +73,12 @@ function BettingCircles() {
         <group key={index} position={pos as [number, number, number]}>
           {/* Outer circle */}
           <mesh rotation={[-Math.PI / 2, 0, 0]}>
-            <ringGeometry args={[0.4, 0.45, 32]} />
+            <ringGeometry args={[0.6, 0.8, 32]} />
             <meshBasicMaterial color="#FFD700" />
           </mesh>
           {/* Inner circle */}
           <mesh rotation={[-Math.PI / 2, 0, 0]}>
-            <circleGeometry args={[0.4, 32]} />
+            <circleGeometry args={[0.6, 32]} />
             <meshBasicMaterial color="#1a472a" opacity={0.5} transparent />
           </mesh>
         </group>
@@ -61,31 +87,29 @@ function BettingCircles() {
   );
 }
 
-// Table Rails Component
+// Table Rails Component - Dark green border around felt
 function TableRails() {
-  const railGeometry = new THREE.BoxGeometry(0.2, 0.3, 5);
-  
   return (
     <>
       {/* Left rail */}
-      <mesh position={[-4, 0.15, 0]} castShadow receiveShadow>
-        <boxGeometry args={[0.2, 0.3, 5]} />
-        <meshStandardMaterial color="#8B4513" />
+      <mesh position={[-8, 2.12, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[0.4, 10]} />
+        <meshBasicMaterial color="#1a472a" />
       </mesh>
       {/* Right rail */}
-      <mesh position={[4, 0.15, 0]} castShadow receiveShadow>
-        <boxGeometry args={[0.2, 0.3, 5]} />
-        <meshStandardMaterial color="#8B4513" />
+      <mesh position={[8, 2.12, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[0.4, 10]} />
+        <meshBasicMaterial color="#1a472a" />
       </mesh>
-      {/* Front rail */}
-      <mesh position={[0, 0.15, 2.5]} castShadow receiveShadow>
-        <boxGeometry args={[8.2, 0.3, 0.2]} />
-        <meshStandardMaterial color="#8B4513" />
+      {/* Top rail */}
+      <mesh position={[0, 2.12, -5]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[16, 0.4]} />
+        <meshBasicMaterial color="#1a472a" />
       </mesh>
-      {/* Back rail */}
-      <mesh position={[0, 0.15, -2.5]} castShadow receiveShadow>
-        <boxGeometry args={[8.2, 0.3, 0.2]} />
-        <meshStandardMaterial color="#8B4513" />
+      {/* Bottom rail */}
+      <mesh position={[0, 2.12, 5]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[16, 0.4]} />
+        <meshBasicMaterial color="#1a472a" />
       </mesh>
     </>
   );
@@ -95,53 +119,63 @@ function TableRails() {
 function Lighting() {
   return (
     <>
-      {/* Ambient light for general illumination */}
-      <ambientLight intensity={0.4} />
+      {/* Strong ambient light for full visibility */}
+      <ambientLight intensity={0.8} />
       
-      {/* Main overhead light */}
+      {/* Main overhead light with much larger shadow camera */}
       <directionalLight
-        position={[0, 10, 5]}
-        intensity={1.2}
+        position={[0, 40, 20]}
+        intensity={2.0}
         castShadow
-        shadow-mapSize={[2048, 2048]}
-        shadow-camera-far={50}
-        shadow-camera-left={-10}
-        shadow-camera-right={10}
-        shadow-camera-top={10}
-        shadow-camera-bottom={-10}
+        shadow-mapSize={[4096, 4096]}
+        shadow-camera-far={100}
+        shadow-camera-left={-30}
+        shadow-camera-right={30}
+        shadow-camera-top={30}
+        shadow-camera-bottom={-30}
       />
       
-      {/* Table spot lights */}
-      <pointLight position={[-3, 5, 0]} intensity={0.5} />
-      <pointLight position={[3, 5, 0]} intensity={0.5} />
+      {/* Additional wide area lighting */}
+      <pointLight position={[0, 20, 0]} intensity={1.0} />
+      <pointLight position={[-15, 15, 0]} intensity={0.8} />
+      <pointLight position={[15, 15, 0]} intensity={0.8} />
+      <pointLight position={[0, 15, -15]} intensity={0.8} />
+      <pointLight position={[0, 15, 15]} intensity={0.8} />
     </>
   );
 }
 
-// Main 3D Scene Component
-export function BlackjackTable3D() {
+// Camera Component with manual setup
+function StaticCamera() {
+  const cameraRef = useRef<THREE.PerspectiveCamera>(null!);
+  
+  React.useEffect(() => {
+    if (cameraRef.current) {
+      cameraRef.current.position.set(0, 10, 5);
+      cameraRef.current.lookAt(0, 2, 0);
+      cameraRef.current.updateMatrixWorld();
+    }
+  }, []);
+
   return (
-    <div className="w-full h-screen bg-gray-900">
+    <PerspectiveCamera
+      ref={cameraRef}
+      makeDefault
+      fov={80}
+      near={0.1}
+      far={1000}
+    />
+  );
+}
+
+// Main 3D Scene Component
+export function BlackjackTable3D({ children }: { children?: React.ReactNode }) {
+  return (
+    <div className="w-full h-full bg-gray-900">
       <Canvas shadows>
         <Suspense fallback={null}>
-          {/* Camera setup */}
-          <PerspectiveCamera
-            makeDefault
-            position={[0, 8, 10]}
-            fov={50}
-            near={0.1}
-            far={1000}
-          />
-          
-          {/* Controls */}
-          <OrbitControls
-            enablePan={true}
-            enableZoom={true}
-            enableRotate={true}
-            minDistance={5}
-            maxDistance={20}
-            maxPolarAngle={Math.PI / 2.2}
-          />
+          {/* Static Camera setup - fixed position and angle */}
+          <StaticCamera />
           
           {/* Lighting */}
           <Lighting />
@@ -152,23 +186,12 @@ export function BlackjackTable3D() {
           {/* Table components */}
           <Table />
           <Felt />
-          <BettingCircles />
           <TableRails />
+          <TableBorder />
+          <BettingCircles />
           
-          {/* Sample cards for demonstration */}
-          <Card3D position={[-1, 0.3, -1]} rank="A" suit="Spades" faceUp={true} />
-          <Card3D position={[-0.3, 0.3, -1]} rank="K" suit="Hearts" faceUp={true} />
-          <Card3D position={[0, 0.3, 1]} rank="10" suit="Diamonds" faceUp={false} />
-          <Card3D position={[0.7, 0.3, 1]} rank="Q" suit="Clubs" faceUp={false} />
-          
-          {/* Sample betting chips */}
-          <Chip3D position={[-2.5, 0.14, 1.5]} value={25} />
-          <Chip3D position={[-2.5, 0.19, 1.5]} value={5} />
-          <Chip3D position={[0, 0.14, 1.5]} value={100} />
-          <Chip3D position={[2.5, 0.14, 1.5]} value={5} />
-          
-          {/* Fog for atmosphere */}
-          <fog attach="fog" args={['#1a1a1a', 10, 50]} />
+          {/* Dynamic content from children */}
+          {children}
         </Suspense>
       </Canvas>
     </div>

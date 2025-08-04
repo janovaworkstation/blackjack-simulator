@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="main1" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#F8F8F8" />
+      <stop offset="60%" stop-color="#F8F8F8" />
+      <stop offset="100%" stop-color="#DDDDDD" />
+    </radialGradient>
+    <radialGradient id="center1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1976D2" />
+      <stop offset="80%" stop-color="#1976D2" />
+      <stop offset="100%" stop-color="#DDDDDD" />
+    </radialGradient>
+    <filter id="shadow1" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="6" dy="6" stdDeviation="8" flood-color="rgba(0,0,0,0.5)" />
+    </filter>
+    <filter id="textShadow1">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.7)" />
+    </filter>
+  </defs>
+  
+  <!-- Main chip circle with shadow -->
+  <circle cx="256" cy="256" r="235.52" 
+          fill="url(#main1)" 
+          stroke="#DDDDDD" 
+          stroke-width="8"
+          filter="url(#shadow1)" />
+  
+  <!-- Outer decorative ring -->
+  <circle cx="256" cy="256" r="210.52" 
+          fill="none" 
+          stroke="#1976D2" 
+          stroke-width="4" 
+          stroke-dasharray="16,6" 
+          opacity="0.9" />
+  
+  <!-- Inner decorative ring -->
+  <circle cx="256" cy="256" r="190.52" 
+          fill="none" 
+          stroke="#1976D2" 
+          stroke-width="2" 
+          stroke-dasharray="8,4" 
+          opacity="0.7" />
+  
+  <!-- Center medallion -->
+  <circle cx="256" cy="256" r="94.20800000000001" 
+          fill="url(#center1)" 
+          stroke="#DDDDDD" 
+          stroke-width="3" />
+  
+  <!-- Main denomination text -->
+  <text x="256" y="260.7104" 
+        text-anchor="middle" 
+        font-family="Arial Black, Arial, sans-serif" 
+        font-size="82.432" 
+        font-weight="900" 
+        fill="#000000"
+        filter="url(#textShadow1)">$1</text>
+  
+  <!-- Casino text -->
+  <text x="256" y="314.88" 
+        text-anchor="middle" 
+        font-family="Arial, sans-serif" 
+        font-size="23.552000000000003" 
+        font-weight="bold" 
+        fill="#000000" 
+        opacity="0.9">CASINO</text>
+  
+  <!-- Chip color name -->
+  <text x="256" y="204.1856" 
+        text-anchor="middle" 
+        font-family="Arial, sans-serif" 
+        font-size="18.8416" 
+        font-weight="bold" 
+        fill="#000000" 
+        opacity="0.8">WHITE</text>
+  
+  <!-- Edge spots for authenticity -->
+  <circle cx="479.52" cy="256" r="4" fill="#1976D2" /><circle cx="449.57399825389774" cy="367.76" r="4" fill="#1976D2" /><circle cx="367.76000000000005" cy="449.5739982538977" r="4" fill="#1976D2" /><circle cx="256" cy="479.52" r="4" fill="#1976D2" /><circle cx="144.24000000000004" cy="449.57399825389774" r="4" fill="#1976D2" /><circle cx="62.42600174610226" cy="367.76" r="4" fill="#1976D2" /><circle cx="32.47999999999999" cy="256" r="4" fill="#1976D2" /><circle cx="62.42600174610229" cy="144.23999999999995" r="4" fill="#1976D2" /><circle cx="144.2399999999999" cy="62.42600174610229" r="4" fill="#1976D2" /><circle cx="255.99999999999997" cy="32.47999999999999" r="4" fill="#1976D2" /><circle cx="367.76000000000005" cy="62.42600174610229" r="4" fill="#1976D2" /><circle cx="449.5739982538977" cy="144.2399999999999" r="4" fill="#1976D2" />
+  
+  <!-- Highlight for 3D effect -->
+  <ellipse cx="220.672" cy="220.672" 
+           rx="58.88" ry="82.432" 
+           fill="rgba(255, 255, 255, 0.3)" 
+           opacity="0.6" />
+</svg>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Realistic Casino Chip Generator</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #0a0a0a; 
+            color: white;
+        }
+        .chip-preview { 
+            display: inline-block; 
+            margin: 15px; 
+            text-align: center;
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .chip-img { 
+            border-radius: 50%; 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+        }
+        button {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        button:hover {
+            background: linear-gradient(45deg, #45a049, #4CAF50);
+            transform: translateY(-2px);
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 20px;
+            background: #1a1a1a;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎰 Realistic Casino Chip Generator</h1>
+    <p>High-quality casino chip textures with authentic design details.</p>
+    
+    <div class="controls">
+        <button onclick="generateChips()">🎲 Generate & Download All Chips</button>
+        <button onclick="previewChips()">👁️ Preview Chips</button>
+        <br><br>
+        <label>Chip Size: <input type="range" id="sizeSlider" min="200" max="600" value="400" onchange="previewChips()"> <span id="sizeValue">400px</span></label>
+    </div>
+    
+    <div id="preview"></div>
+
+    <script>
+        function createRealisticChip(value, size = 400) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            if (!ctx) return '';
+
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const radius = size * 0.45;
+
+            // Authentic casino chip colors and patterns
+            const getChipConfig = (value) => {
+                switch (value) {
+                    case 1: return { 
+                        main: '#FEFEFE', 
+                        edge: '#E8E8E8', 
+                        accent: '#4169E1',
+                        text: '#000000',
+                        pattern: '#F0F0F0',
+                        name: 'WHITE'
+                    };
+                    case 5: return { 
+                        main: '#DC143C', 
+                        edge: '#8B0000', 
+                        accent: '#FFD700',
+                        text: '#FFFFFF',
+                        pattern: '#B71C1C',
+                        name: 'RED'
+                    };
+                    case 25: return { 
+                        main: '#228B22', 
+                        edge: '#006400', 
+                        accent: '#FFD700',
+                        text: '#FFFFFF',
+                        pattern: '#1B5E20',
+                        name: 'GREEN'
+                    };
+                    case 100: return { 
+                        main: '#2C2C2C', 
+                        edge: '#000000', 
+                        accent: '#FFD700',
+                        text: '#FFFFFF',
+                        pattern: '#1A1A1A',
+                        name: 'BLACK'
+                    };
+                    case 500: return { 
+                        main: '#7B1FA2', 
+                        edge: '#4A148C', 
+                        accent: '#FFD700',
+                        text: '#FFFFFF',
+                        pattern: '#6A1B9A',
+                        name: 'PURPLE'
+                    };
+                    default: return { 
+                        main: '#FFD700', 
+                        edge: '#FFA000', 
+                        accent: '#8D6E63',
+                        text: '#000000',
+                        pattern: '#FFB300',
+                        name: 'GOLD'
+                    };
+                }
+            };
+
+            const config = getChipConfig(value);
+
+            // Create realistic lighting gradient
+            const mainGradient = ctx.createRadialGradient(
+                centerX - radius * 0.3, centerY - radius * 0.3, 0,
+                centerX, centerY, radius
+            );
+            mainGradient.addColorStop(0, config.main);
+            mainGradient.addColorStop(0.4, config.main);
+            mainGradient.addColorStop(0.8, config.pattern);
+            mainGradient.addColorStop(1, config.edge);
+
+            // Draw main chip body with shadow
+            ctx.save();
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+            ctx.shadowBlur = radius * 0.1;
+            ctx.shadowOffsetX = radius * 0.05;
+            ctx.shadowOffsetY = radius * 0.05;
+            
+            ctx.fillStyle = mainGradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.restore();
+
+            // Outer edge rim with beveled effect
+            const rimGradient = ctx.createLinearGradient(0, centerY - radius, 0, centerY + radius);
+            rimGradient.addColorStop(0, config.edge);
+            rimGradient.addColorStop(0.5, config.main);
+            rimGradient.addColorStop(1, config.edge);
+            
+            ctx.strokeStyle = rimGradient;
+            ctx.lineWidth = radius * 0.08;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius - radius * 0.04, 0, 2 * Math.PI);
+            ctx.stroke();
+
+            // Inner decorative pattern - crosshatch design
+            ctx.strokeStyle = config.accent;
+            ctx.lineWidth = 2;
+            ctx.globalAlpha = 0.6;
+            
+            // Create crosshatch pattern
+            for (let i = 0; i < 16; i++) {
+                const angle = (i * Math.PI * 2) / 16;
+                const innerRadius = radius * 0.6;
+                const outerRadius = radius * 0.85;
+                
+                const x1 = centerX + Math.cos(angle) * innerRadius;
+                const y1 = centerY + Math.sin(angle) * innerRadius;
+                const x2 = centerX + Math.cos(angle) * outerRadius;
+                const y2 = centerY + Math.sin(angle) * outerRadius;
+                
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+            }
+            ctx.globalAlpha = 1;
+
+            // Center medallion with professional styling
+            const centerRadius = radius * 0.35;
+            const centerGradient = ctx.createRadialGradient(
+                centerX, centerY - centerRadius * 0.3, 0,
+                centerX, centerY, centerRadius
+            );
+            centerGradient.addColorStop(0, config.accent);
+            centerGradient.addColorStop(1, config.edge);
+            
+            ctx.fillStyle = centerGradient;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Center rim
+            ctx.strokeStyle = config.edge;
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
+            ctx.stroke();
+
+            // Main denomination - large and bold
+            ctx.fillStyle = config.text;
+            ctx.font = `bold ${centerRadius * 0.8}px "Times New Roman", serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('$' + value, centerX, centerY - centerRadius * 0.1);
+
+            // Casino name/style text
+            ctx.font = `${centerRadius * 0.25}px "Arial", sans-serif`;
+            ctx.fillText('CASINO', centerX, centerY + centerRadius * 0.4);
+
+            // Edge denomination markings (8 positions around the rim)
+            ctx.fillStyle = config.accent;
+            ctx.font = `bold ${radius * 0.08}px "Arial", sans-serif`;
+            for (let i = 0; i < 8; i++) {
+                const angle = (i * Math.PI * 2) / 8;
+                const textRadius = radius * 0.75;
+                const x = centerX + Math.cos(angle) * textRadius;
+                const y = centerY + Math.sin(angle) * textRadius;
+                
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(angle + Math.PI / 2);
+                ctx.fillText('$' + value, 0, 0);
+                ctx.restore();
+            }
+
+            // Edge spots for authenticity (alternating pattern)
+            ctx.fillStyle = config.accent;
+            for (let i = 0; i < 40; i++) {
+                if (i % 3 === 0) { // Every third spot
+                    const angle = (i * Math.PI * 2) / 40;
+                    const spotRadius = radius * 0.92;
+                    const x = centerX + Math.cos(angle) * spotRadius;
+                    const y = centerY + Math.sin(angle) * spotRadius;
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, y, 3, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+            }
+
+            // Inner highlight for 3D effect
+            ctx.strokeStyle = `rgba(255, 255, 255, 0.3)`;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(centerX - radius * 0.2, centerY - radius * 0.2, radius * 0.6, 0, Math.PI);
+            ctx.stroke();
+
+            return canvas.toDataURL('image/png');
+        }
+
+        function generateChips() {
+            const chipValues = [1, 5, 25, 100, 500];
+            const size = parseInt(document.getElementById('sizeSlider').value);
+            
+            chipValues.forEach(value => {
+                const dataUrl = createRealisticChip(value, size);
+                const link = document.createElement('a');
+                link.download = `chip-${value}.png`;
+                link.href = dataUrl;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+            
+            alert('🎰 Realistic casino chip images generated and downloaded!');
+        }
+
+        function previewChips() {
+            const chipValues = [1, 5, 25, 100, 500];
+            const size = parseInt(document.getElementById('sizeSlider').value);
+            document.getElementById('sizeValue').textContent = size + 'px';
+            
+            const preview = document.getElementById('preview');
+            preview.innerHTML = '<h2>🎨 Realistic Chip Preview</h2>';
+            
+            chipValues.forEach(value => {
+                const dataUrl = createRealisticChip(value, size);
+                const div = document.createElement('div');
+                div.className = 'chip-preview';
+                div.innerHTML = `
+                    <img src="${dataUrl}" width="150" height="150" class="chip-img">
+                    <br><strong>$${value} Chip</strong>
+                    <br><small>Professional casino quality</small>
+                `;
+                preview.appendChild(div);
+            });
+        }
+
+        // Auto-preview on load
+        window.onload = () => previewChips();
+    </script>
+</body>
+</html>

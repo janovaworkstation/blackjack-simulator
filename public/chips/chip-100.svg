@@ -1,0 +1,146 @@
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <!-- Main chip gradient -->
+            <radialGradient id="chipGradient100" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" style="stop-color:#616161;stop-opacity:1" />
+                <stop offset="40%" style="stop-color:#424242;stop-opacity:1" />
+                <stop offset="80%" style="stop-color:#424242;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#212121;stop-opacity:1" />
+            </radialGradient>
+            
+            <!-- Center medallion gradient -->
+            <radialGradient id="centerGradient100" cx="30%" cy="30%" r="70%">
+                <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+                <stop offset="70%" style="stop-color:#FFD700;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#212121;stop-opacity:1" />
+            </radialGradient>
+            
+            <!-- Drop shadow filter -->
+            <filter id="dropShadow100" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="3" dy="3" stdDeviation="8" flood-color="rgba(0,0,0,0.4)" />
+            </filter>
+            
+            <!-- Inner highlight -->
+            <radialGradient id="highlight100" cx="25%" cy="25%" r="50%">
+                <stop offset="0%" style="stop-color:rgba(255,255,255,0.4);stop-opacity:1" />
+                <stop offset="100%" style="stop-color:rgba(255,255,255,0);stop-opacity:0" />
+            </radialGradient>
+        </defs>
+        
+        <!-- Main chip body with shadow -->
+        <circle cx="256" cy="256" r="230.4" 
+                fill="url(#chipGradient100)" 
+                filter="url(#dropShadow100)"
+                stroke="#212121" 
+                stroke-width="18.432000000000002" />
+        
+        <!-- Outer decorative ring -->
+        <circle cx="256" cy="256" r="195.84" 
+                fill="none" 
+                stroke="#FFD700" 
+                stroke-width="6.912" 
+                stroke-dasharray="23.040000000000003,11.520000000000001" 
+                opacity="0.8" />
+        
+        <!-- Inner pattern ring -->
+        <circle cx="256" cy="256" r="161.28" 
+                fill="none" 
+                stroke="#FFD700" 
+                stroke-width="2" 
+                stroke-dasharray="8,4" 
+                opacity="0.6" />
+        
+        <!-- Center medallion -->
+        <circle cx="256" cy="256" r="92.16000000000001" 
+                fill="url(#centerGradient100)" 
+                stroke="#212121" 
+                stroke-width="3" />
+        
+        <!-- Main denomination text -->
+        <text x="256" y="274.432" 
+              text-anchor="middle" 
+              font-family="Times New Roman, serif" 
+              font-size="57.6" 
+              font-weight="bold" 
+              fill="#FFFFFF"
+              stroke="#212121"
+              stroke-width="1">$100</text>
+        
+        <!-- Casino text -->
+        <text x="256" y="313.6" 
+              text-anchor="middle" 
+              font-family="Arial, sans-serif" 
+              font-size="18.432000000000002" 
+              font-weight="normal" 
+              fill="#FFFFFF"
+              opacity="0.8">CASINO</text>
+        
+        <!-- Edge denomination markings -->
+        <text x="256" y="90.112" 
+                         text-anchor="middle" 
+                         font-family="Arial, sans-serif" 
+                         font-size="13.824" 
+                         font-weight="bold" 
+                         fill="#FFD700"
+                         transform="rotate(-90 256 83.19999999999999)">$100</text><text x="378.1880517890354" y="140.7239482109646" 
+                         text-anchor="middle" 
+                         font-family="Arial, sans-serif" 
+                         font-size="13.824" 
+                         font-weight="bold" 
+                         fill="#FFD700"
+                         transform="rotate(-45 378.1880517890354 133.8119482109646)">$100</text><text x="428.8" y="262.912" 
+                         text-anchor="middle" 
+                         font-family="Arial, sans-serif" 
+                         font-size="13.824" 
+                         font-weight="bold" 
+                         fill="#FFD700"
+                         transform="rotate(0 428.8 256)">$100</text><text x="378.1880517890354" y="385.1000517890354" 
+                         text-anchor="middle" 
+                         font-family="Arial, sans-serif" 
+                         font-size="13.824" 
+                         font-weight="bold" 
+                         fill="#FFD700"
+                         transform="rotate(45 378.1880517890354 378.1880517890354)">$100</text><text x="256" y="435.712" 
+                         text-anchor="middle" 
+                         font-family="Arial, sans-serif" 
+                         font-size="13.824" 
+                         font-weight="bold" 
+                         fill="#FFD700"
+                         transform="rotate(90 256 428.8)">$100</text><text x="133.8119482109646" y="385.1000517890354" 
+                         text-anchor="middle" 
+                         font-family="Arial, sans-serif" 
+                         font-size="13.824" 
+                         font-weight="bold" 
+                         fill="#FFD700"
+                         transform="rotate(135 133.8119482109646 378.1880517890354)">$100</text><text x="83.19999999999999" y="262.912" 
+                         text-anchor="middle" 
+                         font-family="Arial, sans-serif" 
+                         font-size="13.824" 
+                         font-weight="bold" 
+                         fill="#FFD700"
+                         transform="rotate(180 83.19999999999999 256)">$100</text><text x="133.81194821096454" y="140.7239482109646" 
+                         text-anchor="middle" 
+                         font-family="Arial, sans-serif" 
+                         font-size="13.824" 
+                         font-weight="bold" 
+                         fill="#FFD700"
+                         transform="rotate(225 133.81194821096454 133.8119482109646)">$100</text>
+        
+        <!-- Edge spots for authenticity -->
+        <circle cx="467.968" cy="256" r="2.5" fill="#FFD700" opacity="0.8"/><circle cx="451.83289674735244" cy="337.1166417915633" r="2.5" fill="#FFD700" opacity="0.8"/><circle cx="405.8840101945501" cy="405.8840101945501" r="2.5" fill="#FFD700" opacity="0.8"/><circle cx="337.1166417915634" cy="451.83289674735244" r="2.5" fill="#FFD700" opacity="0.8"/><circle cx="256" cy="467.968" r="2.5" fill="#FFD700" opacity="0.8"/><circle cx="174.88335820843668" cy="451.83289674735244" r="2.5" fill="#FFD700" opacity="0.8"/><circle cx="106.11598980544989" cy="405.8840101945501" r="2.5" fill="#FFD700" opacity="0.8"/><circle cx="60.167103252647564" cy="337.1166417915634" r="2.5" fill="#FFD700" opacity="0.8"/><circle cx="44.03199999999998" cy="256" r="2.5" fill="#FFD700" opacity="0.8"/><circle cx="60.16710325264751" cy="174.88335820843676" r="2.5" fill="#FFD700" opacity="0.8"/><circle cx="106.11598980544986" cy="106.11598980544989" r="2.5" fill="#FFD700" opacity="0.8"/><circle cx="174.8833582084367" cy="60.167103252647536" r="2.5" fill="#FFD700" opacity="0.8"/><circle cx="255.99999999999997" cy="44.03199999999998" r="2.5" fill="#FFD700" opacity="0.8"/><circle cx="337.11664179156344" cy="60.16710325264759" r="2.5" fill="#FFD700" opacity="0.8"/><circle cx="405.8840101945501" cy="106.11598980544986" r="2.5" fill="#FFD700" opacity="0.8"/><circle cx="451.8328967473525" cy="174.88335820843668" r="2.5" fill="#FFD700" opacity="0.8"/>
+        
+        <!-- Inner highlight for 3D effect -->
+        <ellipse cx="209.92" cy="209.92" 
+                 rx="138.24" ry="92.16000000000001" 
+                 fill="url(#highlight100)" 
+                 opacity="0.3" />
+        
+        <!-- Color name on chip -->
+        <text x="256" y="198.4" 
+              text-anchor="middle" 
+              font-family="Arial, sans-serif" 
+              font-size="13.824" 
+              font-weight="bold" 
+              fill="#FFFFFF"
+              opacity="0.7">BLACK</text>
+    </svg>

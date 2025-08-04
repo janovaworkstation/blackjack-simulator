@@ -22,6 +22,7 @@ A modern, web-based blackjack simulation tool that replicates and enhances the f
 - **Real-time Updates**: Live progress tracking during simulations
 - **Interactive Configuration**: Easy-to-use parameter adjustment
 - **Professional Styling**: Clean, modern UI with Tailwind CSS
+- **3D Gaming Experience**: Immersive 3D blackjack table with realistic graphics
 - **Monitoring & Alerts**: Comprehensive error tracking and uptime monitoring
 
 ## Quick Start
@@ -55,6 +56,25 @@ A modern, web-based blackjack simulation tool that replicates and enhances the f
 
 4.  **Open your browser to** `http://localhost:5173`
 
+### Exploring the 3D Demo
+
+The application now includes an immersive 3D blackjack table experience:
+
+1. **Start the development server** (if not already running)
+2. **Navigate to the application** in your browser
+3. **Click the "3D Demo" button** in the top navigation
+4. **Interact with the 3D scene**:
+   - Mouse drag to rotate camera
+   - Scroll to zoom in/out
+   - View realistic casino table with cards and chips
+
+**Features in 3D Demo:**
+- Professional blackjack table with felt surface
+- Realistic 3D playing cards (face up/down)
+- Casino-style poker chips with value-based colors
+- Dynamic lighting and shadows
+- Interactive camera controls
+
 ### Building for Production
 ```bash
 npm run build
@@ -66,6 +86,7 @@ This project uses a comprehensive testing strategy to ensure code quality and ap
 
 ### Current Test Coverage
 - **33 Unit Tests** with 95%+ code coverage of core simulation engine
+- **24 3D Component Tests** covering all 3D rendering functionality
 - **16 End-to-End Tests** covering all major user workflows
 - **98% E2E Test Pass Rate** across Chrome, Firefox, and Safari
 
@@ -85,6 +106,7 @@ This project uses a comprehensive testing strategy to ensure code quality and ap
 
 ### What's Tested
 - **Core Game Logic**: Card counting systems, basic strategy, game mechanics
+- **3D Rendering Components**: Card3D, Chip3D, BlackjackTable3D, and Game3DDemo
 - **User Workflows**: Complete simulation runs, configuration changes, hand tracking
 - **Error Handling**: Input validation, edge cases, error recovery
 - **Mobile Support**: Responsive design and touch interactions

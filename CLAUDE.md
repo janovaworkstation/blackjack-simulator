@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) for working on the Blackjack Strategy Simulator. It outlines the project's architecture, development commands, and key implementation plans, aligning with the project's formal documentation (`PRD.md`, `PLANNING.md`, `TASKS.md`).
 
-**Project Status:** Planning Phase (as of August 2025)
+**Project Status:** Phase 1 Development - 3D Gaming Platform Implemented (as of August 2025)
 
 ## Commands
 
@@ -24,10 +24,16 @@ This file provides guidance to Claude Code (claude.ai/code) for working on the B
 
 The project follows a modern, web-first architecture, starting with a client-side Single Page Application (SPA) for the MVP and designed for future expansion into a full-stack service with microservices, as detailed in `PLANNING.md`.
 
-### Phase 1 (MVP) Core Components
-- **`BlackjackSimulator.tsx`** - The main application component that will orchestrate the UI, managing state and coordinating between the configuration panel, the simulation engine, and the results display.
-- **`BlackjackEngine.ts`** - The core simulation engine. This will implement game mechanics, card management, and strategy execution.
-- **`useSimulation.ts`** - A React hook to manage the simulation's state, handle its asynchronous execution, and track its progress.
+### Phase 1 (MVP) Core Components - IMPLEMENTED ✅
+- **`BlackjackSimulator.tsx`** - The main application component orchestrating the UI, managing state and coordinating between components.
+- **`BlackjackEngine.ts`** - The core simulation engine implementing game mechanics, card management, and strategy execution.
+- **`useSimulation.ts`** - A React hook managing simulation state, asynchronous execution, and progress tracking.
+
+### 3D Gaming Platform Components - NEW ✅
+- **`BlackjackTable3D.tsx`** - Immersive 3D blackjack table with realistic casino atmosphere
+- **`Card3D.tsx`** - 3D playing card component with face-up/down states and suit-based styling
+- **`Chip3D.tsx`** - Casino-style poker chips with value-based colors and realistic geometry
+- **`Game3DDemo.tsx`** - Demo page showcasing the 3D gaming experience
 
 ### Data Flow
 1. Configuration settings will flow from `ConfigurationPanel` → `BlackjackSimulator` → `useSimulation` hook.
@@ -50,14 +56,26 @@ The project follows a modern, web-first architecture, starting with a client-sid
 - Will support count-based betting spreads.
 - Will handle all standard player actions: split, double, and surrender.
 
-### UI Structure
-- The UI will be built with a responsive grid layout using Tailwind CSS.
-- The main view will consist of a configuration panel on one side and a results/charting area on the other.
-- Recharts will be used for data visualization (e.g., bankroll progression).
+### UI Structure - IMPLEMENTED ✅
+- **Dual Interface Design**: Navigation between Analysis (Simulator) and Gaming (3D Demo) modes
+- **Responsive Layout**: Built with Tailwind CSS, works on desktop, tablet, and mobile
+- **Analysis Mode**: Configuration panel with results/charting area using Recharts for data visualization
+- **3D Gaming Mode**: Immersive casino table with Three.js/React Three Fiber rendering
+- **Interactive Navigation**: Seamless switching between simulation and 3D gaming experiences
 
 ### Key Files
+**Core Simulation (Analysis Mode):**
 - `src/utils/BlackjackEngine.ts` - All simulation logic and strategy implementation.
 - `src/hooks/useSimulation.ts` - Simulation state management and async execution.
 - `src/components/BlackjackSimulator.tsx` - Main coordinator component.
 - `src/components/ConfigurationPanel.tsx` - Parameter controls for simulation setup.
 - `src/components/ResultsPanel.tsx` - Component for displaying simulation results.
+
+**3D Gaming Platform:**
+- `src/components/game/BlackjackTable3D.tsx` - Main 3D scene with casino table, lighting, and controls.
+- `src/components/game/Card3D.tsx` - Individual 3D playing card component.
+- `src/components/game/Chip3D.tsx` - Casino poker chip component with value-based styling.
+- `src/pages/Game3DDemo.tsx` - 3D demo page with navigation and instructions.
+
+**Application Structure:**
+- `src/App.tsx` - Main app with navigation between Simulator and 3D Demo modes.
