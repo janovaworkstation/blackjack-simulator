@@ -5,6 +5,7 @@ interface GameUIProps {
   onStand: () => void;
   onDouble: () => void;
   onSplit: () => void;
+  onSurrender: () => void;
   onDeal: () => void;
   onBet: (amount: number) => void;
   onClearBet?: () => void;
@@ -16,6 +17,7 @@ interface GameUIProps {
     canStand: boolean;
     canDouble: boolean;
     canSplit: boolean;
+    canSurrender: boolean;
     canDeal: boolean;
     currentBet: number;
     bankroll: number;
@@ -27,6 +29,8 @@ interface GameUIProps {
     message: string;
     insuranceBet: number;
     canTakeInsurance: boolean;
+    lastHandResult: 'won' | 'lost' | null;
+    lastHandAmount: number;
   };
   // Shoe information
   cardsRemaining?: number;
@@ -38,7 +42,7 @@ interface GameUIProps {
   trueCount?: number;
 }
 
-export function GameUI({ onHit, onStand, onDouble, onSplit, onDeal, onBet, onClearBet, onTakeInsurance, onDeclineInsurance, isDealing = false, gameState, cardsRemaining = 0, totalCardsInShoe = 0, penetration = 0, needsShuffle = false, runningCount = 0, trueCount = 0 }: GameUIProps) {
+export function GameUI({ onHit, onStand, onDouble, onSplit, onSurrender, onDeal, onBet, onClearBet, onTakeInsurance, onDeclineInsurance, isDealing = false, gameState, cardsRemaining = 0, totalCardsInShoe = 0, penetration = 0, needsShuffle = false, runningCount = 0, trueCount = 0 }: GameUIProps) {
   const chipValues = [1, 5, 25, 100];
 
   return (
@@ -49,7 +53,14 @@ export function GameUI({ onHit, onStand, onDouble, onSplit, onDeal, onBet, onCle
           <h2 className="text-xl font-bold mb-2">Game Status</h2>
           <div className="space-y-2 text-sm">
             <div>Bankroll: ${gameState.bankroll}</div>
-            <div>Current Bet: ${gameState.currentBet}</div>
+            <div>
+              {gameState.gameStatus === 'complete' && gameState.lastHandResult === 'won' 
+                ? `Won: $${gameState.lastHandAmount.toFixed(2)}`
+                : gameState.gameStatus === 'complete' && gameState.lastHandResult === 'lost'
+                ? `Lost: $${gameState.lastHandAmount.toFixed(2)}`
+                : `Current Bet: $${gameState.currentBet}`
+              }
+            </div>
             <div>Status: {gameState.message}</div>
             <div className="border-t border-gray-600 pt-2 mt-2">
               <div className="text-xs text-gray-300">6-Deck Shoe:</div>
@@ -236,6 +247,20 @@ export function GameUI({ onHit, onStand, onDouble, onSplit, onDeal, onBet, onCle
                 `}
               >
                 Split
+              </button>
+              
+              <button
+                onClick={onSurrender}
+                disabled={!gameState.canSurrender}
+                className={`
+                  px-6 py-3 rounded-lg font-semibold transition-all
+                  ${gameState.canSurrender
+                    ? 'bg-orange-600 hover:bg-orange-700 text-white cursor-pointer'
+                    : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                  }
+                `}
+              >
+                Surrender
               </button>
             </div>
           </div>

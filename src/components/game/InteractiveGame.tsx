@@ -248,7 +248,10 @@ function InteractiveTable({
         {chipStack.map((chipValue, index) => {
           let xPos = 0;
           if (doubleChipStack.length > 0) xPos = -0.4;
-          if (gameState.isSplit) xPos = -1.2; // Move left when split
+          if (gameState.isSplit) {
+            // For split hands, position bet under rightmost hand (index 1)
+            xPos = 2; // Align with rightmost hand position
+          }
           
           return showLossAnimation ? (
             <AnimatedChip 
@@ -267,12 +270,12 @@ function InteractiveTable({
           );
         })}
         
-        {/* Split bet chips - positioned to the left of primary bet */}
+        {/* Split bet chips - positioned under leftmost hand */}
         {splitChipStack.map((chipValue, index) => 
           showSplitLossAnimation ? (
             <AnimatedChip 
               key={`split-chip-${index}`}
-              position={[-2.4, 2.14 + (index * 0.03), 3.5]} // Outside the betting circle to the left
+              position={[-2, 2.14 + (index * 0.03), 3.5]} // Align with leftmost hand position
               value={chipValue}
               isLoss={true}
               showAnimation={showSplitLossAnimation}
@@ -280,7 +283,7 @@ function InteractiveTable({
           ) : (
             <Chip3D 
               key={`split-chip-${index}`}
-              position={[-2.4, 2.14 + (index * 0.03), 3.5]} // Outside the betting circle to the left
+              position={[-2, 2.14 + (index * 0.03), 3.5]} // Align with leftmost hand position
               value={chipValue} 
             />
           )
@@ -360,6 +363,7 @@ export function InteractiveGame() {
     onStand,
     onDouble,
     onSplit,
+    onSurrender,
     onTakeInsurance,
     onDeclineInsurance,
     playerCards,
@@ -387,7 +391,8 @@ export function InteractiveGame() {
     needsShuffle,
     runningCount,
     trueCount,
-    setDealerCheckComplete
+    setDealerCheckComplete,
+    handleDealerBlackjack
   } = useBlackjackGame();
 
   // State for dealer card flip animation
@@ -413,34 +418,40 @@ export function InteractiveGame() {
     }
   }, [gameState.gameStatus]);
 
-  // Trigger dealer peek when showing 10-value card
+  // Trigger dealer peek when showing 10-value card or Ace (after insurance declined)
   useEffect(() => {
     // Only check when game is playing and dealer has exactly 2 cards
     if (gameState.gameStatus === 'playing' && dealerCards.length === 2 && !shouldPeekDealerCard && !isDealerPeeking && !hasCheckedForBlackjack) {
       const dealerUpCard = dealerCards[0];
-      if (dealerUpCard && (dealerUpCard.rank === '10' || dealerUpCard.rank === 'J' || dealerUpCard.rank === 'Q' || dealerUpCard.rank === 'K')) {
-        console.log('Dealer showing 10-value card - triggering peek animation');
+      if (dealerUpCard && (
+        // 10-value cards (immediate peek)
+        dealerUpCard.rank === '10' || dealerUpCard.rank === 'J' || dealerUpCard.rank === 'Q' || dealerUpCard.rank === 'K' ||
+        // Ace (peek after insurance is declined - insurance bet will be 0)
+        (dealerUpCard.rank === 'A' && gameState.insuranceBet === 0)
+      )) {
+        console.log('Dealer showing peek-worthy card - triggering peek animation');
         setDealerCheckComplete(false); // Reset check state
         setShouldPeekDealerCard(true);
         setIsDealerPeeking(true);
         setHasCheckedForBlackjack(true); // Prevent re-triggering
       }
     }
-  }, [gameState.gameStatus, dealerCards, shouldPeekDealerCard, isDealerPeeking, hasCheckedForBlackjack, setDealerCheckComplete]);
+  }, [gameState.gameStatus, gameState.insuranceBet, dealerCards, shouldPeekDealerCard, isDealerPeeking, hasCheckedForBlackjack, setDealerCheckComplete]);
 
-  // Check if dealer has blackjack when showing 10
+  // Check if dealer has blackjack when showing 10 or Ace
   useEffect(() => {
     if (gameState.gameStatus === 'complete' && dealerCards.length === 2) {
-      // Check if this is a dealer blackjack with 10 showing
-      const dealerShowingTen = dealerCards[0] && (
+      // Check if this is a dealer blackjack with 10 or Ace showing
+      const dealerShowingBlackjackCard = dealerCards[0] && (
         dealerCards[0].rank === '10' || 
         dealerCards[0].rank === 'J' || 
         dealerCards[0].rank === 'Q' || 
-        dealerCards[0].rank === 'K'
+        dealerCards[0].rank === 'K' ||
+        dealerCards[0].rank === 'A'
       );
       
-      if (dealerShowingTen && gameState.dealerValue === 21 && !dealerHoleCardFlipped) {
-        console.log('Dealer has blackjack with 10 showing - immediately revealing hole card');
+      if (dealerShowingBlackjackCard && gameState.dealerValue === 21 && !dealerHoleCardFlipped) {
+        console.log('Dealer has blackjack - immediately revealing hole card');
         setDealerHoleCardFlipped(true);
       }
     }
@@ -469,25 +480,22 @@ export function InteractiveGame() {
     console.log('Dealer peek completed, checking for blackjack...');
     setShouldPeekDealerCard(false);
     
-    // Check if dealer has blackjack after peek (need both cards)
-    if (dealerCards.length >= 2) {
-      const dealerValue = calculateHandValue(dealerCards);
-      console.log('Dealer total with both cards:', dealerValue);
-      
-      if (dealerValue === 21) {
-        console.log('Dealer has blackjack - ending game');
-        // Dealer has blackjack - flip the hole card and end game
-        setTimeout(() => {
-          setDealerHoleCardFlipped(true);
-        }, 500);
-      } else {
-        console.log('Dealer does not have blackjack - enabling player actions');
-        // No blackjack - enable player actions after a brief delay
-        setTimeout(() => {
-          setDealerCheckComplete(true);
-          console.log('Player actions enabled after dealer check');
-        }, 500);
-      }
+    // Check if dealer has blackjack after peek using the hook function
+    const hasBlackjack = handleDealerBlackjack();
+    
+    if (hasBlackjack) {
+      console.log('Dealer has blackjack - game ended by hook');
+      // Flip the hole card to show the blackjack
+      setTimeout(() => {
+        setDealerHoleCardFlipped(true);
+      }, 500);
+    } else {
+      console.log('Dealer does not have blackjack - enabling player actions');
+      // No blackjack - enable player actions after a brief delay
+      setTimeout(() => {
+        setDealerCheckComplete(true);
+        console.log('Player actions enabled after dealer check');
+      }, 500);
     }
     
     // Reset the peeking state
@@ -584,6 +592,7 @@ export function InteractiveGame() {
         onStand={onStand}
         onDouble={onDouble}
         onSplit={onSplit}
+        onSurrender={onSurrender}
         onDeal={onDeal}
         onBet={onBet}
         onClearBet={onClearBet}

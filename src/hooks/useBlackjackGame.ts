@@ -11,8 +11,10 @@ interface GameState {
   canStand: boolean;
   canDouble: boolean;
   canSplit: boolean;
+  canSurrender: boolean;
   canDeal: boolean;
   currentBet: number;
+  originalBet: number; // Track original bet before doubling
   bankroll: number;
   playerHand: string[];
   dealerHand: string[];
@@ -22,6 +24,9 @@ interface GameState {
   message: string;
   insuranceBet: number;
   canTakeInsurance: boolean;
+  // Win/Loss tracking for display
+  lastHandResult: 'won' | 'lost' | null;
+  lastHandAmount: number;
   // Split hands
   isSplit: boolean;
   activeHand: number; // 0 or 1 for which split hand is active
@@ -41,8 +46,10 @@ export function useBlackjackGame() {
     canStand: false,
     canDouble: false,
     canSplit: false,
+    canSurrender: false,
     canDeal: false,
     currentBet: 0,
+    originalBet: 0,
     bankroll: 1000,
     playerHand: [],
     dealerHand: [],
@@ -52,6 +59,9 @@ export function useBlackjackGame() {
     message: 'Place your bet to start',
     insuranceBet: 0,
     canTakeInsurance: false,
+    // Win/Loss tracking
+    lastHandResult: null,
+    lastHandAmount: 0,
     // Split hands
     isSplit: false,
     activeHand: 0,
@@ -90,6 +100,23 @@ export function useBlackjackGame() {
   const [showDoubleLossAnimation, setShowDoubleLossAnimation] = useState<boolean>(false); // Control double bet loss animation
   const [showSplitLossAnimation, setShowSplitLossAnimation] = useState<boolean>(false); // Control split bet loss animation
 
+  // Check if surrender is strategically recommended
+  const shouldOfferSurrender = useCallback((playerValue: number, dealerUpCard: Card): boolean => {
+    // Surrender strategy from BlackjackEngine
+    // Hand 15: Surrender vs dealer 10 only
+    // Hand 16: Surrender vs dealer 9, 10, or Ace
+    
+    const dealerValue = dealerUpCard.rank === 'A' ? 11 : (dealerUpCard.rank === 'K' || dealerUpCard.rank === 'Q' || dealerUpCard.rank === 'J') ? 10 : parseInt(dealerUpCard.rank);
+    
+    if (playerValue === 15) {
+      return dealerValue === 10; // 15 vs 10
+    } else if (playerValue === 16) {
+      return dealerValue === 9 || dealerValue === 10 || dealerValue === 11; // 16 vs 9, 10, A
+    }
+    
+    return false; // No other hands should surrender
+  }, []);
+
   // Update game state when dealer check completes
   useEffect(() => {
     if (dealerCheckComplete && gameState.gameStatus === 'playing' && !gameState.canHit) {
@@ -104,10 +131,11 @@ export function useBlackjackGame() {
         canStand: !isBlackjack,
         canDouble: !isBlackjack && canDouble,
         canSplit: !isBlackjack && canSplit,
+        canSurrender: !isBlackjack && dealerCards.length > 0 && shouldOfferSurrender(gameState.handValue, dealerCards[0]),
         message: 'Choose your action'
       }));
     }
-  }, [dealerCheckComplete, gameState.gameStatus, gameState.canHit, gameState.handValue, gameState.bankroll, gameState.currentBet, playerCards]);
+  }, [dealerCheckComplete, gameState.gameStatus, gameState.canHit, gameState.handValue, gameState.bankroll, gameState.currentBet, playerCards, dealerCards, shouldOfferSurrender]);
 
   // Calculate Hi-Lo count value for a card
   const getHiLoValue = useCallback((card: Card): number => {
@@ -284,11 +312,53 @@ export function useBlackjackGame() {
     setGameState(prev => ({
       ...prev,
       currentBet: 0,
+      originalBet: 0,
       bankroll: prev.bankroll + refundAmount,
       canDeal: false,
       message: 'Place your bet to start'
     }));
   }, [gameState.currentBet]);
+
+  // Player surrenders
+  const onSurrender = useCallback(() => {
+    // Surrender loses half the bet
+    const halfBet = gameState.currentBet / 2;
+    const refund = halfBet;
+
+    // Store the previous bet amount for next hand
+    setPreviousBaseBet(gameState.currentBet);
+    setPreviousBaseChipStack([...chipStack]);
+
+    // Calculate dealer's hole card value for display
+    const dealerValue = calculateHandValue(dealerCards);
+    const dealerHandDisplay = dealerCards.map(c => `${c.rank}${c.suit[0]}`);
+
+    setGameState(prev => ({
+      ...prev,
+      bankroll: prev.bankroll + refund,
+      currentBet: 0, // Set to 0 when hand ends
+      dealerHand: dealerHandDisplay, // Show dealer's cards including hole card
+      dealerValue: dealerValue, // Show dealer's true value
+      lastHandResult: 'lost', // Track result for display
+      lastHandAmount: halfBet, // Track amount lost
+      gameStatus: 'complete',
+      canHit: false,
+      canStand: false,
+      canDouble: false,
+      canSplit: false,
+      canSurrender: false,
+      message: `Surrendered. Lost $${halfBet.toFixed(2)}. Dealer had ${dealerValue}.`
+    }));
+
+    // Trigger hole card flip to show dealer's hidden card
+    setWaitingForHoleCardFlip(true);
+
+    // Clear chip stacks after a delay
+    setTimeout(() => {
+      setChipStack([]);
+      setDoubleChipStack([]);
+    }, 2000);
+  }, [gameState.currentBet, chipStack, dealerCards, calculateHandValue]);
 
   // Take insurance bet
   const onTakeInsurance = useCallback(() => {
@@ -381,53 +451,9 @@ export function useBlackjackGame() {
       message: 'Insurance declined. Dealer checking for blackjack...'
     }));
     
-    // After declining insurance, check if dealer has blackjack
-    setTimeout(() => {
-      if (dealerCards.length >= 2) {
-        const dealerValue = calculateHandValue(dealerCards);
-        console.log('Dealer total after insurance declined:', dealerValue);
-        
-        if (dealerValue === 21) {
-          console.log('Dealer has blackjack - ending game after insurance declined');
-          setGameState(prev => ({
-            ...prev,
-            dealerValue: dealerValue,
-            gameStatus: 'complete',
-            canHit: false,
-            canStand: false,
-            canDouble: false,
-            canSplit: false,
-            message: 'Dealer has Blackjack!'
-          }));
-          // Trigger hole card flip
-          setWaitingForHoleCardFlip(true);
-        } else {
-          console.log('Dealer does not have blackjack after insurance declined - enabling player actions');
-          const isBlackjack = gameState.handValue === 21 && playerCards.length === 2;
-          const canDouble = gameState.bankroll >= gameState.currentBet;
-          const canSplit = playerCards.length === 2 && playerCards[0].rank === playerCards[1].rank && gameState.bankroll >= gameState.currentBet;
-          
-          // Show clear message about dealer check result first
-          setGameState(prev => ({
-            ...prev,
-            message: 'Dealer does not have blackjack.'
-          }));
-          
-          // After a brief pause, enable player actions
-          setTimeout(() => {
-            setGameState(prev => ({
-              ...prev,
-              canHit: !isBlackjack,
-              canStand: !isBlackjack,
-              canDouble: !isBlackjack && canDouble,
-              canSplit: !isBlackjack && canSplit,
-              message: isBlackjack ? 'Blackjack! Choose your action.' : 'Choose your action'
-            }));
-          }, 1500); // 1.5 second pause to show the result message
-        }
-      }
-    }, 2000); // 2 second pause to show the "checking" message
-  }, [dealerCards, calculateHandValue, gameState.handValue, gameState.bankroll, gameState.currentBet, playerCards]);
+    // The visual peek animation and blackjack check will be handled by InteractiveGame.tsx
+    // based on dealer showing Ace and insuranceBet being 0
+  }, []);
 
   // Deal initial cards one at a time with realistic timing
   const dealInitialCards = useCallback((currentDeck: Card[], step: number = 0, currentPlayerCards: Card[] = [], currentDealerCards: Card[] = []) => {
@@ -465,10 +491,28 @@ export function useBlackjackGame() {
         
         if (isBlackjack) {
           message = 'Push! Both have blackjack.';
-          winnings = gameState.currentBet; // Return bet
+          winnings = gameState.currentBet; // Return original bet only
         } else {
           message = 'Dealer has Blackjack!';
-          winnings = 0; // Player loses
+          winnings = 0; // Lose the bet (already deducted)
+        }
+        
+        // Store previous bet for next hand (use original bet if doubled, otherwise current bet)
+        setPreviousBaseBet(gameState.originalBet > 0 ? gameState.originalBet : gameState.currentBet);
+        setPreviousBaseChipStack([...chipStack]);
+        
+        // Calculate win/loss for display
+        let resultType: 'won' | 'lost' | null = null;
+        let resultAmount = 0;
+        
+        if (isBlackjack) {
+          // Push - both have blackjack
+          resultType = null;
+          resultAmount = 0;
+        } else {
+          // Dealer blackjack, player doesn't - loss
+          resultType = 'lost';
+          resultAmount = gameState.currentBet;
         }
         
         setGameState(prev => ({
@@ -477,6 +521,10 @@ export function useBlackjackGame() {
           dealerHand: currentDealerCards.map(c => `${c.rank}${c.suit[0]}`),
           handValue: playerValue,
           dealerValue: fullDealerValue,
+          currentBet: 0, // Set to 0 when hand ends
+          originalBet: 0,
+          lastHandResult: resultType, // Track result for display
+          lastHandAmount: resultAmount, // Track amount won/lost
           gameStatus: 'complete',
           canHit: false,
           canStand: false,
@@ -523,6 +571,7 @@ export function useBlackjackGame() {
           canStand: !isBlackjack && (!dealerShowingTen || dealerCheckComplete),
           canDouble: !isBlackjack && canDouble && (!dealerShowingTen || dealerCheckComplete),
           canSplit: !isBlackjack && canSplit && (!dealerShowingTen || dealerCheckComplete),
+          canSurrender: !isBlackjack && shouldOfferSurrender(playerValue, currentDealerCards[0]) && (!dealerShowingTen || dealerCheckComplete),
           canDeal: false,
           message: isBlackjack ? 'Blackjack! Checking for dealer blackjack...' : (dealerShowingTen && !dealerCheckComplete ? 'Dealer checking for blackjack...' : 'Choose your action')
         }));
@@ -596,13 +645,9 @@ export function useBlackjackGame() {
       dealInitialCards(currentDeck, 0);
 
     } else if (gameState.gameStatus === 'complete') {
-      // Store previous base bet (not doubled bet) for auto-default
-      const baseBetAmount = Math.floor(gameState.currentBet / (doubleChipStack.length > 0 ? 2 : 1));
-      console.log('Storing previous bet:', { currentBet: gameState.currentBet, baseBetAmount, chipStack });
-      if (baseBetAmount > 0) {
-        setPreviousBaseBet(baseBetAmount);
-        setPreviousBaseChipStack([...chipStack]);
-      }
+      // Use stored previous bet for auto-default (already stored when hand ended)
+      const baseBetAmount = previousBaseBet;
+      console.log('Using stored previous bet:', { previousBaseBet, baseBetAmount });
       
       // Auto-default to previous base bet for new hand
       const shouldAutoDefault = baseBetAmount > 0 && gameState.bankroll >= baseBetAmount;
@@ -615,6 +660,7 @@ export function useBlackjackGame() {
       setGameState(prev => ({
         ...prev,
         currentBet: shouldAutoDefault ? baseBetAmount : 0,
+        originalBet: 0, // Reset original bet for new hand
         bankroll: shouldAutoDefault ? prev.bankroll - baseBetAmount : prev.bankroll,
         playerHand: [],
         dealerHand: [],
@@ -628,6 +674,9 @@ export function useBlackjackGame() {
         canDeal: shouldAutoDefault,
         insuranceBet: 0,
         canTakeInsurance: false,
+        // Reset win/loss tracking
+        lastHandResult: null,
+        lastHandAmount: 0,
         // Reset split state
         isSplit: false,
         activeHand: 0,
@@ -637,8 +686,8 @@ export function useBlackjackGame() {
       }));
       
       // Set chip stack to previous base bet if auto-defaulting
-      if (shouldAutoDefault) {
-        setChipStack([...chipStack]); // Use current chip stack as it represents the base bet
+      if (shouldAutoDefault && previousBaseChipStack.length > 0) {
+        setChipStack([...previousBaseChipStack]); // Restore previous chip stack
       } else {
         setChipStack([]);
       }
@@ -666,7 +715,7 @@ export function useBlackjackGame() {
       setRunningCount(0);
       setTrueCount(0);
     }
-  }, [gameState.gameStatus, gameState.currentBet, isDealing, createShoe]);
+  }, [gameState.gameStatus, gameState.currentBet, isDealing, createShoe, previousBaseBet, previousBaseChipStack]);
 
   // Player hits
   const onHit = useCallback(() => {
@@ -742,6 +791,7 @@ export function useBlackjackGame() {
         canStand: !isBust && !is21,
         canDouble: false,
         canSplit: false,
+        canSurrender: false,
         gameStatus: (isBust || is21) ? 'dealer-playing' : 'playing',
         message: isBust ? 'Bust! Revealing dealer cards...' : 
                  is21 ? '21! Revealing dealer cards...' : 
@@ -763,27 +813,24 @@ export function useBlackjackGame() {
   // Move to next split hand or dealer if all hands complete
   const moveToNextSplitHand = useCallback(() => {
     setGameState(prev => {
-      const nextHandIndex = prev.activeHand + 1;
+      // For split hands, we go from right to left: 1 -> 0 -> dealer
+      const nextHandIndex = prev.activeHand - 1;
       
-      if (nextHandIndex < prev.splitHands.length) {
-        // Move to next hand
+      if (nextHandIndex >= 0) {
+        // Move to next hand (going right to left)
         const nextHand = prev.splitHands[nextHandIndex];
+        
         return {
           ...prev,
           activeHand: nextHandIndex,
           playerHand: nextHand.cards,
           handValue: nextHand.value,
-          canHit: !nextHand.isComplete,
-          canStand: !nextHand.isComplete,
-          canDouble: prev.bankroll >= prev.currentBet && nextHand.cards.length === 2,
-          canSplit: nextHand.cards.length === 2 && 
-                   splitPlayerCards[nextHandIndex] && 
-                   splitPlayerCards[nextHandIndex][0] && 
-                   splitPlayerCards[nextHandIndex][1] &&
-                   splitPlayerCards[nextHandIndex][0].rank === splitPlayerCards[nextHandIndex][1].rank &&
-                   prev.bankroll >= prev.currentBet &&
-                   prev.splitCount < 2,
-          message: `Playing hand ${nextHandIndex + 1} of ${prev.splitHands.length}. Current value: ${nextHand.value}`
+          canHit: false, // Disable actions until card is dealt
+          canStand: false,
+          canDouble: false,
+          canSplit: false,
+          canSurrender: false,
+          message: `Moving to leftmost hand. Dealing card...`
         };
       } else {
         // All hands complete - move to dealer
@@ -794,18 +841,105 @@ export function useBlackjackGame() {
           canStand: false,
           canDouble: false,
           canSplit: false,
+          canSurrender: false,
           message: 'All hands complete. Revealing dealer cards...'
         };
       }
     });
     
     // If moving to dealer, trigger hole card flip
-    if (gameState.activeHand + 1 >= gameState.splitHands.length) {
+    if (gameState.activeHand - 1 < 0) {
       setTimeout(() => {
         setWaitingForHoleCardFlip(true);
       }, 1000);
     }
   }, [gameState.activeHand, gameState.splitHands.length, splitPlayerCards]);
+
+  // UseEffect to deal ONE additional card to split hand when it becomes active (only if it has exactly 1 card)
+  useEffect(() => {
+    if (gameState.isSplit && gameState.gameStatus === 'playing' && gameState.activeHand >= 0) {
+      const activeHand = gameState.splitHands[gameState.activeHand];
+      const activeSplitCards = splitPlayerCards[gameState.activeHand];
+      
+      // Only deal ONE additional card if the hand has exactly 1 card
+      if (activeHand && activeHand.cards.length === 1 && activeSplitCards && activeSplitCards.length === 1) {
+        setTimeout(() => {
+          const { card, remainingDeck } = dealCard(deck);
+          setDeck(remainingDeck);
+          
+          // Update both split cards and game state together
+          setSplitPlayerCards(prev => {
+            const newSplitCards = [...prev];
+            newSplitCards[gameState.activeHand] = [...newSplitCards[gameState.activeHand], card];
+            
+            // Update game state with the new cards
+            const newCards = newSplitCards[gameState.activeHand];
+            const newValue = calculateHandValue(newCards);
+            
+            setGameState(prevState => {
+              const newSplitHands = [...prevState.splitHands];
+              const isBust = newValue > 21;
+              const is21 = newValue === 21;
+              
+              newSplitHands[gameState.activeHand] = {
+                ...newSplitHands[gameState.activeHand],
+                cards: newCards.map(c => `${c.rank}${c.suit[0]}`),
+                value: newValue,
+                is21: is21,
+                isBust: isBust,
+                isComplete: isBust || is21 // Complete if bust or 21
+              };
+              
+              return {
+                ...prevState,
+                splitHands: newSplitHands,
+                playerHand: newSplitHands[gameState.activeHand].cards,
+                handValue: newValue,
+                // Enable player actions after dealing the second card
+                canHit: !isBust && !is21,
+                canStand: !isBust && !is21,
+                canDouble: false, // Can't double on split hands after first card
+                canSplit: false,
+                canSurrender: false,
+                message: isBust ? `Hand ${gameState.activeHand === 1 ? 'right' : 'left'} busts!` : 
+                        is21 ? `Hand ${gameState.activeHand === 1 ? 'right' : 'left'} has 21!` :
+                        `Hand ${gameState.activeHand === 1 ? 'right' : 'left'} - Your turn (${newValue})`
+              };
+            });
+            
+            return newSplitCards;
+          });
+        }, 800); // Slightly longer delay to see the card being dealt
+      }
+    }
+  }, [gameState.activeHand, gameState.isSplit, gameState.gameStatus, gameState.splitHands, splitPlayerCards, deck, dealCard, calculateHandValue]);
+
+  // UseEffect to update split hand display when split hands change
+  useEffect(() => {
+    if (gameState.isSplit && gameState.gameStatus === 'playing' && gameState.activeHand >= 0) {
+      const activeHand = gameState.splitHands[gameState.activeHand];
+      if (activeHand && activeHand.cards.length >= 2) {
+        // Update the display for the current active hand
+        const newValue = activeHand.value;
+        const isBust = newValue > 21;
+        const is21 = newValue === 21;
+        
+        setGameState(prevState => ({
+          ...prevState,
+          playerHand: activeHand.cards,
+          handValue: newValue,
+          canHit: !isBust && !is21,
+          canStand: !isBust && !is21,
+          canDouble: false, // Can't double after dealing second card to split hand
+          canSplit: false, // Can't split again
+          canSurrender: false, // Can't surrender on split hands
+          message: isBust ? `Hand ${gameState.activeHand + 1} busts!` : 
+                  is21 ? `Hand ${gameState.activeHand + 1} has 21!` :
+                  `Hand ${gameState.activeHand + 1} - Your turn`
+        }));
+      }
+    }
+  }, [gameState.splitHands, gameState.activeHand, gameState.isSplit, gameState.gameStatus]);
 
   // UseEffect to handle dealer play without recursion
   useEffect(() => {
@@ -911,26 +1045,47 @@ export function useBlackjackGame() {
 
     if (finalDealerValue > 21) {
       message = 'Dealer busts! You win!';
-      winnings = gameState.currentBet * 2;
+      winnings = gameState.currentBet + gameState.currentBet; // Return original bet + equal winnings
       isWin = true;
     } else if (playerValue > finalDealerValue) {
       message = 'You win!';
-      winnings = gameState.currentBet * 2;
+      winnings = gameState.currentBet + gameState.currentBet; // Return original bet + equal winnings
       isWin = true;
     } else if (playerValue < finalDealerValue) {
       message = 'Dealer wins.';
-      winnings = 0;
+      winnings = 0; // Lose the bet (already deducted)
       isLoss = true;
     } else {
       message = 'Push (tie)';
-      winnings = gameState.currentBet;
+      winnings = gameState.currentBet; // Return original bet only
     }
+
+    // Store previous bet for next hand (use original bet if doubled, otherwise current bet)
+    setPreviousBaseBet(gameState.originalBet > 0 ? gameState.originalBet : gameState.currentBet);
+    setPreviousBaseChipStack([...chipStack]);
+
+    // Calculate win/loss for display
+    let resultType: 'won' | 'lost' | null = null;
+    let resultAmount = 0;
+    
+    if (isWin) {
+      resultType = 'won';
+      resultAmount = winnings - gameState.currentBet; // Net profit (winnings minus original bet)
+    } else if (isLoss) {
+      resultType = 'lost';
+      resultAmount = gameState.currentBet; // Amount lost (original bet)
+    }
+    // For push, keep resultType as null (will show as bet)
 
     setGameState(prev => ({
       ...prev,
       dealerHand: finalDealerCards.map(c => `${c.rank}${c.suit[0]}`),
       dealerValue: finalDealerValue,
       bankroll: prev.bankroll + winnings,
+      currentBet: 0, // Set to 0 when hand ends
+      originalBet: 0,
+      lastHandResult: resultType, // Track result for display
+      lastHandAmount: resultAmount, // Track amount won/lost
       gameStatus: 'complete', // Ensure game status is set to complete
       canHit: false,
       canStand: false,
@@ -1009,7 +1164,25 @@ export function useBlackjackGame() {
           winnings = gameState.currentBet; // Return bet
         } else {
           message = gameState.insuranceBet > 0 ? 'Blackjack! You win! Insurance lost.' : 'Blackjack! You win!';
-          winnings = gameState.currentBet * 2.5; // Blackjack pays 3:2
+          winnings = gameState.currentBet + (gameState.currentBet * 1.5); // Return original bet + 1.5x winnings (3:2 payout)
+        }
+        
+        // Store previous bet for next hand (use original bet if doubled, otherwise current bet)
+        setPreviousBaseBet(gameState.originalBet > 0 ? gameState.originalBet : gameState.currentBet);
+        setPreviousBaseChipStack([...chipStack]);
+        
+        // Calculate win/loss for display
+        let resultType: 'won' | 'lost' | null = null;
+        let resultAmount = 0;
+        
+        if (dealerHasBlackjack) {
+          // Push - no win/loss (will show as bet)
+          resultType = null;
+          resultAmount = 0;
+        } else {
+          // Blackjack win
+          resultType = 'won';
+          resultAmount = winnings - gameState.currentBet; // Net profit (1.5x bet)
         }
         
         setGameState(prev => ({
@@ -1017,6 +1190,10 @@ export function useBlackjackGame() {
           dealerHand: dealerCards.map(c => `${c.rank}${c.suit[0]}`),
           dealerValue: dealerValue,
           bankroll: prev.bankroll + winnings + insuranceWinnings,
+          currentBet: 0, // Set to 0 when hand ends
+          originalBet: 0,
+          lastHandResult: resultType, // Track result for display
+          lastHandAmount: resultAmount, // Track amount won/lost
           gameStatus: 'complete', // Set to complete when blackjack resolution is done
           insuranceBet: 0,
           message
@@ -1035,10 +1212,19 @@ export function useBlackjackGame() {
       } else if (gameState.handValue > 21) {
         // Player busted - only reveal dealer cards, no hitting
         const dealerValue = calculateHandValue(dealerCards);
+        
+        // Store previous bet for next hand (use original bet if doubled, otherwise current bet)
+        setPreviousBaseBet(gameState.originalBet > 0 ? gameState.originalBet : gameState.currentBet);
+        setPreviousBaseChipStack([...chipStack]);
+        
         setGameState(prev => ({
           ...prev,
           dealerHand: dealerCards.map(c => `${c.rank}${c.suit[0]}`),
           dealerValue: dealerValue,
+          currentBet: 0, // Set to 0 when hand ends
+          originalBet: 0,
+          lastHandResult: 'lost', // Track result for display
+          lastHandAmount: gameState.currentBet, // Track amount lost
           gameStatus: 'complete', // Set to complete when player busts
           message: 'Bust! You lose.'
         }));
@@ -1121,6 +1307,7 @@ export function useBlackjackGame() {
         canStand: false,
         canDouble: false,
         canSplit: false,
+        canSurrender: false,
         message: 'Revealing dealer cards...'
       }));
       
@@ -1132,11 +1319,13 @@ export function useBlackjackGame() {
   const onDouble = useCallback(() => {
     if (gameState.bankroll >= gameState.currentBet) {
       // Step 1: Place the double bet chips and update game state
-      setDoubleChipStack([...chipStack]);
+      // Create a single chip representing the double bet amount (equal to original bet)
+      setDoubleChipStack([gameState.currentBet]);
       
       setGameState(prev => ({
         ...prev,
         currentBet: prev.currentBet * 2,
+        originalBet: prev.currentBet, // Store original bet before doubling
         bankroll: prev.bankroll - prev.currentBet,
         canHit: false,
         canStand: false,
@@ -1189,28 +1378,21 @@ export function useBlackjackGame() {
         currentBet: prev.currentBet * 2, // Double the total bet
         bankroll: prev.bankroll - prev.currentBet, // Deduct split bet
         isSplit: true,
-        activeHand: 0, // Start with first hand
+        activeHand: 1, // Start with rightmost hand (index 1)
         splitHands: [splitHand1, splitHand2],
         splitCount: 1, // One split made (2 hands total)
-        playerHand: splitHand1.cards, // Show first hand initially
-        handValue: splitHand1.value,
+        playerHand: splitHand2.cards, // Show rightmost hand initially
+        handValue: splitHand2.value,
         canHit: true,
         canStand: true,
         canDouble: prev.bankroll >= prev.currentBet, // Can double if bankroll allows
         canSplit: false, // Will check after dealing additional cards
-        message: `Split! Playing hand 1 of 2. Current value: ${splitHand1.value}`
+        message: `Split! Playing rightmost hand first. Current value: ${splitHand2.value}`
       }));
       
-      // Deal one card to each split hand after a brief pause
+      // Deal one card to the rightmost hand only (hand index 1)
       setTimeout(() => {
-        dealCardToSplitHand(0); // Deal to first hand
-        setTimeout(() => {
-          dealCardToSplitHand(1); // Deal to second hand
-          setTimeout(() => {
-            // After dealing, update game state for first hand play
-            updateSplitHandDisplay(0);
-          }, 800);
-        }, 800);
+        dealCardToSplitHand(1); // Deal to rightmost hand first
       }, 1000);
     }
   }, [gameState.bankroll, gameState.currentBet, playerCards, chipStack, calculateHandValue]);
@@ -1231,12 +1413,16 @@ export function useBlackjackGame() {
       
       setGameState(prevState => {
         const newSplitHands = [...prevState.splitHands];
+        const isBust = newValue > 21;
+        const is21 = newValue === 21;
+        
         newSplitHands[handIndex] = {
           ...newSplitHands[handIndex],
           cards: newCards.map(c => `${c.rank}${c.suit[0]}`),
           value: newValue,
-          is21: newValue === 21,
-          isBust: newValue > 21
+          is21: is21,
+          isBust: isBust,
+          isComplete: isBust || is21 // Complete if bust or 21
         };
         
         return {
@@ -1263,6 +1449,29 @@ export function useBlackjackGame() {
                         prev.bankroll >= prev.currentBet &&
                         prev.splitCount < 2; // Max 2 total hands
         
+        // Check if current hand is complete (bust or 21)
+        if (currentHand.isComplete) {
+          // If hand is complete, automatically move to next hand after a delay
+          setTimeout(() => {
+            moveToNextSplitHand();
+          }, currentHand.isBust ? 1000 : 2000); // Shorter delay for bust, longer for 21
+          
+          return {
+            ...prev,
+            activeHand: handIndex,
+            playerHand: currentHand.cards,
+            handValue: currentHand.value,
+            canHit: false,
+            canStand: false,
+            canDouble: false,
+            canSplit: false,
+            canSurrender: false,
+            message: currentHand.isBust ? 
+              `Hand ${handIndex + 1} busts! Moving to next hand...` : 
+              `Hand ${handIndex + 1} gets 21! Moving to next hand...`
+          };
+        }
+        
         return {
           ...prev,
           activeHand: handIndex,
@@ -1272,13 +1481,75 @@ export function useBlackjackGame() {
           canStand: !currentHand.isComplete && !currentHand.isBust && !currentHand.is21,
           canDouble: canDouble && !currentHand.isComplete,
           canSplit: canSplit && !currentHand.isComplete,
+          canSurrender: !currentHand.isComplete && currentSplitCards[handIndex] && currentSplitCards[handIndex].length === 2 && shouldOfferSurrender(currentHand.value, dealerCards[0]),
           message: `Playing hand ${handIndex + 1} of ${prev.splitHands.length}. Current value: ${currentHand.value}`
         };
       });
       
       return currentSplitCards; // Return unchanged
     });
-  }, []);
+  }, [moveToNextSplitHand, shouldOfferSurrender, dealerCards]);
+
+  // Handle dealer blackjack after peek
+  const handleDealerBlackjack = useCallback(() => {
+    if (dealerCards.length >= 2) {
+      const dealerValue = calculateHandValue(dealerCards);
+      console.log('handleDealerBlackjack called - dealer value:', dealerValue);
+      
+      if (dealerValue === 21) {
+        // Dealer has blackjack - end the game immediately
+        const playerValue = gameState.handValue;
+        let message = '';
+        let winnings = 0;
+        
+        if (playerValue === 21) {
+          message = 'Push! Both have blackjack.';
+          winnings = gameState.currentBet; // Return bet
+        } else {
+          message = 'Dealer has blackjack! You lose.';
+          winnings = 0; // Lose the bet
+        }
+        
+        // Store previous bet for next hand (use original bet if doubled, otherwise current bet)
+        setPreviousBaseBet(gameState.originalBet > 0 ? gameState.originalBet : gameState.currentBet);
+        setPreviousBaseChipStack([...chipStack]);
+        
+        // Calculate win/loss for display
+        let resultType: 'won' | 'lost' | null = null;
+        let resultAmount = 0;
+        
+        if (playerValue === 21) {
+          // Push - no win/loss (will show as bet)
+          resultType = null;
+          resultAmount = 0;
+        } else {
+          // Loss
+          resultType = 'lost';
+          resultAmount = gameState.currentBet; // Amount lost
+        }
+        
+        setGameState(prev => ({
+          ...prev,
+          dealerHand: dealerCards.map(c => `${c.rank}${c.suit[0]}`),
+          dealerValue: dealerValue,
+          bankroll: prev.bankroll + winnings,
+          currentBet: 0, // Set to 0 when hand ends
+          originalBet: 0,
+          lastHandResult: resultType, // Track result for display
+          lastHandAmount: resultAmount, // Track amount won/lost
+          gameStatus: 'complete', // End the game
+          canHit: false,
+          canStand: false,
+          canDouble: false,
+          canSplit: false,
+          message
+        }));
+        
+        return true; // Dealer had blackjack
+      }
+    }
+    return false; // No blackjack
+  }, [dealerCards, gameState.handValue, gameState.currentBet, gameState.originalBet, chipStack]);
 
   return {
     gameState,
@@ -1289,6 +1560,7 @@ export function useBlackjackGame() {
     onStand,
     onDouble,
     onSplit,
+    onSurrender,
     onTakeInsurance,
     onDeclineInsurance,
     playerCards,
@@ -1296,6 +1568,7 @@ export function useBlackjackGame() {
     splitPlayerCards,
     startDealerPlay,
     waitingForHoleCardFlip,
+    handleDealerBlackjack,
     isDealing,
     isPlayerBlackjack,
     chipStack,

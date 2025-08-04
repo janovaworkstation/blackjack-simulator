@@ -102,6 +102,14 @@ The project follows a modern, web-first architecture, starting with a client-sid
 - **Quality Assurance**: All tests passing (97 tests), lint errors resolved
 - **Code Quality**: Professional-grade codebase with comprehensive error handling
 
+### ✅ **Post-Launch Bug Fixes & Enhancements**
+- **Double Down Bet Reversion**: Fixed bet amount reversion to original amount after doubling
+- **Dealer Blackjack Detection**: Fixed game hanging when dealer shows Ace and has blackjack
+- **Win/Loss Display**: Enhanced text display to show actual win/loss amounts instead of "Bet: $0"
+- **Split Functionality**: Corrected hand order (rightmost first) and sequential play mechanics
+- **Bankroll Calculations**: Fixed win/loss calculations for accurate 3:2 blackjack payouts
+- **Test Coverage**: Added comprehensive tests for new functionality (originalBet tracking, handleDealerBlackjack)
+
 ### 📱 **Mobile Optimization Roadmap Planned**
 - **Comprehensive Analysis**: Identified mobile compatibility challenges and solutions
 - **Phase 4.1 Planning**: Detailed 4-phase mobile optimization plan in TASKS.md
