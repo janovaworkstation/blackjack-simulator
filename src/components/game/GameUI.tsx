@@ -11,6 +11,8 @@ interface GameUIProps {
   onClearBet?: () => void;
   onTakeInsurance?: () => void;
   onDeclineInsurance?: () => void;
+  onTakeEvenMoney?: () => void;
+  onDeclineEvenMoney?: () => void;
   isDealing?: boolean;
   gameState: {
     canHit: boolean;
@@ -25,10 +27,11 @@ interface GameUIProps {
     dealerHand: string[];
     handValue: number;
     dealerValue: number;
-    gameStatus: 'betting' | 'playing' | 'dealer-playing' | 'complete' | 'insurance-offered';
+    gameStatus: 'betting' | 'playing' | 'dealer-playing' | 'complete' | 'insurance-offered' | 'even-money-offered';
     message: string;
     insuranceBet: number;
     canTakeInsurance: boolean;
+    canTakeEvenMoney: boolean;
     lastHandResult: 'won' | 'lost' | null;
     lastHandAmount: number;
   };
@@ -40,9 +43,12 @@ interface GameUIProps {
   // Card counting
   runningCount?: number;
   trueCount?: number;
+  // Testing mode
+  isTestingMode?: boolean;
+  onToggleTestingMode?: () => void;
 }
 
-export function GameUI({ onHit, onStand, onDouble, onSplit, onSurrender, onDeal, onBet, onClearBet, onTakeInsurance, onDeclineInsurance, isDealing = false, gameState, cardsRemaining = 0, totalCardsInShoe = 0, penetration = 0, needsShuffle = false, runningCount = 0, trueCount = 0 }: GameUIProps) {
+export function GameUI({ onHit, onStand, onDouble, onSplit, onSurrender, onDeal, onBet, onClearBet, onTakeInsurance, onDeclineInsurance, onTakeEvenMoney, onDeclineEvenMoney, isDealing = false, gameState, cardsRemaining = 0, totalCardsInShoe = 0, penetration = 0, needsShuffle = false, runningCount = 0, trueCount = 0, isTestingMode = false, onToggleTestingMode }: GameUIProps) {
   const chipValues = [1, 5, 25, 100];
 
   return (
@@ -73,6 +79,26 @@ export function GameUI({ onHit, onStand, onDouble, onSplit, onSurrender, onDeal,
               </div>
               {needsShuffle && <div className="text-yellow-400">🔄 Shuffle Next</div>}
             </div>
+            {/* Testing Mode Toggle */}
+            {onToggleTestingMode && (
+              <div className="border-t border-gray-600 pt-2 mt-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-gray-300">Testing Mode</span>
+                  <button
+                    onClick={onToggleTestingMode}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                      isTestingMode ? 'bg-green-600' : 'bg-gray-600'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                        isTestingMode ? 'translate-x-5' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -189,8 +215,8 @@ export function GameUI({ onHit, onStand, onDouble, onSplit, onSurrender, onDeal,
       )}
 
       {/* Action Buttons */}
-      {gameState.gameStatus === 'playing' && (
-        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 pointer-events-auto">
+      {(gameState.gameStatus === 'playing' || gameState.gameStatus === 'insurance-offered') && (
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 pointer-events-auto">
           <div className="bg-black bg-opacity-75 p-6 rounded-lg">
             <div className="flex space-x-4">
               <button
@@ -271,7 +297,7 @@ export function GameUI({ onHit, onStand, onDouble, onSplit, onSurrender, onDeal,
       {gameState.gameStatus === 'insurance-offered' && (() => {
         const insuranceAmount = Math.floor(gameState.currentBet / 2);
         return (
-          <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 pointer-events-auto">
+          <div className="absolute bottom-40 left-1/2 transform -translate-x-1/2 pointer-events-auto">
             <div className="bg-black bg-opacity-90 p-6 rounded-lg text-center">
               <div className="text-white mb-4">
                 <div className="text-lg font-semibold mb-2">Insurance Available</div>
@@ -302,6 +328,42 @@ export function GameUI({ onHit, onStand, onDouble, onSplit, onSurrender, onDeal,
           </div>
         );
       })()}
+
+      {/* Even Money Offer - When player has blackjack and dealer shows Ace */}
+      {gameState.gameStatus === 'even-money-offered' && (
+        <div className="absolute bottom-40 left-1/2 transform -translate-x-1/2 pointer-events-auto">
+          <div className="bg-black bg-opacity-90 p-6 rounded-lg text-center">
+            <div className="text-white mb-4">
+              <div className="text-lg font-semibold mb-2">Even Money Available</div>
+              <div className="text-sm mb-4">You have blackjack! Take even money (1:1) for guaranteed win?</div>
+              <div className="text-xs text-gray-300 mb-4">
+                Even money: ${gameState.currentBet} guaranteed vs Risk push for ${Math.floor(gameState.currentBet * 1.5)} payout
+              </div>
+            </div>
+            <div className="flex space-x-4 justify-center">
+              <button
+                onClick={onTakeEvenMoney}
+                disabled={!gameState.canTakeEvenMoney}
+                className={`
+                  px-6 py-3 rounded-lg font-semibold transition-all
+                  ${gameState.canTakeEvenMoney
+                    ? 'bg-green-600 hover:bg-green-700 text-white cursor-pointer'
+                    : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                  }
+                `}
+              >
+                Take Even Money (${gameState.currentBet})
+              </button>
+              <button
+                onClick={onDeclineEvenMoney}
+                className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-all cursor-pointer"
+              >
+                Risk It (3:2 payout)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Dealer Playing - Show status without New Hand button */}
       {gameState.gameStatus === 'dealer-playing' && (

@@ -294,6 +294,78 @@ This document serves as the master task list for developing the Blackjack Strate
     - [✅] Successfully deployed and accessible
     - [✅] Performance optimized for smooth 3D rendering
 
+- [ ] **1.4.3.0** Testing Mode Implementation
+  **Timeline**: 6 hours | **Dependencies**: Interactive Game (1.4.3)
+  **Purpose**: Enable manual card selection for efficient testing of specific game scenarios
+  
+  - [ ] **Core Testing Mode Infrastructure**
+    - [ ] Add `isTestingMode` state to useBlackjackGame hook
+    - [ ] Create `testingCards` queue system for predetermined cards
+    - [ ] Implement `setTestingMode()` and `setTestingCards()` functions
+    - [ ] Modify `dealInitialCards()` to use test cards when available
+    - [ ] Update `dealCard()` to pull from test queue in testing mode
+    - [ ] Add fallback to random dealing when test cards exhausted
+  
+  - [ ] **Testing Panel UI Component**
+    - [ ] Create `TestingPanel.tsx` component with card selection interface
+    - [ ] Add dropdowns for player cards (2), dealer cards (2)
+    - [ ] Implement additional cards queue for hits/splits
+    - [ ] Add visual card preview before dealing
+    - [ ] Create "Apply & Deal" button to confirm selections
+    - [ ] Add validation to prevent duplicate cards
+  
+  - [ ] **Pre-defined Test Scenarios**
+    - [ ] Create `testingScenarios.ts` utility file
+    - [ ] Surrender scenarios: Player 15/16 vs Dealer 10/A
+    - [ ] Insurance scenarios: Dealer Ace variations
+    - [ ] Blackjack scenarios: Player/Dealer/Push combinations
+    - [ ] Split scenarios: All pair combinations (A-A through K-K)
+    - [ ] Double down scenarios: 9/10/11 vs various dealer cards
+    - [ ] Bust scenarios: High value hands for testing
+  
+  - [ ] **UI Integration**
+    - [ ] Add "Testing Mode" toggle button to GameUI
+    - [ ] Conditionally show TestingPanel when mode is active
+    - [ ] Integrate with existing betting interface layout
+    - [ ] Update InteractiveGame to pass testing props
+    - [ ] Add visual indicator when testing mode is active
+  
+  - [ ] **Testing & Documentation**
+    - [ ] Add unit tests for testing mode functionality
+    - [ ] Create integration tests for scenario selection
+    - [ ] Document testing mode usage in README
+    - [ ] Add testing scenarios guide for QA
+
+  - [ ] **Test Quick Scenarios**
+    - [ ] **Surrender Scenarios**
+      - [ ] Surrender 16 vs 10
+      - [ ] Surrender 15 vs Ace
+      - [ ] Surrender 16 vs Ace
+    - [ ] **Insurance Scenarios**
+      - [ ] Insurance - Dealer BJ
+      - [ ] Insurance - No BJ
+      - [ ] Insurance - Player BJ
+    - [ ] **Blackjack Scenarios**
+      - [ ] Player Blackjack
+      - [ ] Dealer Blackjack
+      - [ ] Blackjack Push
+    - [ ] **Split Scenarios**
+      - [ ] Split Aces
+      - [ ] Split 8s
+      - [ ] Split 10s Test
+      - [ ] Split then Double
+    - [ ] **Double Down Scenarios**
+      - [ ] Double 11 vs 6
+      - [ ] Double 10 vs 9
+      - [ ] Double 9 vs 6
+      - [ ] Soft Double A7 vs 6
+    - [ ] **Bust Scenarios**
+      - [ ] Player Bust Test
+      - [ ] Dealer Bust Test
+    - [ ] **Edge Cases**
+      - [ ] Dealer Soft 17
+      - [ ] 5-Card Charlie Test
+
 - [ ] **1.4.3.1** Multi-Hand Gameplay Implementation
   - [ ] Expand game logic to support multiple player positions (1-5 hands)
   - [ ] Create individual betting areas for each position

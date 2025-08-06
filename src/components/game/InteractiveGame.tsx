@@ -3,6 +3,7 @@ import { BlackjackTable3D } from './BlackjackTable3D';
 import GameUI from './GameUI';
 import Card3D from './Card3D';
 import Chip3D from './Chip3D';
+import TestingPanel from './TestingPanel';
 import { useBlackjackGame } from '../../hooks/useBlackjackGame';
 import { useSpring, animated } from '@react-spring/three';
 import { useFrame } from '@react-three/fiber';
@@ -100,12 +101,16 @@ function InteractiveTable({
   onDealerCardFlipped,
   chipStack,
   doubleChipStack,
+  doubledHandIndex,
   insuranceChipStack,
   splitChipStack,
+  additionalSplitChipStacks,
   winningsChipStack,
   doubleWinningsChipStack,
+  splitWinningsChipStack,
   showWinningsAnimation,
   showDoubleWinningsAnimation,
+  showSplitWinningsAnimation,
   showLossAnimation,
   showInsuranceLossAnimation,
   showDoubleLossAnimation,
@@ -123,12 +128,16 @@ function InteractiveTable({
   onDealerCardFlipped: () => void;
   chipStack: number[];
   doubleChipStack: number[];
+  doubledHandIndex: number;
   insuranceChipStack: number[];
   splitChipStack: number[];
+  additionalSplitChipStacks: number[][];
   winningsChipStack: number[];
   doubleWinningsChipStack: number[];
+  splitWinningsChipStack: number[][];
   showWinningsAnimation: boolean;
   showDoubleWinningsAnimation: boolean;
+  showSplitWinningsAnimation: boolean[];
   showLossAnimation: boolean;
   showInsuranceLossAnimation: boolean;
   showDoubleLossAnimation: boolean;
@@ -143,10 +152,16 @@ function InteractiveTable({
       <BlackjackTable3D>
         <Suspense fallback={null}>
           {/* Player cards - handle both regular and split hands */}
+          {console.log('Rendering player cards:', {
+            isSplit: gameState.isSplit,
+            playerCards: playerCards,
+            splitPlayerCards: splitPlayerCards,
+            gameStatus: gameState.gameStatus
+          })}
           {!gameState.isSplit ? (
             // Regular hand
             playerCards.map((card, index) => {
-              console.log(`Rendering player card ${index}:`, card);
+              console.log(`Rendering regular player card ${index}:`, card);
               // Dynamic spacing based on number of cards - back to overlapping style
               const cardCount = playerCards.length;
               const baseSpacing = 1.0;
@@ -182,8 +197,12 @@ function InteractiveTable({
               hand.map((card, cardIndex) => {
                 console.log(`Rendering split hand ${handIndex} card ${cardIndex}:`, card);
                 
-                // Position split hands side by side
-                const handOffset = handIndex === 0 ? -2 : 2; // Left and right positions
+                // Position split hands side by side (support up to 4 hands)
+                const totalHands = splitPlayerCards.length;
+                const handPositions = totalHands === 2 ? [-2, 2] : 
+                                    totalHands === 3 ? [-3, 0, 3] : 
+                                    [-3.5, -1, 1, 3.5]; // Up to 4 hands
+                const handOffset = handPositions[handIndex] || 0;
                 const cardSpacing = 0.4;
                 const xPos = handOffset + (cardIndex * cardSpacing);
                 
@@ -244,13 +263,17 @@ function InteractiveTable({
           })}
         </Suspense>
         
-        {/* Primary betting chips - positioned based on split status */}
+        {/* Primary betting chips - positioned under first hand */}
         {chipStack.map((chipValue, index) => {
           let xPos = 0;
           if (doubleChipStack.length > 0) xPos = -0.4;
           if (gameState.isSplit) {
-            // For split hands, position bet under rightmost hand (index 1)
-            xPos = 2; // Align with rightmost hand position
+            // Use EXACT same positioning as cards
+            const totalHands = splitPlayerCards.length;
+            const handPositions = totalHands === 2 ? [-2, 2] : 
+                                totalHands === 3 ? [-3, 0, 3] : 
+                                [-3.5, -1, 1, 3.5]; // Up to 4 hands
+            xPos = handPositions[0]; // Position under hand 0 (first hand)
           }
           
           return showLossAnimation ? (
@@ -270,12 +293,20 @@ function InteractiveTable({
           );
         })}
         
-        {/* Split bet chips - positioned under leftmost hand */}
-        {splitChipStack.map((chipValue, index) => 
-          showSplitLossAnimation ? (
+        {/* Split bet chips - positioned under LAST hand when split */}
+        {gameState.isSplit && splitPlayerCards.length >= 2 && splitChipStack.map((chipValue, index) => {
+          // Use EXACT same positioning as cards
+          const totalHands = splitPlayerCards.length;
+          const handPositions = totalHands === 2 ? [-2, 2] : 
+                              totalHands === 3 ? [-3, 0, 3] : 
+                              [-3.5, -1, 1, 3.5]; // Up to 4 hands
+          const lastHandIndex = totalHands - 1;
+          const xPos = handPositions[lastHandIndex]; // Position under LAST hand (rightmost)
+          
+          return showSplitLossAnimation ? (
             <AnimatedChip 
               key={`split-chip-${index}`}
-              position={[-2, 2.14 + (index * 0.03), 3.5]} // Align with leftmost hand position
+              position={[xPos, 2.14 + (index * 0.03), 3.5]}
               value={chipValue}
               isLoss={true}
               showAnimation={showSplitLossAnimation}
@@ -283,18 +314,50 @@ function InteractiveTable({
           ) : (
             <Chip3D 
               key={`split-chip-${index}`}
-              position={[-2, 2.14 + (index * 0.03), 3.5]} // Align with leftmost hand position
+              position={[xPos, 2.14 + (index * 0.03), 3.5]}
               value={chipValue} 
             />
-          )
-        )}
+          );
+        })}
         
-        {/* Double bet chips - second stack next to primary */}
-        {doubleChipStack.map((chipValue, index) => 
-          showDoubleLossAnimation ? (
+        {/* Additional split bet chips - positioned under hands 2+ */}
+        {gameState.isSplit && additionalSplitChipStacks.map((chipStack, stackIndex) => {
+          // Use EXACT same positioning as cards
+          const totalHands = splitPlayerCards.length;
+          const handPositions = totalHands === 2 ? [-2, 2] : 
+                              totalHands === 3 ? [-3, 0, 3] : 
+                              [-3.5, -1, 1, 3.5]; // Up to 4 hands
+          
+          // Additional chip stacks fill the middle hands (between first and last)
+          // For 3 hands: stackIndex 0 maps to middle hand (index 1)
+          // For 4 hands: stackIndex 0 maps to hand 1, stackIndex 1 maps to hand 2
+          const handIndex = stackIndex + 1; // Middle hands start at index 1
+          const xPos = handPositions[handIndex];
+          
+          console.log(`Rendering additional chip stack ${stackIndex} for hand ${handIndex} at position ${xPos}`);
+          
+          return chipStack.map((chipValue, chipIndex) => (
+            <Chip3D 
+              key={`additional-split-${stackIndex}-chip-${chipIndex}`}
+              position={[xPos, 2.14 + (chipIndex * 0.03), 3.5]}
+              value={chipValue} 
+            />
+          ));
+        })}
+        
+        {/* Double bet chips - positioned based on which hand was doubled */}
+        {doubleChipStack.map((chipValue, index) => {
+          // Calculate position based on doubled hand index
+          let xPos = 0.4; // Default position for regular hands
+          if (gameState.isSplit && doubledHandIndex >= 0) {
+            // For split hands: position next to the doubled hand's bet
+            xPos = doubledHandIndex === 0 ? -1.6 : 2.4; // Next to left (-2) or right (+2) hand
+          }
+          
+          return showDoubleLossAnimation ? (
             <AnimatedChip 
               key={`double-chip-${index}`}
-              position={[0.4, 2.14 + (index * 0.03), 3.5]} // Stack chips vertically, offset right
+              position={[xPos, 2.14 + (index * 0.03), 3.5]}
               value={chipValue}
               isLoss={true}
               showAnimation={showDoubleLossAnimation}
@@ -302,11 +365,11 @@ function InteractiveTable({
           ) : (
             <Chip3D 
               key={`double-chip-${index}`}
-              position={[0.4, 2.14 + (index * 0.03), 3.5]} // Stack chips vertically, offset right
+              position={[xPos, 2.14 + (index * 0.03), 3.5]}
               value={chipValue} 
             />
-          )
-        )}
+          );
+        })}
         
         {/* Insurance bet chips - positioned in front of main bet (closer to player) */}
         {insuranceChipStack.map((chipValue, index) => 
@@ -348,6 +411,23 @@ function InteractiveTable({
             showAnimation={showDoubleWinningsAnimation}
           />
         ))}
+        
+        {/* Split hand winnings chips - positioned next to each split hand's bet */}
+        {gameState.isSplit && splitWinningsChipStack.map((handChips, handIndex) => 
+          handChips.map((chipValue, chipIndex) => {
+            // Position winnings next to each hand's bet: left hand at -2, right hand at +2
+            const xPos = handIndex === 0 ? -1.2 : 2.8; // Left of left bet, right of right bet
+            return (
+              <AnimatedChip 
+                key={`split-winnings-${handIndex}-chip-${chipIndex}`}
+                position={[xPos, 2.14 + (chipIndex * 0.03), 3.5]}
+                value={chipValue}
+                isWinning={true}
+                showAnimation={showSplitWinningsAnimation[handIndex]}
+              />
+            );
+          })
+        )}
       </BlackjackTable3D>
     </div>
   );
@@ -366,6 +446,8 @@ export function InteractiveGame() {
     onSurrender,
     onTakeInsurance,
     onDeclineInsurance,
+    onTakeEvenMoney,
+    onDeclineEvenMoney,
     playerCards,
     dealerCards,
     splitPlayerCards,
@@ -376,10 +458,14 @@ export function InteractiveGame() {
     doubleChipStack,
     insuranceChipStack,
     splitChipStack,
+    additionalSplitChipStacks,
+    doubledHandIndex,
     winningsChipStack,
     doubleWinningsChipStack,
+    splitWinningsChipStack,
     showWinningsAnimation,
     showDoubleWinningsAnimation,
+    showSplitWinningsAnimation,
     showLossAnimation,
     showInsuranceLossAnimation,
     showDoubleLossAnimation,
@@ -392,7 +478,12 @@ export function InteractiveGame() {
     runningCount,
     trueCount,
     setDealerCheckComplete,
-    handleDealerBlackjack
+    handleDealerBlackjack,
+    isTestingMode,
+    toggleTestingMode,
+    applyTestCards,
+    clearTestCards,
+    applyTestCardsAndDeal
   } = useBlackjackGame();
 
   // State for dealer card flip animation
@@ -401,6 +492,7 @@ export function InteractiveGame() {
   const [shouldPeekDealerCard, setShouldPeekDealerCard] = useState(false);
   const [isDealerPeeking, setIsDealerPeeking] = useState(false);
   const [hasCheckedForBlackjack, setHasCheckedForBlackjack] = useState(false);
+  const [showNoBlackjackMessage, setShowNoBlackjackMessage] = useState(false);
 
   // Log game state changes for debugging
   useEffect(() => {
@@ -415,6 +507,7 @@ export function InteractiveGame() {
       setShouldPeekDealerCard(false);
       setIsDealerPeeking(false);
       setHasCheckedForBlackjack(false);
+      setShowNoBlackjackMessage(false);
     }
   }, [gameState.gameStatus]);
 
@@ -426,8 +519,8 @@ export function InteractiveGame() {
       if (dealerUpCard && (
         // 10-value cards (immediate peek)
         dealerUpCard.rank === '10' || dealerUpCard.rank === 'J' || dealerUpCard.rank === 'Q' || dealerUpCard.rank === 'K' ||
-        // Ace (peek after insurance is declined - insurance bet will be 0)
-        (dealerUpCard.rank === 'A' && gameState.insuranceBet === 0)
+        // Ace (only peek after insurance is declined, not automatically)
+        (dealerUpCard.rank === 'A' && gameState.insuranceBet === 0 && gameState.gameStatus === 'playing')
       )) {
         console.log('Dealer showing peek-worthy card - triggering peek animation');
         setDealerCheckComplete(false); // Reset check state
@@ -490,12 +583,16 @@ export function InteractiveGame() {
         setDealerHoleCardFlipped(true);
       }, 500);
     } else {
-      console.log('Dealer does not have blackjack - enabling player actions');
-      // No blackjack - enable player actions after a brief delay
+      console.log('Dealer does not have blackjack - showing message');
+      // Show "no blackjack" message first
+      setShowNoBlackjackMessage(true);
+      
+      // After showing the message, enable player actions
       setTimeout(() => {
+        setShowNoBlackjackMessage(false);
         setDealerCheckComplete(true);
         console.log('Player actions enabled after dealer check');
-      }, 500);
+      }, 2000); // Show message for 2 seconds
     }
     
     // Reset the peeking state
@@ -517,12 +614,16 @@ export function InteractiveGame() {
         onDealerCardFlipped={handleDealerCardFlipped}
         chipStack={chipStack}
         doubleChipStack={doubleChipStack}
+        doubledHandIndex={doubledHandIndex}
         insuranceChipStack={insuranceChipStack}
         splitChipStack={splitChipStack}
+        additionalSplitChipStacks={additionalSplitChipStacks}
         winningsChipStack={winningsChipStack}
         doubleWinningsChipStack={doubleWinningsChipStack}
+        splitWinningsChipStack={splitWinningsChipStack}
         showWinningsAnimation={showWinningsAnimation}
         showDoubleWinningsAnimation={showDoubleWinningsAnimation}
+        showSplitWinningsAnimation={showSplitWinningsAnimation}
         showLossAnimation={showLossAnimation}
         showInsuranceLossAnimation={showInsuranceLossAnimation}
         showDoubleLossAnimation={showDoubleLossAnimation}
@@ -552,12 +653,14 @@ export function InteractiveGame() {
       )}
       
       {/* Dealer Hand Value - Below dealer cards */}
-      {dealerCards.length > 0 && (gameState.dealerValue > 0 || isDealerPeeking) && (
+      {dealerCards.length > 0 && (gameState.dealerValue > 0 || isDealerPeeking || showNoBlackjackMessage) && (
         <div className="absolute left-1/2 transform -translate-x-1/2 top-[38%] pointer-events-none">
           <div className="bg-black bg-opacity-75 text-white px-4 py-2 rounded-lg">
             <div className="text-2xl font-bold text-center">
               {isDealerPeeking ? (
                 <span className="text-yellow-300">CHECKING FOR BLACKJACK</span>
+              ) : showNoBlackjackMessage ? (
+                <span className="text-green-400">DEALER DOES NOT HAVE BLACKJACK</span>
               ) : gameState.gameStatus === 'playing' && !dealerHoleCardFlipped ? (
                 <span>{gameState.dealerValue}</span>
               ) : gameState.dealerValue > 21 ? (
@@ -573,7 +676,7 @@ export function InteractiveGame() {
       )}
 
       {/* Current bet amount display under betting circle */}
-      {(chipStack.length > 0 || gameState.currentBet > 0) && (
+      {(chipStack.length > 0 || gameState.currentBet > 0) && !gameState.isSplit && (
         <div className="absolute left-1/2 transform -translate-x-1/2 bottom-[30%] pointer-events-none">
           <div className="bg-black bg-opacity-75 text-white px-3 py-1 rounded">
             <div className="text-sm font-bold text-center">
@@ -585,6 +688,39 @@ export function InteractiveGame() {
           </div>
         </div>
       )}
+
+      {/* Split hand bet displays - show numbered bets for each hand */}
+      {gameState.isSplit && gameState.currentBet > 0 && splitPlayerCards.map((hand, handIndex) => {
+        // Use EXACT same positioning as cards and chips
+        const totalHands = splitPlayerCards.length;
+        const handPositions = totalHands === 2 ? [-2, 2] : 
+                            totalHands === 3 ? [-3, 0, 3] : 
+                            [-3.5, -1, 1, 3.5]; // Up to 4 hands
+        const xPos = handPositions[handIndex];
+        
+        // Calculate bet amount for this hand
+        const baseBetPerHand = gameState.currentBet / totalHands;
+        const isDoubled = doubledHandIndex === handIndex;
+        const betAmount = isDoubled ? baseBetPerHand * 2 : baseBetPerHand;
+        
+        // Convert 3D table position to screen position
+        // Increase scale factor significantly to spread labels out
+        const screenOffsetX = xPos * 80; // Increased scale factor for proper spacing
+        
+        return (
+          <div 
+            key={`hand-${handIndex}-bet-label`}
+            className="absolute left-1/2 bottom-[30%] pointer-events-none"
+            style={{ transform: `translate(${screenOffsetX}px, 0)` }}
+          >
+            <div className="bg-black bg-opacity-75 text-white px-3 py-1 rounded">
+              <div className="text-sm font-bold text-center">
+                Hand {totalHands - handIndex}: ${Math.round(betAmount)}
+              </div>
+            </div>
+          </div>
+        );
+      })}
 
       {/* Game UI Overlay */}
       <GameUI
@@ -598,6 +734,8 @@ export function InteractiveGame() {
         onClearBet={onClearBet}
         onTakeInsurance={onTakeInsurance}
         onDeclineInsurance={onDeclineInsurance}
+        onTakeEvenMoney={onTakeEvenMoney}
+        onDeclineEvenMoney={onDeclineEvenMoney}
         isDealing={isDealing}
         gameState={gameState}
         cardsRemaining={cardsRemaining}
@@ -606,6 +744,16 @@ export function InteractiveGame() {
         needsShuffle={needsShuffle}
         runningCount={runningCount}
         trueCount={trueCount}
+        isTestingMode={isTestingMode}
+        onToggleTestingMode={toggleTestingMode}
+      />
+      <TestingPanel
+        isTestingMode={isTestingMode}
+        onToggleTestingMode={toggleTestingMode}
+        onApplyTestCards={applyTestCards}
+        onClearTestCards={clearTestCards}
+        onApplyTestCardsAndDeal={applyTestCardsAndDeal}
+        bankroll={gameState.bankroll}
       />
     </div>
   );

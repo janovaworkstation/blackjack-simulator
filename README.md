@@ -17,6 +17,7 @@ Experience casino-quality blackjack with realistic 3D graphics, complete game ru
 - **Visual Feedback**: Animated chip stacks for wins/losses, realistic card dealing
 - **Professional Game Flow**: Proper timing, dealer animations, and casino-style experience
 - **Responsive Design**: Optimized for desktop (mobile optimization planned in Phase 4.1)
+- **Testing Mode**: Manually select cards to test specific scenarios (surrender, insurance, splits, etc.)
 
 ### Core Simulation Engine
 - **Multiple Card Counting Systems**: Hi-Lo, Knock-Out (KO), Hi-Opt I
@@ -246,6 +247,36 @@ The core simulation engine (`BlackjackEngine.js`) implements:
 - Capable of simulating millions of hands efficiently
 - Real-time progress updates during long simulations
 - Optimized for modern browsers with efficient algorithms
+
+## Testing Mode
+
+The interactive game includes a Testing Mode that allows you to manually select cards for testing specific scenarios. This is extremely useful for:
+
+### Use Cases
+- **Testing Surrender Logic**: Set up hands like 16 vs 10 or 15 vs Ace
+- **Insurance Scenarios**: Test dealer Ace situations with/without blackjack
+- **Split Functionality**: Create pair hands to test splitting logic
+- **Double Down Scenarios**: Test optimal doubling situations
+- **Edge Cases**: Test rare scenarios like 5-card Charlie or specific dealer draws
+
+### How to Use
+1. **Enable Testing Mode**: Click the Testing Mode toggle in the Game Status panel
+2. **Select Cards**: Use the TestingPanel on the right to:
+   - Choose specific cards for player and dealer
+   - Select from pre-defined scenarios (20+ included)
+   - Add additional cards for hits/dealer draws
+3. **Deal**: Place your bet and click Deal to start with your selected cards
+4. **Play Normally**: The game proceeds normally with your pre-selected cards
+
+### Pre-defined Scenarios
+The testing mode includes 20+ pre-defined scenarios organized by category:
+- **Surrender**: 16 vs 10, 15 vs Ace, 16 vs Ace
+- **Insurance**: Dealer blackjack, no blackjack, player blackjack
+- **Blackjack**: Player wins, dealer wins, push scenarios
+- **Splits**: Aces, 8s, 10s, split then double
+- **Double Down**: 11 vs 6, 10 vs 9, soft doubles
+- **Bust Testing**: Player bust, dealer bust scenarios
+- **Edge Cases**: Soft 17, 5-card scenarios
 
 ## Comparison to CVData/CVCX
 
