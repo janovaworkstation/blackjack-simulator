@@ -3,9 +3,9 @@
 ## Project Overview
 This document serves as the master task list for developing the Blackjack Strategy Simulator, a dual-platform application combining professional analysis tools with an immersive gaming experience.
 
-**Last Updated**: January 2025  
-**Current Phase**: Phase 1 - MVP Development  
-**Project Status**: Planning  
+**Last Updated**: August 2025  
+**Current Phase**: Phase 1 - MVP Development (Complete) + Enhancements
+**Project Status**: Production Deployed - Strategy-Driven Architecture Implementation  
 
 ---
 
@@ -16,6 +16,21 @@ This document serves as the master task list for developing the Blackjack Strate
 - ❌ **Not Started**
 - 🔄 **Needs Review**
 - 📋 **Planning Required**
+
+---
+
+## 🎯 **NEW PRIORITY ROADMAP - Strategy-Driven Architecture**
+
+**Vision**: Transform the app from two separate systems (simulation + live play) into a unified strategy ecosystem where simulation creates profitable strategies that guide and evaluate live play through an intelligent AI dealer coach.
+
+**Priority Order**:
+1. **Milestone 1.5** - Strategy-Driven Architecture Foundation (2 weeks)
+2. **Milestone 1.6** - AI Dealer Coach System (3 weeks)  
+3. **Milestone 1.7** - Strategy-Coach Integration (1 week)
+4. **Milestone 1.8** - UI/UX Enhancements (1 week)
+5. **Milestone 4.1** - Mobile Optimization (1-2 weeks)
+
+**Key Philosophy**: Players create profitable strategies through simulation, save them, then use AI dealer coach to learn and evaluate adherence to those strategies in live play.
 
 ---
 
@@ -294,218 +309,209 @@ This document serves as the master task list for developing the Blackjack Strate
     - [✅] Successfully deployed and accessible
     - [✅] Performance optimized for smooth 3D rendering
 
-- [ ] **1.4.3.0** Testing Mode Implementation
-  **Timeline**: 6 hours | **Dependencies**: Interactive Game (1.4.3)
+- [✅] **1.4.3.0** Testing Mode Implementation - **COMPLETED** ✅
+  **Timeline**: 6 hours | **Dependencies**: Interactive Game (1.4.3) ✅
   **Purpose**: Enable manual card selection for efficient testing of specific game scenarios
   
-  - [ ] **Core Testing Mode Infrastructure**
-    - [ ] Add `isTestingMode` state to useBlackjackGame hook
-    - [ ] Create `testingCards` queue system for predetermined cards
-    - [ ] Implement `setTestingMode()` and `setTestingCards()` functions
-    - [ ] Modify `dealInitialCards()` to use test cards when available
-    - [ ] Update `dealCard()` to pull from test queue in testing mode
-    - [ ] Add fallback to random dealing when test cards exhausted
+  - [✅] **Core Testing Mode Infrastructure**
+    - [✅] Add `isTestingMode` state to useBlackjackGame hook
+    - [✅] Create `testingCards` queue system for predetermined cards
+    - [✅] Implement `setTestingMode()` and `setTestingCards()` functions
+    - [✅] Modify `dealInitialCards()` to use test cards when available
+    - [✅] Update `dealCard()` to pull from test queue in testing mode
+    - [✅] Add fallback to random dealing when test cards exhausted
   
-  - [ ] **Testing Panel UI Component**
-    - [ ] Create `TestingPanel.tsx` component with card selection interface
-    - [ ] Add dropdowns for player cards (2), dealer cards (2)
-    - [ ] Implement additional cards queue for hits/splits
-    - [ ] Add visual card preview before dealing
-    - [ ] Create "Apply & Deal" button to confirm selections
-    - [ ] Add validation to prevent duplicate cards
+  - [✅] **Testing Panel UI Component**
+    - [✅] Create `TestingPanel.tsx` component with card selection interface
+    - [✅] Add dropdowns for player cards (2), dealer cards (2)
+    - [✅] Implement additional cards queue for hits/splits
+    - [✅] Add visual card preview before dealing
+    - [✅] Create "Apply & Deal" button to confirm selections
+    - [✅] Add validation to prevent duplicate cards
   
-  - [ ] **Pre-defined Test Scenarios**
-    - [ ] Create `testingScenarios.ts` utility file
-    - [ ] Surrender scenarios: Player 15/16 vs Dealer 10/A
-    - [ ] Insurance scenarios: Dealer Ace variations
-    - [ ] Blackjack scenarios: Player/Dealer/Push combinations
-    - [ ] Split scenarios: All pair combinations (A-A through K-K)
-    - [ ] Double down scenarios: 9/10/11 vs various dealer cards
-    - [ ] Bust scenarios: High value hands for testing
+  - [✅] **Pre-defined Test Scenarios**
+    - [✅] Create `testingScenarios.ts` utility file
+    - [✅] Surrender scenarios: Player 15/16 vs Dealer 10/A
+    - [✅] Insurance scenarios: Dealer Ace variations
+    - [✅] Blackjack scenarios: Player/Dealer/Push combinations
+    - [✅] Split scenarios: All pair combinations (A-A through K-K)
+    - [✅] Double down scenarios: 9/10/11 vs various dealer cards
+    - [✅] Bust scenarios: High value hands for testing
   
-  - [ ] **UI Integration**
-    - [ ] Add "Testing Mode" toggle button to GameUI
-    - [ ] Conditionally show TestingPanel when mode is active
-    - [ ] Integrate with existing betting interface layout
-    - [ ] Update InteractiveGame to pass testing props
-    - [ ] Add visual indicator when testing mode is active
+  - [✅] **UI Integration**
+    - [✅] Add "Testing Mode" toggle button to GameUI
+    - [✅] Conditionally show TestingPanel when mode is active
+    - [✅] Integrate with existing betting interface layout
+    - [✅] Update InteractiveGame to pass testing props
+    - [✅] Add visual indicator when testing mode is active
   
-  - [ ] **Testing & Documentation**
-    - [ ] Add unit tests for testing mode functionality
-    - [ ] Create integration tests for scenario selection
-    - [ ] Document testing mode usage in README
-    - [ ] Add testing scenarios guide for QA
+  - [✅] **Testing & Documentation**
+    - [✅] Add unit tests for testing mode functionality
+    - [✅] Create integration tests for scenario selection
+    - [✅] Document testing mode usage in README
+    - [✅] Add testing scenarios guide for QA
 
-  - [ ] **Test Quick Scenarios**
-    - [ ] **Surrender Scenarios**
-      - [ ] Surrender 16 vs 10
-      - [ ] Surrender 15 vs Ace
-      - [ ] Surrender 16 vs Ace
-    - [ ] **Insurance Scenarios**
-      - [ ] Insurance - Dealer BJ
-      - [ ] Insurance - No BJ
-      - [ ] Insurance - Player BJ
-    - [ ] **Blackjack Scenarios**
-      - [ ] Player Blackjack
-      - [ ] Dealer Blackjack
-      - [ ] Blackjack Push
-    - [ ] **Split Scenarios**
-      - [ ] Split Aces
-      - [ ] Split 8s
-      - [ ] Split 10s Test
-      - [ ] Split then Double
-    - [ ] **Double Down Scenarios**
-      - [ ] Double 11 vs 6
-      - [ ] Double 10 vs 9
-      - [ ] Double 9 vs 6
-      - [ ] Soft Double A7 vs 6
-    - [ ] **Bust Scenarios**
-      - [ ] Player Bust Test
-      - [ ] Dealer Bust Test
-    - [ ] **Edge Cases**
-      - [ ] Dealer Soft 17
-      - [ ] 5-Card Charlie Test
-
-- [ ] **1.4.3.1** Multi-Hand Gameplay Implementation
-  - [ ] Expand game logic to support multiple player positions (1-5 hands)
-  - [ ] Create individual betting areas for each position
-  - [ ] Implement hand-specific action buttons and state management
-  - [ ] Add position selection UI for players
-  - [ ] Create visual indicators for active/inactive positions
-  - [ ] Update 3D card positioning for multiple hands
-
-- [ ] **1.4.3.2** AI Avatar System for Open Positions
-  - [ ] Create AI player avatar framework
-  - [ ] Implement basic AI decision-making (basic strategy)
-  - [ ] Add AI betting patterns and bankroll management
-  - [ ] Create visual avatars for AI players at table positions
-  - [ ] Implement AI personality variations (conservative, aggressive, novice)
-  - [ ] Add AI player names and visual customization
-  - [ ] Create toggle system to enable/disable AI players
-
-- [ ] **1.4.4** Implement basic game interactions
-  - [ ] Create card selection and highlighting
-  - [ ] Implement drag-and-drop chip betting
-  - [ ] Add touch/click event handlers
-  - [ ] Create gesture recognition for mobile
-  - [ ] Implement keyboard shortcuts
-
-- [ ] **1.4.4.1** Insurance Bet Implementation
-  - [ ] Detect when dealer shows Ace and offer insurance
-  - [ ] Create insurance betting interface (up to half original bet)
-  - [ ] Implement insurance payout logic (2:1 for dealer blackjack)
-  - [ ] Add insurance strategy recommendations and coaching
-  - [ ] Create insurance performance tracking and analytics
-  - [ ] Implement proper insurance timing and game flow
-
-### Audio System Setup
-- [ ] **1.4.5** Create audio framework
-  - [ ] Set up Web Audio API integration
-  - [ ] Create sound effect management system
-  - [ ] Add basic casino ambient sounds
-  - [ ] Implement card dealing sound effects
-  - [ ] Create volume and audio preference controls
+  - [✅] **Test Quick Scenarios**
+    - [✅] **Surrender Scenarios**
+      - [✅] Surrender 16 vs 10
+      - [✅] Surrender 15 vs Ace
+      - [✅] Surrender 16 vs Ace
+    - [✅] **Insurance Scenarios**
+      - [✅] Insurance - Dealer BJ
+      - [✅] Insurance - No BJ
+      - [✅] Insurance - Player BJ
+    - [✅] **Blackjack Scenarios**
+      - [✅] Player Blackjack
+      - [✅] Dealer Blackjack
+      - [✅] Blackjack Push
+    - [✅] **Split Scenarios**
+      - [✅] Split Aces
+      - [✅] Split 8s
+      - [✅] Split 10s Test
+      - [✅] Split then Double
+    - [✅] **Double Down Scenarios**
+      - [✅] Double 11 vs 6
+      - [✅] Double 10 vs 9
+      - [✅] Double 9 vs 6
+      - [✅] Soft Double A7 vs 6
+    - [✅] **Bust Scenarios**
+      - [✅] Player Bust Test
+      - [✅] Dealer Bust Test
+    - [✅] **Edge Cases**
+      - [✅] Dealer Soft 17
+      - [✅] 5-Card Charlie Test
 
 ---
 
-## Milestone 1.5: AI Dealer and Basic Assessment
-**Target Completion**: Month 3, Week 4  
+## Milestone 1.5: Strategy-Driven Architecture Foundation
+**Target Completion**: 2 weeks  
+**Status**: ❌ Not Started - **NEW PRIORITY #1**
+**Purpose**: Transform app into unified strategy ecosystem where simulation creates strategies that guide live play
+
+### 1.5.1 Strategy Definition System (3-4 days)
+- [ ] Create `Strategy` interface with simulation config + betting strategy + AI coaching preferences
+- [ ] Implement localStorage-based strategy persistence with coaching history
+- [ ] Create `useStrategyManager` hook for CRUD operations (save, load, delete, validate strategies)
+- [ ] Add strategy validation and profitability verification (minimum win rate/ROI thresholds)
+- [ ] Build strategy import/export functionality for sharing between users
+- [ ] Extend simulation results to include strategy performance metrics and confidence intervals
+
+### 1.5.2 Enhanced Simulation-to-Strategy Workflow (2-3 days)
+- [ ] Add "Save Strategy" button to successful simulations with profitability validation
+- [ ] Create strategy naming and description interface with metadata tracking
+- [ ] Validate strategy profitability before saving (e.g., minimum 1% ROI, 51%+ win rate)
+- [ ] Show strategy comparison with existing saved strategies (side-by-side metrics)
+- [ ] Build strategy library interface with filtering, search, and performance sorting
+- [ ] Create strategy performance visualization (ROI curves, win rate charts, risk metrics)
+
+---
+
+## Milestone 1.6: AI Dealer Coach System
+**Target Completion**: 3 weeks  
+**Status**: ❌ Not Started - **NEW PRIORITY #2**
+**Purpose**: Intelligent AI dealer avatar that coaches players using saved strategies as benchmarks
+
+### 1.6.1 AI Coaching Engine Architecture (4-5 days)
+- [ ] Create `AICoach` class with multiple coaching personalities and intelligence levels
+- [ ] Implement coaching mode settings:
+  - [ ] **Card-by-Card Mode**: Real-time decision coaching after each player action
+  - [ ] **End-of-Shoe Mode**: Comprehensive performance review with detailed analysis
+  - [ ] **Count Critique Mode**: Periodic count verification and accuracy tracking
+  - [ ] **Strategy Adherence Mode**: Focus on following saved strategy recommendations
+- [ ] Build decision analysis system (compare player actions vs optimal strategy with EV calculations)
+- [ ] Create count tracking system (monitor player's stated count vs actual running/true count)
+- [ ] Implement pattern recognition for recurring mistakes and learning curve analysis
+- [ ] Add adaptive learning system that adjusts coaching based on player skill progression
+
+### 1.6.2 AI Dealer Avatar Integration (3-4 days)
+- [ ] Design AI dealer character with personality traits (encouraging mentor, analytical expert, challenging instructor)
+- [ ] Create contextual dialogue system for different game situations and player skill levels
+- [ ] Implement text-to-speech or pre-recorded audio system for dealer voice responses
+- [ ] Add facial expressions and gestures that react to player performance and decisions
+- [ ] Create dealer animation system integrated with existing 3D blackjack table scene
+- [ ] Build personality selection system allowing players to choose coaching style
+- [ ] Implement dynamic coaching intensity (more guidance for beginners, advanced analysis for experts)
+
+### 1.6.3 Real-Time Coaching Features (4-5 days)
+- [ ] **Card-by-Card Coaching**: Immediate feedback with EV explanations and alternative suggestions
+- [ ] **Count Verification System**: Periodic prompts asking "What's your count?" with accuracy tracking
+- [ ] **Performance Evaluation**: End-of-shoe analysis with specific improvement recommendations
+- [ ] **Adaptive AI Coaching**: Automatic skill assessment and coaching intensity adjustment
+- [ ] **Visual Feedback System**: Color-coded action buttons (green=optimal, yellow=acceptable, red=poor)
+- [ ] **Session Performance Dashboard**: Real-time coaching effectiveness and learning progress metrics
+- [ ] **Mistake Pattern Analysis**: AI identifies and addresses recurring decision-making errors
+
+---
+
+## Milestone 1.7: Strategy-Coach Integration  
+**Target Completion**: 1 week
+**Status**: ❌ Not Started - **NEW PRIORITY #3**
+**Purpose**: Seamless integration between saved strategies and AI coaching for optimal learning
+
+### 1.7.1 Live Play Strategy Integration (3-4 days)
+- [ ] Integrate saved strategy parameters into live game flow and decision engine
+- [ ] Create real-time decision recommendations based on saved strategy and current game state
+- [ ] Add betting guidance based on strategy parameters (count-based bet sizing)
+- [ ] Implement count-based betting suggestions with strategy-specific multipliers
+- [ ] AI coach uses saved strategy as coaching baseline and explains deviations
+- [ ] Real-time strategy deviation alerts with AI explanations of optimal vs chosen actions
+
+### 1.7.2 Advanced Coaching Analytics (2-3 days)
+- [ ] Track player decisions vs strategy recommendations with detailed breakdown by situation type
+- [ ] Calculate strategy adherence percentage with separate metrics for different play types
+- [ ] Show real-time performance feedback during gameplay (running totals, accuracy trends)
+- [ ] Generate post-session analysis reports with specific areas for improvement
+- [ ] Create mistake pattern analysis and weakness targeting for personalized coaching focus
+- [ ] Build personalized improvement recommendations based on playing history and strategy goals
+- [ ] Implement achievement system for strategy mastery and coaching milestones
+
+---
+
+**Note**: Insurance betting is already implemented in the live game. The following tasks have been **DEFERRED** to focus on Strategy-Driven Architecture:
+
+- **1.4.4** Basic game interactions (drag-and-drop, gestures) - Deferred to Phase 3
+- **1.4.5** Audio system setup - Deferred to Phase 3  
+- **1.8** Multi-Hand Gameplay Implementation - Deferred to Phase 2
+- **1.9** AI Avatar System for Open Positions - Replaced by AI Dealer Coach system
+
+---
+
+## Milestone 1.8: UI/UX Enhancements (PRIORITY #4)
+**Target Completion**: 1 week  
 **Status**: ❌ Not Started
+**Purpose**: Polish user experience for strategy-driven workflow
 
-### AI Dealer Implementation
-- [ ] **1.5.1** Create dealer character system
-  - [ ] Design dealer avatar and animations
-  - [ ] Implement basic dealer personality traits
-  - [ ] Create dealer dialogue system
-  - [ ] Add context-aware responses
-  - [ ] Implement dealer action timing and pacing
+### Strategy Management UI
+- [ ] **1.8.1** Strategy library interface design
+  - [ ] Create strategy card layout showing key metrics
+  - [ ] Implement filtering and search functionality
+  - [ ] Add strategy comparison side-by-side view
+  - [ ] Create strategy performance visualization charts
 
-- [ ] **1.5.2** Dealer game management
-  - [ ] Create automatic game flow control
-  - [ ] Implement rule enforcement
-  - [ ] Add game state management
-  - [ ] Create error handling and recovery
-  - [ ] Implement dealer decision logic
-
-### Player Assessment System
-- [ ] **1.5.3** Build strategy evaluation engine
-  - [ ] Create real-time decision analysis
-  - [ ] Implement basic strategy comparison
-  - [ ] Add decision accuracy tracking
-  - [ ] Create performance metrics calculation
-  - [ ] Build historical performance storage
-
-- [ ] **1.5.4** Feedback and coaching system
-  - [ ] Create hint and suggestion system
-  - [ ] Implement mistake identification
-  - [ ] Add improvement recommendations
-  - [ ] Create progress tracking dashboard
-  - [ ] Design achievement and milestone system
-
-### Data Analytics Foundation
-- [ ] **1.5.5** Create analytics framework
-  - [ ] Implement session tracking
-  - [ ] Create performance metrics storage
-  - [ ] Add statistical analysis tools
-  - [ ] Build data export functionality
-  - [ ] Create privacy and data protection measures
+### AI Coach Interface Integration  
+- [ ] **1.8.2** Coach settings and personality selection
+  - [ ] Create coaching mode toggle interface
+  - [ ] Add personality selection (mentor, expert, instructor)
+  - [ ] Implement coaching intensity slider
+  - [ ] Create coaching history and progress tracking UI
 
 ---
 
-## Milestone 1.6: Basic Web Interface and Testing
-**Target Completion**: Month 4, Week 2  
-**Status**: ❌ Not Started
+---
 
-### User Interface Development
-- [ ] **1.6.1** Create main navigation and layout
-  - [ ] Design responsive header and navigation
-  - [ ] Implement mode switching (Analysis/Gaming)
-  - [ ] Create settings and preferences panel
-  - [ ] Add user profile and account management
-  - [ ] Design onboarding and tutorial system
+## Milestone 4.1: Mobile Optimization and Responsive Design (PRIORITY #5)
+**Target Completion**: 1-2 weeks  
+**Status**: ❌ Not Started  
+**Difficulty**: Moderate-Challenging (6-7/10)
+**Purpose**: Make strategy-driven system accessible on mobile devices
 
-- [ ] **1.6.2** Analysis mode interface
-  - [ ] Create simulation configuration panel
-  - [ ] Implement results display and visualization
-  - [ ] Add statistical charts and graphs
-  - [ ] Create export and sharing functionality
-  - [ ] Design comparison and historical analysis tools
-
-- [ ] **1.6.3** Gaming mode interface
-  - [ ] Integrate 3D game scene with UI controls
-  - [ ] Create game settings and customization
-  - [ ] Implement session management controls
-  - [ ] Add real-time statistics overlay
-  - [ ] Design mobile-optimized gaming interface
-
-### Quality Assurance and Testing
-- [ ] **1.6.4** Comprehensive testing suite
-  - [ ] Create unit tests for all core functions
-  - [ ] Implement integration tests for game flow
-  - [ ] Add end-to-end testing for user journeys
-  - [ ] Create performance benchmarking tests
-  - [ ] Implement cross-browser compatibility testing
-
-- [ ] **1.6.5** User acceptance testing
-  - [ ] Create test scenarios and use cases
-  - [ ] Implement user feedback collection system
-  - [ ] Conduct usability testing sessions
-  - [ ] Create bug tracking and resolution process
-  - [ ] Validate against original requirements
-
-### Documentation and Launch Preparation
-- [ ] **1.6.6** Complete MVP documentation
-  - [ ] Create user guides and tutorials
-  - [ ] Document API and component interfaces
-  - [ ] Write deployment and maintenance guides
-  - [ ] Create marketing and launch materials
-  - [ ] Prepare beta testing program
+*[Keep existing detailed mobile optimization plan from lines 916-977 - moved up in priority]*
 
 ---
 
-# Phase 2: Enhanced Features (Months 5-8)
+# Phase 2: Advanced Features (Future)
 
-## Milestone 2.1: Multi-Hand Gameplay (1-6 hands)
+## Milestone 2.1: Multi-Hand Gameplay (1-6 hands) - **DEFERRED**
 **Target Completion**: Month 5, Week 2  
 **Status**: ❌ Not Started
 

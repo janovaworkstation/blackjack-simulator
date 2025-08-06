@@ -284,7 +284,7 @@ test.describe('Blackjack Simulator', () => {
     await page.setViewportSize({ width: 375, height: 667 });
 
     // Check that main elements are still visible
-    await expect(page.getByText('Blackjack Strategy Simulator')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Blackjack Strategy Simulator' })).toBeVisible();
     await expect(
       page.getByRole('heading', { name: 'Simulation Configuration' }),
     ).toBeVisible();

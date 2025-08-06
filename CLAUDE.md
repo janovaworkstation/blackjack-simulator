@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) for working on the Blackjack Strategy Simulator. It outlines the project's architecture, development commands, and key implementation plans, aligning with the project's formal documentation (`PRD.md`, `PLANNING.md`, `TASKS.md`).
 
-**Project Status:** Phase 1 Complete - 3D Interactive Blackjack Game Successfully Deployed (as of August 2025)
+**Project Status:** Phase 1 Complete - Strategy-Driven Architecture Implementation Phase (as of August 2025)
 
 ## Commands
 
@@ -22,12 +22,30 @@ This file provides guidance to Claude Code (claude.ai/code) for working on the B
 
 ## Architecture Overview
 
-The project follows a modern, web-first architecture, starting with a client-side Single Page Application (SPA) for the MVP and designed for future expansion into a full-stack service with microservices, as detailed in `PLANNING.md`.
+The project follows a strategy-driven architecture that transforms simulation data into actionable live play guidance through an intelligent AI dealer coach. The system creates a unified ecosystem where profitable strategies discovered through simulation directly guide and evaluate live play performance.
 
-### Phase 1 (MVP) Core Components - IMPLEMENTED ✅
-- **`BlackjackSimulator.tsx`** - The main application component orchestrating the UI, managing state and coordinating between components.
-- **`BlackjackEngine.ts`** - The core simulation engine implementing game mechanics, card management, and strategy execution.
-- **`useSimulation.ts`** - A React hook managing simulation state, asynchronous execution, and progress tracking.
+### Current Priority: Strategy-Driven Architecture Implementation 🎯
+
+**NEW PRIORITY #1: Strategy Foundation System**
+- **Strategy Definition**: TypeScript interfaces for strategy data model with simulation config + betting strategy + AI coaching preferences
+- **Strategy Management**: localStorage persistence with CRUD operations via `useStrategyManager` hook
+- **Strategy Validation**: Profitability verification and comparison systems
+
+**NEW PRIORITY #2: AI Dealer Coach System** 
+- **AICoach Class**: Intelligent coaching engine with multiple personalities (mentor, expert, instructor)
+- **Coaching Modes**: Card-by-card, end-of-shoe, count critique, and strategy adherence coaching
+- **3D Avatar Integration**: Realistic dealer character with contextual dialogue and visual feedback
+
+**NEW PRIORITY #3: Live Play Integration**
+- **Strategy-Guided Gameplay**: Real-time decision recommendations based on saved strategies
+- **Performance Analytics**: Strategy adherence tracking and improvement measurement
+- **Adaptive Learning**: AI coach adjusts intensity based on player skill progression
+
+### Existing Foundation - IMPLEMENTED ✅
+- **`BlackjackSimulator.tsx`** - Main simulation application (to be enhanced with strategy management)
+- **`BlackjackEngine.ts`** - Core simulation engine (to be extended with strategy creation workflow)
+- **`useSimulation.ts`** - Simulation state management (to be enhanced with strategy saving)
+- **Interactive Game Components** - Full 3D blackjack game (to be integrated with AI coaching)
 
 ### 3D Gaming Platform Components - NEW ✅
 - **`BlackjackTable3D.tsx`** - Immersive 3D blackjack table with realistic casino atmosphere
@@ -35,10 +53,18 @@ The project follows a modern, web-first architecture, starting with a client-sid
 - **`Chip3D.tsx`** - Casino-style poker chips with value-based colors and realistic geometry
 - **`Game3DDemo.tsx`** - Demo page showcasing the 3D gaming experience
 
-### Data Flow
-1. Configuration settings will flow from `ConfigurationPanel` → `BlackjackSimulator` → `useSimulation` hook.
-2. The simulation will run within the `BlackjackEngine`, with progress callbacks updating the UI.
-3. Results will flow from the engine back through the `useSimulation` hook to be displayed in the `ResultsPanel` and `ResultsChart` components.
+### Strategy-Driven Data Flow
+1. **Strategy Creation**: `ConfigurationPanel` → `BlackjackSimulator` → `useSimulation` → `BlackjackEngine` → Strategy Results
+2. **Strategy Management**: Strategy Results → Strategy Validation → `useStrategyManager` → localStorage persistence
+3. **AI Coaching Integration**: Saved Strategy → `AICoach` class → Live play decision analysis and feedback
+4. **Performance Tracking**: Player Actions → Strategy Comparison → Performance Analytics → Progress Reports
+
+### Core Philosophy Implementation
+The data flow transforms from linear simulation → results to cyclical strategy creation → coaching → improvement:
+- Simulation creates profitable strategies
+- Strategies are validated and saved with metadata
+- AI coach uses strategies as benchmarks for live play evaluation
+- Performance data feeds back to strategy refinement and coaching adaptation
 
 ### Key Implementation Plan
 
@@ -88,30 +114,23 @@ The project follows a modern, web-first architecture, starting with a client-sid
 
 ## Recent Achievements (August 2025)
 
-### ✅ **Milestone 1.4.3 Completed - Full Interactive 3D Blackjack Game**
+### ✅ **Milestone 1.4.3 & 1.4.3.0 Completed - Production-Ready 3D Blackjack Game**
 - **Complete Game Implementation**: Fully functional blackjack game with all standard rules
 - **Advanced Features**: Split functionality, insurance betting, double down, surrender
-- **3D Visual Experience**: Realistic casino table with cards, chips, and animations
+- **3D Visual Experience**: Realistic casino table with cards, chips, and animations (foundation for AI dealer avatar)
+- **Testing Mode**: Manual card selection with 20+ pre-defined scenarios for comprehensive testing
 - **Card Counting Integration**: Real-time running and true count display with 6-deck shoe
 - **Professional Game Flow**: Proper timing, animations, and dealer logic
-- **Win/Loss Animations**: Visual feedback with appearing/disappearing chip stacks
-- **Performance Optimized**: Smooth 3D rendering with optimized asset loading
+- **Production Deployment**: Successfully deployed with 97 tests passing, all lint errors resolved
 
-### ✅ **Deployment Success**
-- **Production Ready**: Successfully deployed and accessible
-- **Quality Assurance**: All tests passing (97 tests), lint errors resolved
-- **Code Quality**: Professional-grade codebase with comprehensive error handling
+### 🎯 **Strategy-Driven Architecture Redesign**
+- **Vision Transformation**: Shifted from dual-platform to unified strategy ecosystem
+- **AI Coach Architecture**: Technical design for intelligent dealer avatar integration
+- **Priority Restructuring**: Updated TASKS.md to focus on strategy-driven implementation
+- **Documentation Updates**: All .md files updated to reflect new strategic direction
 
-### ✅ **Post-Launch Bug Fixes & Enhancements**
-- **Double Down Bet Reversion**: Fixed bet amount reversion to original amount after doubling
-- **Dealer Blackjack Detection**: Fixed game hanging when dealer shows Ace and has blackjack
-- **Win/Loss Display**: Enhanced text display to show actual win/loss amounts instead of "Bet: $0"
-- **Split Functionality**: Corrected hand order (rightmost first) and sequential play mechanics
-- **Bankroll Calculations**: Fixed win/loss calculations for accurate 3:2 blackjack payouts
-- **Test Coverage**: Added comprehensive tests for new functionality (originalBet tracking, handleDealerBlackjack)
-
-### 📱 **Mobile Optimization Roadmap Planned**
-- **Comprehensive Analysis**: Identified mobile compatibility challenges and solutions
-- **Phase 4.1 Planning**: Detailed 4-phase mobile optimization plan in TASKS.md
-- **Timeline Estimated**: 6-8 days for complete mobile responsiveness
-- **Technical Strategy**: Responsive UI, 3D scene adaptation, touch optimization, performance tuning
+### 📋 **Next Implementation Phase (6 weeks estimated)**
+1. **Strategy Foundation System** (2 weeks) - Strategy creation, management, and persistence
+2. **AI Dealer Coach System** (3 weeks) - Intelligent coaching engine with 3D avatar integration  
+3. **Strategy-Coach Integration** (1 week) - Live play guided by saved strategies with AI evaluation
+4. **Mobile Optimization** (Phase 4.1) - Deferred until after core AI coaching system is complete

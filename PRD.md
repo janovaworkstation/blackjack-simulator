@@ -3,44 +3,112 @@
 ## Executive Summary
 
 ### Vision
-Create a modern, web-based blackjack strategy simulator that replaces and enhances the functionality of legacy Windows applications CVData and CVCX, making professional-grade blackjack analysis accessible across all platforms with a superior user experience.
+Create an intelligent, strategy-driven blackjack training system that transforms simulation data into actionable live play guidance through an AI dealer coach, revolutionizing how players learn and master profitable blackjack strategies.
 
 ### Mission
-Provide advantage players, researchers, and blackjack enthusiasts with the most comprehensive and user-friendly blackjack simulation platform available, featuring advanced statistical analysis, multiple counting systems, and sophisticated risk management tools.
+Bridge the gap between theoretical simulation analysis and practical playing ability by creating a unified ecosystem where profitable strategies discovered through simulation directly guide and evaluate live play performance through intelligent AI coaching.
 
 ---
 
 ## Product Overview
 
-### Dual-Platform Architecture
-The Blackjack Strategy Simulator consists of two integrated but distinct platforms:
+### Strategy-Driven Architecture
+The Blackjack Strategy Simulator is built around a unified strategy ecosystem consisting of:
 
-1. **Analysis Platform**: Advanced simulation and statistical analysis tools (CVData/CVCX replacement)
-2. **Interactive Gaming Platform**: Realistic blackjack playing environment with AI coaching and social features
+1. **Strategy Creation System**: Professional simulation engine that creates and validates profitable strategies
+2. **Strategy Management System**: Comprehensive strategy library with save/load, comparison, and sharing capabilities
+3. **AI Dealer Coach System**: Intelligent avatar that uses saved strategies as benchmarks for live play coaching
+4. **Performance Analytics System**: Real-time tracking and evaluation of strategy adherence and improvement
+5. **Immersive Gaming Platform**: 3D blackjack environment fully integrated with the coaching system
 
 ### Target Users
-- **Professional Advantage Players**: Serious card counters developing and testing strategies
-- **Blackjack Researchers**: Academics and professionals studying game theory
-- **Casino Managers**: Understanding game vulnerabilities and player advantage
-- **Recreational Players**: Learning optimal strategies and understanding odds
-- **Educational Institutions**: Teaching probability and game theory concepts
-- **Strategy Learners**: Players wanting realistic practice environment with feedback
-- **Entertainment Seekers**: Users wanting engaging blackjack gameplay with educational value
+- **Strategy Development Players**: Players who want to create, test, and master profitable blackjack strategies
+- **Learning-Focused Players**: Users seeking systematic improvement through AI-guided coaching
+- **Professional Advantage Players**: Serious card counters who need strategy validation and adherence tracking
+- **Skill Assessment Players**: Players wanting measurable progress in decision-making accuracy
+- **Blackjack Instructors**: Educators using AI coaching as a teaching and assessment tool
+- **Simulation Enthusiasts**: Users who want their simulation work to directly impact live play performance
 
 ### Core Value Proposition
-- **Accessibility**: Web-based platform accessible on any device, anywhere
-- **Comprehensive Analysis**: More detailed statistics than legacy tools
-- **Modern UX**: Intuitive interface replacing outdated Windows applications
-- **Real-time Insights**: Live visualization of strategy performance
-- **Educational Focus**: Clear explanations and learning resources
-- **Interactive Learning**: Realistic gameplay environment with AI coaching
-- **Dual Platform**: Combined analysis tools and immersive playing experience
+- **Strategy-Driven Learning**: Simulation directly creates strategies that guide live play improvement
+- **AI-Powered Coaching**: Intelligent dealer avatar provides personalized, contextual guidance
+- **Measurable Progress**: Quantified improvement in strategy adherence and decision accuracy
+- **Unified Ecosystem**: Seamless flow from strategy creation to live play mastery
+- **Adaptive Intelligence**: AI coach adjusts to individual learning pace and skill level
+- **Real-time Evaluation**: Instant feedback on every decision with strategy-based benchmarking
+- **Professional Training**: Transform theoretical knowledge into practical playing ability
 
 ---
 
 ## Feature Requirements
 
-### Phase 1: Core Simulation Engine (MVP)
+### Phase 1: Strategy-Driven Architecture Foundation
+
+#### 1.1 Strategy Creation & Management System
+**Priority**: Critical
+**User Story**: As a player, I want to create profitable strategies through simulation and save them for live play use.
+
+**Requirements**:
+- **Strategy Definition Interface**: TypeScript interfaces for strategy data model with simulation config, betting parameters, and performance metrics
+- **Strategy Validation**: Automatic profitability verification (minimum ROI/win rate thresholds) before saving
+- **Strategy Persistence**: localStorage-based strategy library with metadata (creation date, performance history, coaching preferences)
+- **Strategy Comparison**: Side-by-side analysis of multiple strategies with performance visualization
+- **Import/Export**: JSON-based strategy sharing between users
+- **Strategy Library UI**: Filterable, searchable interface with performance-based sorting
+
+**Acceptance Criteria**:
+- [ ] Save strategies from successful simulations with >1% ROI and >51% win rate
+- [ ] Strategy library supports 50+ strategies with fast search/filter
+- [ ] Strategy comparison shows statistically significant differences
+- [ ] Import/export maintains data integrity across all strategy components
+
+#### 1.2 AI Dealer Coach System
+**Priority**: Critical
+**User Story**: As a learner, I want an intelligent AI dealer that coaches me using my saved strategies as benchmarks.
+
+**Core AI Coaching Features**:
+- **Multiple Coaching Personalities**: Encouraging mentor, analytical expert, challenging instructor
+- **Adaptive Coaching Modes**:
+  - **Card-by-Card**: Real-time feedback after each decision with EV explanations
+  - **End-of-Shoe**: Comprehensive performance review with specific improvement recommendations
+  - **Count Critique**: Periodic count verification ("What's your count?") with accuracy tracking
+  - **Strategy Adherence**: Focus on following saved strategy recommendations with deviation alerts
+- **Intelligent Decision Analysis**: Compare player actions vs optimal strategy with detailed explanations
+- **Pattern Recognition**: Identify recurring mistakes and learning curve trends
+- **Performance Tracking**: Real-time coaching effectiveness metrics and progress visualization
+
+**AI Dealer Avatar Integration**:
+- **3D Character**: Realistic dealer integrated with existing casino table scene
+- **Contextual Dialogue**: Situation-aware responses based on game state and player performance
+- **Visual Feedback**: Facial expressions and gestures that react to player decisions
+- **Personality Settings**: User-selectable coaching style and intensity levels
+- **Audio Integration**: Text-to-speech or pre-recorded responses for immersive experience
+
+**Acceptance Criteria**:
+- [ ] AI coach provides contextually appropriate feedback within 2 seconds
+- [ ] Coaching accuracy measured against optimal strategy shows >95% correctness
+- [ ] Player strategy adherence tracking with detailed breakdown by situation type
+- [ ] Visual coaching cues (color-coded buttons) help players identify optimal decisions
+
+#### 1.3 Live Play Strategy Integration
+**Priority**: Critical
+**User Story**: As a strategist, I want my live play to be guided and evaluated based on my saved strategies.
+
+**Requirements**:
+- **Real-time Strategy Integration**: Live game uses saved strategy parameters for decision recommendations
+- **Betting Guidance**: Count-based bet sizing suggestions using strategy-specific multipliers
+- **Strategy Deviation Alerts**: Real-time notifications when player deviates from saved strategy
+- **Performance Analytics**: Live tracking of adherence percentage with trend visualization
+- **Session Analysis**: Post-session reports with strategy-specific improvement recommendations
+- **Achievement System**: Milestones for strategy mastery and coaching progress
+
+**Acceptance Criteria**:
+- [ ] Strategy recommendations appear within 500ms of game state changes
+- [ ] Betting guidance adjusts dynamically based on true count and strategy parameters
+- [ ] Strategy adherence tracking maintains >99% accuracy across all decision types
+- [ ] Session reports provide actionable insights for strategy improvement
+
+### Phase 2: Enhanced Simulation Engine (Existing MVP)
 
 #### 1.1 Basic Blackjack Simulation
 **Priority**: Critical

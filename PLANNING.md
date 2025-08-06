@@ -1,18 +1,18 @@
-# Blackjack Strategy Simulator - Technical Architecture
+# Blackjack Strategy Simulator - Strategy-Driven Architecture
 
 ## Document Overview
-This document outlines the technical architecture for the Blackjack Strategy Simulator, a dual-platform application combining professional blackjack analysis tools with an immersive gaming experience.
+This document outlines the technical architecture for the Blackjack Strategy Simulator, an intelligent strategy-driven blackjack training system that transforms simulation data into actionable live play guidance through an AI dealer coach.
 
-**Version**: 1.1  
+**Version**: 2.0  
 **Last Updated**: August 2025  
-**Status**: Phase 1 Complete - Production Deployed  
+**Status**: Phase 1 Complete - Strategy-Driven Architecture Implementation  
 **Owner**: Technical Architecture Team
 
 ## 🚀 **Recent Updates (August 2025)**
-- ✅ **Milestone 1.4.3 Completed**: Full 3D interactive blackjack game deployed to production
-- ✅ **Advanced Features**: Split functionality, insurance betting, card counting integration
-- ✅ **Quality Assurance**: 97 tests passing, all linting errors resolved
-- 📱 **Phase 4.1 Planned**: Comprehensive mobile optimization roadmap created  
+- ✅ **Milestone 1.4.3 & 1.4.3.0 Completed**: Full 3D interactive blackjack game with testing mode
+- ✅ **Strategy-Driven Vision**: Redesigned architecture to focus on unified strategy ecosystem
+- ✅ **AI Coach Architecture**: Technical design for intelligent dealer avatar system
+- 🎯 **Current Priority**: Implementation of Strategy-Driven Architecture with AI coaching  
 
 ---
 
@@ -42,11 +42,54 @@ The application follows a **hybrid architecture** combining:
 - **Microservices Backend**: Scalable cloud-based services
 - **Edge Computing**: AI/ML processing at edge nodes for low latency
 
-### Core Platforms
-1. **Analysis Platform**: Statistical simulation and professional tools
-2. **Gaming Platform**: Immersive 3D blackjack gameplay with AI
-3. **Social Platform**: Community features and multiplayer capabilities
-4. **Educational Platform**: Learning modules and certification systems
+### Core Systems
+1. **Strategy Creation System**: Advanced simulation engine that creates profitable strategies
+2. **Strategy Management System**: Save, load, validate, and compare strategies
+3. **AI Dealer Coach System**: Intelligent avatar that coaches players using saved strategies
+4. **Live Play Integration**: Real-time strategy evaluation and performance tracking
+5. **3D Gaming Platform**: Immersive blackjack environment integrated with coaching system
+
+---
+
+## Strategy-Driven Architecture Overview
+
+### Core Philosophy
+The application transforms from two separate systems (simulation + live play) into a **unified strategy ecosystem** where:
+
+1. **Strategy Creation**: Professional simulation engine creates and validates profitable strategies
+2. **Strategy Persistence**: Local storage system manages strategy library with metadata
+3. **AI Coaching Integration**: Intelligent dealer avatar uses saved strategies as coaching benchmarks
+4. **Live Play Evaluation**: Real-time performance tracking against strategy recommendations
+5. **Adaptive Learning**: AI coach adjusts based on player adherence and skill progression
+
+### Data Flow Architecture
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Simulation    │───▶│     Strategy    │───▶│   AI Coach      │
+│     Engine      │    │   Management    │    │    Engine       │
+│                 │    │                 │    │                 │
+│ • BlackjackSim  │    │ • Save/Load     │    │ • Decision      │
+│ • Results       │    │ • Validation    │    │   Analysis      │
+│ • Metrics       │    │ • Comparison    │    │ • Count Track   │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                                       │
+                                                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│  Performance    │◀───│   Live Play     │◀───│  AI Dealer      │
+│   Analytics     │    │    Engine       │    │    Avatar       │
+│                 │    │                 │    │                 │
+│ • Adherence %   │    │ • Game Logic    │    │ • Personality   │
+│ • Improvement   │    │ • 3D Interface  │    │ • Dialogue      │
+│ • Progress      │    │ • Testing Mode  │    │ • Feedback      │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+### Technical Components
+- **Strategy Interface**: TypeScript definitions for strategy data model
+- **useStrategyManager**: React hook for strategy CRUD operations  
+- **AICoach Class**: Intelligent coaching engine with multiple personalities
+- **Dealer Avatar**: 3D character integrated with existing casino table
+- **Performance Tracker**: Real-time analytics and coaching effectiveness metrics
 
 ---
 

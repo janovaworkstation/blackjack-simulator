@@ -1,25 +1,37 @@
 # Blackjack Strategy Simulator
 
-A comprehensive, web-based blackjack platform combining professional strategy analysis tools with an immersive 3D gaming experience. Features both simulation capabilities that rival CVData/CVCX and a fully interactive 3D blackjack game with advanced features.
+An intelligent, strategy-driven blackjack training system that transforms simulation data into actionable live play guidance through an AI dealer coach. Create profitable strategies through simulation, save them, then let the AI dealer evaluate and improve your live play performance.
 
 **🎮 [Play the Interactive Game](https://your-deployed-url.com) | 📊 [Try the Simulator](https://your-deployed-url.com)**
 
-## 🌟 **New: Full 3D Interactive Blackjack Game**
-Experience casino-quality blackjack with realistic 3D graphics, complete game rules, and professional features including split hands, insurance betting, card counting display, and visual chip animations.
+## 🌟 **New: Strategy-Driven Architecture with AI Dealer Coach**
+Experience the revolutionary approach to blackjack training where simulation creates strategies that guide live play through an intelligent AI dealer coach. Learn faster, play better, track your progress systematically.
 
 ## Features
 
+### 🎯 **Strategy-Driven Architecture**
+- **Unified Ecosystem**: Simulation creates strategies that guide live play evaluation
+- **Strategy Management**: Save, load, and compare profitable strategies from simulations
+- **Performance Benchmarking**: AI coach evaluates live play against saved strategies
+- **Progress Tracking**: Measurable improvement in strategy adherence and decision accuracy
+
+### 🤖 **AI Dealer Coach System** 
+- **Intelligent Coaching**: AI dealer avatar with multiple personality settings (mentor, expert, instructor)
+- **Real-time Guidance**: Card-by-card decision coaching with EV explanations
+- **Count Training**: Periodic count verification and accuracy tracking
+- **Adaptive Learning**: Coaching intensity adjusts based on player skill progression
+- **Performance Analysis**: End-of-shoe reviews with personalized improvement recommendations
+- **Visual Feedback**: Color-coded action buttons (green=optimal, yellow=acceptable, red=poor)
+
 ### 🎮 Interactive 3D Gaming Platform
-- **Immersive 3D Graphics**: Realistic casino table with Three.js rendering
+- **Immersive 3D Graphics**: Realistic casino table with Three.js rendering and AI dealer avatar
 - **Complete Blackjack Rules**: Hit, stand, double down, split, insurance, surrender
 - **Advanced Features**: Split up to 2 hands, insurance betting, dealer peek animations
 - **Real-time Card Counting**: Running and true count display with 6-deck shoe (75% penetration)
-- **Visual Feedback**: Animated chip stacks for wins/losses, realistic card dealing
-- **Professional Game Flow**: Proper timing, dealer animations, and casino-style experience
-- **Responsive Design**: Optimized for desktop (mobile optimization planned in Phase 4.1)
-- **Testing Mode**: Manually select cards to test specific scenarios (surrender, insurance, splits, etc.)
+- **Strategy Integration**: Live play guided by saved strategies with AI coaching
+- **Testing Mode**: Manually select cards to test specific scenarios (20+ pre-defined scenarios)
 
-### Core Simulation Engine
+### 📊 Advanced Simulation Engine
 - **Multiple Card Counting Systems**: Hi-Lo, Knock-Out (KO), Hi-Opt I
 - **Complete Basic Strategy**: Mathematically optimal play for all situations
 - **Realistic Game Rules**: Configurable deck count, penetration, dealer rules
@@ -42,9 +54,10 @@ Experience casino-quality blackjack with realistic 3D graphics, complete game ru
 
 ## 🚀 **Recent Updates (August 2025)**
 - ✅ **Milestone 1.4.3 Complete**: Full interactive 3D blackjack game deployed
+- ✅ **Milestone 1.4.3.0 Complete**: Testing mode with 20+ scenarios implemented
 - ✅ **Production Deployment**: All tests passing, lint errors resolved, successfully deployed
-- 📱 **Mobile Optimization**: Comprehensive mobile optimization plan created (Phase 4.1)
-- 🎯 **Next Phase**: Mobile-first responsive design and touch optimization
+- 🎯 **Current Focus**: Strategy-Driven Architecture with AI Dealer Coach system
+- 📋 **Next Priorities**: Strategy management, AI coaching engine, live play integration
 
 ## Quick Start
 
@@ -297,25 +310,32 @@ The testing mode includes 20+ pre-defined scenarios organized by category:
 - 🔄 Strategy deviations (coming soon)
 - 🔄 Bankroll sizing recommendations (coming soon)
 
-## Roadmap
+## Roadmap - Strategy-Driven Architecture
 
-### Phase 2 Features
-- **Risk of Ruin Calculator**: Implement Kelly Criterion and bankroll sizing
-- **Strategy Deviations**: Add Illustrious 18 and Fab 4 variations
-- **Additional Counting Systems**: Red 7, Omega II, Zen Count
-- **Side Bet Analysis**: Perfect Pairs, 21+3, Lucky Ladies
+### 🎯 **Immediate Priorities (Next 6 weeks)**
+1. **Strategy-Driven Architecture Foundation** (2 weeks)
+   - Strategy definition system and localStorage persistence
+   - Enhanced simulation-to-strategy workflow with profitability validation
+   
+2. **AI Dealer Coach System** (3 weeks)
+   - AI coaching engine with multiple personalities and adaptive learning
+   - Dealer avatar integration with contextual dialogue system
+   - Real-time coaching features and performance evaluation
 
-### Phase 3 Features
-- **Tournament Simulation**: Multi-round tournament analysis
-- **Team Play Tools**: Coordination and bankroll management
-- **Advanced Visualization**: Heat maps, distribution charts
-- **Export/Import**: Save and share simulation configurations
+3. **Strategy-Coach Integration** (1 week)
+   - Live play strategy integration with AI coaching
+   - Advanced coaching analytics and progress tracking
 
-### Phase 4 Features
-- **Machine Learning**: Optimize strategies using ML techniques
-- **Real-time Integration**: Connect with live casino data
-- **Mobile App**: Native iOS/Android applications
-- **Cloud Sync**: Cross-device synchronization
+### 🚀 **Phase 2 Features**
+- **Mobile Optimization**: Complete responsive design and touch optimization
+- **Advanced Counting Systems**: Red 7, Hi-Opt II, Omega II integration with AI coach
+- **Risk of Ruin Calculator**: Kelly Criterion and bankroll management with AI guidance
+
+### 🎨 **Phase 3 Features** 
+- **Advanced AI Features**: Machine learning-based strategy optimization
+- **Multi-Hand Gameplay**: Extended to work with AI coaching system
+- **Strategy Sharing**: Community-driven strategy library
+- **Advanced Analytics**: Heat maps, performance visualization, predictive modeling
 
 ## Contributing
 
