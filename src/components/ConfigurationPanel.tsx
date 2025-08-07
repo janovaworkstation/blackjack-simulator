@@ -9,6 +9,7 @@ export interface PanelConfig extends SimulationConfig {
   countingSystem: string;
   resplitAces: boolean;
   enableHandTracking: boolean;
+  doubleAfterSplit: boolean;
 }
 
 export interface ConfigurationPanelProps<T extends PanelConfig = PanelConfig> {
@@ -180,7 +181,7 @@ const ConfigurationPanel = <T extends PanelConfig = PanelConfig>({
             <div className="flex items-center">
               <input
                 type="checkbox"
-                id="doubleAfterSplit"
+                id="playerCanDouble"
                 checked={config.playerCanDouble}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   updateConfig('playerCanDouble', e.target.checked)
@@ -189,7 +190,7 @@ const ConfigurationPanel = <T extends PanelConfig = PanelConfig>({
                 className="mr-2"
               />
               <label
-                htmlFor="doubleAfterSplit"
+                htmlFor="playerCanDouble"
                 className="text-sm text-gray-700"
               >
                 Player Can Double
@@ -244,6 +245,22 @@ const ConfigurationPanel = <T extends PanelConfig = PanelConfig>({
               />
               <label htmlFor="resplitAces" className="text-sm text-gray-700">
                 Re-split Aces
+              </label>
+            </div>
+
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="doubleAfterSplit"
+                checked={config.doubleAfterSplit}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  updateConfig('doubleAfterSplit', e.target.checked)
+                }
+                disabled={isRunning}
+                className="mr-2"
+              />
+              <label htmlFor="doubleAfterSplit" className="text-sm text-gray-700">
+                Double After Split (DAS)
               </label>
             </div>
           </div>

@@ -31,6 +31,7 @@ const BlackjackSimulator = () => {
     countingSystem: 'HI_LO',
     resplitAces: false,
     enableHandTracking: true,
+    doubleAfterSplit: true,
     bettingTable: [
       { minCount: -10, maxCount: 0, betAmount: 5 },
       { minCount: 0, maxCount: 1, betAmount: 10 },
@@ -61,6 +62,7 @@ const BlackjackSimulator = () => {
       enableHandTracking: config.enableHandTracking,
       bettingTable: config.bettingTable,
       countingSystem: config.countingSystem,
+      doubleAfterSplit: config.doubleAfterSplit,
     };
     console.log('runSimulation function:', runSimulation);
     runSimulation(simulationConfig);
@@ -84,6 +86,7 @@ const BlackjackSimulator = () => {
       numberOfSimulations: strategy.simulationConfig.numberOfSimulations,
       countingSystem: strategy.countingSystem,
       enableHandTracking: strategy.simulationConfig.enableHandTracking,
+      doubleAfterSplit: strategy.simulationConfig.doubleAfterSplit ?? true,
       bettingTable: [...strategy.bettingStrategy], // Deep copy the betting table
     }));
   };

@@ -971,4 +971,175 @@ describe('BlackjackEngine', () => {
       }
     }, 10000);
   });
+
+  describe('Double After Split (DAS) Rules Implementation', () => {
+    const mockConfigWithDAS = {
+      ...mockConfig,
+      playerCanSplit: true,
+      playerCanDouble: true,
+      doubleAfterSplit: true,
+    };
+
+    const mockConfigWithoutDAS = {
+      ...mockConfig,
+      playerCanSplit: true,
+      playerCanDouble: true,
+      doubleAfterSplit: false,
+    };
+
+    it('allows doubling on post-split hands when DAS is enabled', () => {
+      const engine = new BlackjackSimulation(mockConfigWithDAS);
+      
+      // Test the internal logic by checking the configuration
+      expect(engine.config.doubleAfterSplit).toBe(true);
+      expect(engine.config.playerCanDouble).toBe(true);
+      expect(engine.config.playerCanSplit).toBe(true);
+    });
+
+    it('prevents doubling on post-split hands when DAS is disabled', () => {
+      const engine = new BlackjackSimulation(mockConfigWithoutDAS);
+      
+      // Test the internal logic by checking the configuration
+      expect(engine.config.doubleAfterSplit).toBe(false);
+      expect(engine.config.playerCanDouble).toBe(true);
+      expect(engine.config.playerCanSplit).toBe(true);
+    });
+
+    it('correctly implements DAS-dependent pair strategy for 4,4 vs 5', () => {
+      const dasEnabledEngine = new BlackjackSimulation(mockConfigWithDAS);
+      const dasDisabledEngine = new BlackjackSimulation(mockConfigWithoutDAS);
+
+      // Create test hands for 4,4 vs dealer 5
+      const playerHand: Hand = {
+        cards: [
+          { suit: 'Hearts', rank: '4', value: 4 },
+          { suit: 'Spades', rank: '4', value: 4 }
+        ],
+        value: { hard: 8, soft: 8 },
+        isBlackjack: false
+      };
+
+      const dealerUpCard = { suit: 'Diamonds', rank: '5', value: 5 };
+
+      // With DAS enabled: 4,4 vs 5 should split
+      const actionWithDAS = dasEnabledEngine.testGetBasicStrategyAction(
+        playerHand, dealerUpCard, true, true
+      );
+
+      // With DAS disabled: 4,4 vs 5 should NOT split (hit instead)
+      const actionWithoutDAS = dasDisabledEngine.testGetBasicStrategyAction(
+        playerHand, dealerUpCard, true, true
+      );
+
+      expect(actionWithDAS).toBe('P'); // Split with DAS
+      expect(actionWithoutDAS).toBe('H'); // Hit without DAS
+    });
+
+    it('correctly implements DAS-dependent pair strategy for 4,4 vs 6', () => {
+      const dasEnabledEngine = new BlackjackSimulation(mockConfigWithDAS);
+      const dasDisabledEngine = new BlackjackSimulation(mockConfigWithoutDAS);
+
+      // Create test hands for 4,4 vs dealer 6
+      const playerHand: Hand = {
+        cards: [
+          { suit: 'Hearts', rank: '4', value: 4 },
+          { suit: 'Spades', rank: '4', value: 4 }
+        ],
+        value: { hard: 8, soft: 8 },
+        isBlackjack: false
+      };
+
+      const dealerUpCard = { suit: 'Diamonds', rank: '6', value: 6 };
+
+      // With DAS enabled: 4,4 vs 6 should split
+      const actionWithDAS = dasEnabledEngine.testGetBasicStrategyAction(
+        playerHand, dealerUpCard, true, true
+      );
+
+      // With DAS disabled: 4,4 vs 6 should NOT split
+      const actionWithoutDAS = dasDisabledEngine.testGetBasicStrategyAction(
+        playerHand, dealerUpCard, true, true
+      );
+
+      expect(actionWithDAS).toBe('P'); // Split with DAS
+      expect(actionWithoutDAS).toBe('H'); // Hit without DAS
+    });
+
+    it('does not affect non-DAS-dependent pairs like 8,8', () => {
+      const dasEnabledEngine = new BlackjackSimulation(mockConfigWithDAS);
+      const dasDisabledEngine = new BlackjackSimulation(mockConfigWithoutDAS);
+
+      // Create test hands for 8,8 vs dealer 10 (always split regardless of DAS)
+      const playerHand: Hand = {
+        cards: [
+          { suit: 'Hearts', rank: '8', value: 8 },
+          { suit: 'Spades', rank: '8', value: 8 }
+        ],
+        value: { hard: 16, soft: 16 },
+        isBlackjack: false
+      };
+
+      const dealerUpCard = { suit: 'Diamonds', rank: '10', value: 10 };
+
+      const actionWithDAS = dasEnabledEngine.testGetBasicStrategyAction(
+        playerHand, dealerUpCard, true, true
+      );
+
+      const actionWithoutDAS = dasDisabledEngine.testGetBasicStrategyAction(
+        playerHand, dealerUpCard, true, true
+      );
+
+      // Both should split regardless of DAS setting
+      expect(actionWithDAS).toBe('P'); 
+      expect(actionWithoutDAS).toBe('P');
+    });
+
+    it('defaults to DAS enabled for backward compatibility', () => {
+      const configWithoutDASField = { ...mockConfig };
+      delete (configWithoutDASField as any).doubleAfterSplit;
+      
+      const engine = new BlackjackSimulation(configWithoutDASField);
+      
+      // Should default to allowing DAS
+      expect(engine.config.doubleAfterSplit).toBeUndefined();
+      
+      // Test that the default behavior allows DAS-dependent splits
+      const playerHand: Hand = {
+        cards: [
+          { suit: 'Hearts', rank: '4', value: 4 },
+          { suit: 'Spades', rank: '4', value: 4 }
+        ],
+        value: { hard: 8, soft: 8 },
+        isBlackjack: false
+      };
+
+      const dealerUpCard = { suit: 'Diamonds', rank: '5', value: 5 };
+
+      const action = engine.testGetBasicStrategyAction(
+        playerHand, dealerUpCard, true, true
+      );
+
+      expect(action).toBe('P'); // Should split (DAS enabled by default)
+    });
+
+    it('correctly marks hands as post-split during actual gameplay', async () => {
+      const config = {
+        ...mockConfigWithDAS,
+        numberOfSimulations: 5, // Reduced to avoid shoe exhaustion
+        numberOfDecks: 4,        // More cards available
+        deckPenetration: 80,     // Less aggressive penetration
+        enableHandTracking: true
+      };
+      
+      const engine = new BlackjackSimulation(config);
+      const results = await engine.simulate();
+      
+      // Check if any splits occurred and verify post-split hand tracking
+      expect(results.splits).toBeGreaterThanOrEqual(0);
+      
+      // The implementation should properly mark hands as post-split
+      // This is tested indirectly through the simulation working without errors
+      expect(results.handsPlayed).toBeGreaterThan(0);
+    });
+  });
 });

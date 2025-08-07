@@ -125,6 +125,15 @@ export const PAIR_STRATEGY: { [key: string]: string[] } = {
   '10': ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'], // 10,10 (never split)
 };
 
+// Pairs that require DAS (Double After Split) to be profitable
+// These pairs should NOT be split if DAS is disabled
+export const DAS_DEPENDENT_PAIRS: { [key: string]: number[] } = {
+  '4': [3, 4], // 4,4 vs 5,6 (dealer index 3,4) only split with DAS
+  '2': [1], // 2,2 vs 3 (dealer index 1) only split with DAS (some variations)
+  '3': [1], // 3,3 vs 3 (dealer index 1) only split with DAS (some variations) 
+  '6': [1], // 6,6 vs 3 (dealer index 1) only split with DAS (some variations)
+};
+
 // H17 Strategy Overrides
 // Base strategy tables above are for S17 (dealer stands on soft 17)
 // These overrides apply when dealer hits soft 17 (H17 rule)
@@ -457,11 +466,24 @@ export class BlackjackSimulation {
       if (surrenderAction === 'Y') return 'R'; // Surrender
     }
 
-    // Check pair splitting (no H17 differences currently)
+    // Check pair splitting with DAS conditioning
     if (canSplit && this.isPair(playerHand)) {
       const pairCardRank = playerHand.cards[0].rank;
       const splitAction = PAIR_STRATEGY[pairCardRank]?.[dealerIndex];
-      if (splitAction === 'Y') return 'P'; // Split
+      if (splitAction === 'Y') {
+        // Check if this pair/dealer combination requires DAS
+        const dasRequiredIndices = DAS_DEPENDENT_PAIRS[pairCardRank];
+        if (dasRequiredIndices && dasRequiredIndices.includes(dealerIndex)) {
+          // This split requires DAS - only split if DAS is enabled
+          if (this.config.doubleAfterSplit !== false) {
+            return 'P'; // Split with DAS
+          }
+          // DAS disabled for a DAS-dependent pair - don't split
+        } else {
+          // Non-DAS-dependent pair - always split when basic strategy says so
+          return 'P'; // Split
+        }
+      }
     }
 
     // Handle soft hands with H17 conditioning
@@ -581,7 +603,10 @@ export class BlackjackSimulation {
       let handIndex = 0;
       while (handIndex < playerHands.length) {
         const currentHand = playerHands[handIndex];
-        let canDouble = this.config.playerCanDouble;
+        // DAS rule: post-split hands can only double if doubleAfterSplit is enabled
+        let canDouble = currentHand.isPostSplit 
+          ? (this.config.doubleAfterSplit ?? true)
+          : this.config.playerCanDouble;
         let canSplit = this.config.playerCanSplit && 
           (currentHand.cards[0].rank !== 'A' || this.config.resplitAces);
 
@@ -637,6 +662,7 @@ export class BlackjackSimulation {
               isBlackjack: false,
               betAmount: betSize,
               isSplitAces: isSplittingAces,
+              isPostSplit: true,
             };
             newHand.value = this.calculateHandValue(newHand.cards);
             playerHands.push(newHand);
@@ -644,6 +670,7 @@ export class BlackjackSimulation {
             currentHand.cards.push(this.dealCard());
             currentHand.value = this.calculateHandValue(currentHand.cards);
             currentHand.isSplitAces = isSplittingAces;
+            currentHand.isPostSplit = true;
             
             // After splitting Aces, no further actions allowed and no re-splitting unless resplitAces is enabled
             canSplit = !isSplittingAces && this.config.playerCanSplit;
@@ -848,6 +875,10 @@ export class BlackjackSimulation {
 
   testDealCard(): Card {
     return this.dealCard();
+  }
+
+  testGetBasicStrategyAction(playerHand: Hand, dealerUpCard: Card, canDouble: boolean, canSplit: boolean): string {
+    return this.getBasicStrategyAction(playerHand, dealerUpCard, canDouble, canSplit);
   }
 
   updateCount(card: Card): void {
