@@ -23,7 +23,8 @@ describe('BettingTable', () => {
         isRunning={false}
       />,
     );
-    expect(screen.getByText('True Count Range')).toBeInTheDocument();
+    expect(screen.getByText('From (≥)')).toBeInTheDocument();
+    expect(screen.getByText('To (<)')).toBeInTheDocument();
     expect(screen.getByText('Wager ($)')).toBeInTheDocument();
     expect(screen.getByText('Delete?')).toBeInTheDocument();
   });
@@ -74,7 +75,7 @@ describe('BettingTable', () => {
 
     expect(mockSetBettingTable).toHaveBeenCalledWith([
       ...mockBettingTable,
-      { minCount: 2, maxCount: 2.9, betAmount: 25 },
+      { minCount: 1.9, maxCount: 2.9, betAmount: 25 },
     ]);
   });
 

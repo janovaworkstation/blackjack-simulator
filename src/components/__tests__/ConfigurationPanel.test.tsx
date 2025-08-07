@@ -51,7 +51,7 @@ describe('ConfigurationPanel', () => {
     expect(screen.getByLabelText('Re-split Aces')).toBeInTheDocument();
     expect(
       screen.getByLabelText(
-        'Enable Hand-by-Hand Tracking (Limits to 1000 hands max)',
+        'Enable Hand-by-Hand Tracking (Required for Strategy Validation)',
       ),
     ).toBeInTheDocument();
   });

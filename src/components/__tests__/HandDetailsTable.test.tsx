@@ -123,7 +123,7 @@ describe('HandDetailsTable', () => {
     ];
 
     render(<HandDetailsTable handDetails={shuffleHandDetails} />);
-    expect(screen.getByText('Shuffle')).toBeInTheDocument();
+    expect(screen.getAllByText('Shuffle')).toHaveLength(3);
   });
 
   it('displays running bankroll correctly', () => {

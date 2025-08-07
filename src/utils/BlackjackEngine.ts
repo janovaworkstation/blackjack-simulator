@@ -605,8 +605,8 @@ export class BlackjackSimulation {
       this.currentBankroll - this.minBankroll,
     );
 
-    // Track hand details if enabled
-    if (this.config.enableHandTracking) {
+    // Track hand details if enabled (limit to 1000 hands)
+    if (this.config.enableHandTracking && this.handDetails.length < 1000) {
       this.handDetails.push({
         handNumber: this.handsPlayed + 1,
         runningCountStart: willShuffle ? 0 : runningCountStart,
