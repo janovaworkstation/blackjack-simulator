@@ -68,7 +68,7 @@ export const COUNTING_SYSTEMS: {
   },
 };
 
-// Basic Strategy Matrix
+// Basic Strategy Matrix (S17 - Dealer Stands on Soft 17)
 export const BASIC_STRATEGY: { [key: number]: string[] } = {
   // Hard totals: [2,3,4,5,6,7,8,9,10,A] dealer up cards
   4: ['H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H'],
@@ -91,9 +91,9 @@ export const BASIC_STRATEGY: { [key: number]: string[] } = {
   21: ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
 };
 
-// Soft totals (with Ace)
+// Soft totals (with Ace) - S17 Base Strategy
 export const SOFT_STRATEGY: { [key: number]: string[] } = {
-  // Soft totals: A,2 through A,9
+  // Soft totals: A,2 through A,9 - [2,3,4,5,6,7,8,9,10,A] dealer up cards
   13: ['H', 'H', 'H', 'D', 'D', 'H', 'H', 'H', 'H', 'H'], // A,2
   14: ['H', 'H', 'H', 'D', 'D', 'H', 'H', 'H', 'H', 'H'], // A,3
   15: ['H', 'H', 'D', 'D', 'D', 'H', 'H', 'H', 'H', 'H'], // A,4
@@ -123,6 +123,33 @@ export const PAIR_STRATEGY: { [key: string]: string[] } = {
   '8': ['Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y'], // 8,8
   '9': ['Y', 'Y', 'Y', 'Y', 'Y', 'N', 'Y', 'Y', 'N', 'N'], // 9,9
   '10': ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'], // 10,10 (never split)
+};
+
+// H17 Strategy Overrides
+// Base strategy tables above are for S17 (dealer stands on soft 17)
+// These overrides apply when dealer hits soft 17 (H17 rule)
+export const H17_SOFT_OVERRIDES: { [key: number]: { [dealerCard: number]: string } } = {
+  // Soft 18 (A,7) - More aggressive standing against Ace in H17
+  18: {
+    9: 'S'  // A,7 vs A: Stand in H17 (was Hit in S17)
+  },
+  // Soft 19 (A,8) - More aggressive doubling in H17
+  19: {
+    4: 'D'  // A,8 vs 6: Double in H17 (was Stand in S17) - dealer 6 = index 4
+  }
+};
+
+export const H17_HARD_OVERRIDES: { [key: number]: { [dealerCard: number]: string } } = {
+  // Hard 11 - More aggressive doubling against Ace in H17
+  11: {
+    9: 'D'  // 11 vs A: Double in H17 (was Hit in S17) 
+  }
+};
+
+// H17 Surrender overrides (if any specific differences exist)
+export const H17_SURRENDER_OVERRIDES: { [key: number]: { [dealerCard: number]: string } } = {
+  // Currently no major surrender differences between H17/S17 for standard hands
+  // This can be extended if specific surrender differences are identified
 };
 
 // Helper function to format card with suit
@@ -340,7 +367,18 @@ export class BlackjackSimulation {
   }
 
   private isSoftHand(hand: Hand): boolean {
-    return hand.value.hard !== hand.value.soft;
+    // A hand is "soft" if it contains an Ace that is currently being counted as 11
+    // We can determine this by checking if the soft total uses at least one Ace as 11
+    const aces = hand.cards.filter(card => card.rank === 'A').length;
+    if (aces === 0) return false;
+    
+    // Calculate what the total would be if all Aces counted as 1
+    const hardTotalAllAcesAs1 = hand.cards.reduce((sum, card) => {
+      return sum + (card.rank === 'A' ? 1 : card.value);
+    }, 0);
+    
+    // If soft total > hard total with all aces as 1, then at least one ace counts as 11
+    return hand.value.soft > hardTotalAllAcesAs1;
   }
 
   private isPair(hand: Hand): boolean {
@@ -408,24 +446,45 @@ export class BlackjackSimulation {
     const playerTotal = playerHand.value.soft;
     const dealerValue = dealerUpCard.value;
     const dealerIndex = dealerValue === 11 ? 9 : Math.min(dealerValue - 2, 8);
+    const isH17 = this.config.dealerHitsOnSoft17;
 
+    // Check surrender first (with H17 overrides if applicable)
     if (
       this.config.playerCanSurrender &&
       playerHand.cards.length === 2 &&
       !this.isSoftHand(playerHand)
     ) {
-      const surrenderAction =
-        SURRENDER_STRATEGY[playerHand.value.hard]?.[dealerIndex];
+      // Check H17 surrender overrides first
+      if (isH17) {
+        const h17SurrenderOverride = H17_SURRENDER_OVERRIDES[playerHand.value.hard]?.[dealerIndex];
+        if (h17SurrenderOverride === 'Y') return 'R';
+      }
+      
+      // Use base surrender strategy  
+      const surrenderAction = SURRENDER_STRATEGY[playerHand.value.hard]?.[dealerIndex];
       if (surrenderAction === 'Y') return 'R'; // Surrender
     }
 
+    // Check pair splitting (no H17 differences currently)
     if (canSplit && this.isPair(playerHand)) {
       const pairCardRank = playerHand.cards[0].rank;
       const splitAction = PAIR_STRATEGY[pairCardRank]?.[dealerIndex];
       if (splitAction === 'Y') return 'P'; // Split
     }
 
+    // Handle soft hands with H17 conditioning
     if (this.isSoftHand(playerHand)) {
+      // Check H17 soft overrides first
+      if (isH17) {
+        const h17SoftOverride = H17_SOFT_OVERRIDES[playerTotal]?.[dealerIndex];
+        if (h17SoftOverride) {
+          let action = h17SoftOverride;
+          if (action === 'D' && !canDouble) action = 'H';
+          return action;
+        }
+      }
+      
+      // Use base soft strategy (S17)
       const softStrategy = SOFT_STRATEGY[playerTotal];
       if (softStrategy) {
         let action = softStrategy[dealerIndex];
@@ -434,7 +493,20 @@ export class BlackjackSimulation {
       }
     }
 
+    // Handle hard hands with H17 conditioning
     const hardTotal = playerHand.value.hard;
+    
+    // Check H17 hard overrides first
+    if (isH17) {
+      const h17HardOverride = H17_HARD_OVERRIDES[hardTotal]?.[dealerIndex];
+      if (h17HardOverride) {
+        let action = h17HardOverride;
+        if (action === 'D' && !canDouble) action = 'H';
+        return action;
+      }
+    }
+    
+    // Use base hard strategy (S17)
     const strategy = BASIC_STRATEGY[hardTotal] || BASIC_STRATEGY[21];
     let action = strategy[dealerIndex];
 
