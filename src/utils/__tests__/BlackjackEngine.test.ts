@@ -261,16 +261,16 @@ describe('BlackjackEngine', () => {
         expect(results.handDetails.length).toBeLessThanOrEqual(5);
       }, 10000);
 
-      it('limits hand tracking to 1000 hands maximum', async () => {
+      it('tracks all hands when enableHandTracking is true', async () => {
         const config = {
           ...mockConfig,
           enableHandTracking: true,
-          numberOfSimulations: 1100,
+          numberOfSimulations: 100, // Use smaller number for test performance
         };
         const engine = new BlackjackSimulation(config);
 
         const results = await engine.simulate();
-        expect(results.handDetails.length).toBeLessThanOrEqual(1000);
+        expect(results.handDetails.length).toBe(100);
       }, 15000);
     });
 

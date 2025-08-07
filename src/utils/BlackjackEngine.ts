@@ -521,7 +521,7 @@ export class BlackjackSimulation {
           if (action === 'R') {
             this.surrenders++;
             winnings = -betSize / 2;
-            totalBet = betSize / 2;
+            totalBet = betSize;
             break;
           }
 
@@ -605,8 +605,8 @@ export class BlackjackSimulation {
       this.currentBankroll - this.minBankroll,
     );
 
-    // Track hand details if enabled (limit to 1000 hands)
-    if (this.config.enableHandTracking && this.handDetails.length < 1000) {
+    // Track hand details if enabled
+    if (this.config.enableHandTracking) {
       this.handDetails.push({
         handNumber: this.handsPlayed + 1,
         runningCountStart: willShuffle ? 0 : runningCountStart,
@@ -683,7 +683,7 @@ export class BlackjackSimulation {
       totalWagered: this.totalWagered,
       totalWon: this.totalWon,
       netResult: this.currentBankroll,
-      expectedValue: this.currentBankroll / this.handsPlayed,
+      expectedValue: this.totalWagered > 0 ? (this.totalWon / this.totalWagered) * 100 : 0,
       averageBetSize: this.totalWagered / this.handsPlayed,
       maxDrawdown: this.maxDrawdown,
       handsPerHour: 100, // Placeholder

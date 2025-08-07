@@ -132,8 +132,8 @@ const StrategyValidation: React.FC<StrategyValidationProps> = ({
     stats.handsPlayed > 0 && stats.handsPlayed < getMinHandsForRange(stats, i)
   );
   
-  // Calculate overall EV using the totals (which should match main results)
-  const overallEV = totals.expectedValue; // Use the totals EV instead of recalculating
+  // Use the main simulation results EV for consistency 
+  const overallEV = results?.expectedValue ?? 0;
   const strategyPassed = !hasInsufficientData && overallEV > -0.5; // Strategy passes if EV > -0.5%
 
   return (
@@ -320,11 +320,15 @@ const StrategyValidation: React.FC<StrategyValidationProps> = ({
               <div className="grid grid-cols-2 gap-4 text-xs">
                 <div>
                   <span className="font-medium text-blue-700">Strategy Validation Net:</span>
-                  <span className="text-blue-900 ml-1">${Math.abs(totals.netResult).toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
+                  <span className={`ml-1 ${totals.netResult >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    ${Math.abs(totals.netResult).toLocaleString(undefined, {maximumFractionDigits: 0})}
+                  </span>
                 </div>
                 <div>
                   <span className="font-medium text-blue-700">Main Results Net:</span>
-                  <span className="text-blue-900 ml-1">${Math.abs(results.netResult).toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
+                  <span className={`ml-1 ${results.netResult >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    ${Math.abs(results.netResult).toLocaleString(undefined, {maximumFractionDigits: 0})}
+                  </span>
                 </div>
                 <div>
                   <span className={`font-medium ${

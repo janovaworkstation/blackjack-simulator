@@ -16,10 +16,9 @@ test.describe('Blackjack Simulator', () => {
   });
 
   test('betting strategy table has correct labels', async ({ page }) => {
-    // Check for "True Count Range" header instead of old label
-    await expect(
-      page.getByRole('cell', { name: 'True Count Range' }),
-    ).toBeVisible();
+    // Check for betting table headers
+    await expect(page.getByText('From (≥)')).toBeVisible();
+    await expect(page.getByText('To (<)')).toBeVisible();
 
     // Check for "Wager ($)" header instead of "Bet Amount ($)"
     await expect(page.getByText('Wager ($)')).toBeVisible();
@@ -55,12 +54,15 @@ test.describe('Blackjack Simulator', () => {
     page,
   }) => {
     const checkbox = page.getByLabel(
-      'Enable Hand-by-Hand Tracking (Limits to 1000 hands max)',
+      'Enable Hand-by-Hand Tracking (Required for Strategy Validation)',
     );
     const runButton = page.getByRole('button', { name: 'Run Simulation' });
 
-    // Initially unchecked
-    await expect(checkbox).not.toBeChecked();
+    // Initially checked by default
+    await expect(checkbox).toBeChecked();
+
+    // Disable tracking first
+    await checkbox.uncheck();
 
     // Run simulation without tracking
     await runButton.click();
@@ -85,12 +87,12 @@ test.describe('Blackjack Simulator', () => {
   });
 
   test('betting table inputs have correct sizes', async ({ page }) => {
-    // Check that True Count Range inputs are small (w-14)
+    // Check that True Count Range inputs are small (w-16)
     const minCountInput = page.locator('input[id^="minCount-"]').first();
-    await expect(minCountInput).toHaveClass(/w-14/);
+    await expect(minCountInput).toHaveClass(/w-16/);
 
     const maxCountInput = page.locator('input[id^="maxCount-"]').first();
-    await expect(maxCountInput).toHaveClass(/w-14/);
+    await expect(maxCountInput).toHaveClass(/w-16/);
 
     // Check that Wager input is small (w-16)
     const betAmountInput = page.locator('input[id^="betAmount-"]').first();
@@ -122,10 +124,10 @@ test.describe('Blackjack Simulator', () => {
 
   test('complete simulation workflow with basic settings', async ({ page }) => {
     // Set basic simulation parameters
-    const numberOfSimulationsInput = page.locator(
-      'input[id="numberOfSimulations"]',
+    const numberOfSimulationsSelect = page.locator(
+      'select[id="numberOfSimulations"]',
     );
-    await numberOfSimulationsInput.fill('100');
+    await numberOfSimulationsSelect.selectOption('10000');
 
     // Configure betting through the betting table
     const betAmountInput = page.locator('input[id^="betAmount-"]').first();
@@ -142,14 +144,14 @@ test.describe('Blackjack Simulator', () => {
     await expect(page.getByText('Simulation Results')).toBeVisible();
     await expect(page.getByText('Hands Played')).toBeVisible();
 
-    // Check that hands played shows 100 (be more specific to avoid multiple matches)
+    // Check that hands played shows 10,000 (be more specific to avoid multiple matches)
     const handsPlayedSection = page
       .locator('.bg-blue-50')
       .filter({ hasText: 'Hands Played' });
-    await expect(handsPlayedSection.getByText('100')).toBeVisible();
+    await expect(handsPlayedSection.getByText('10,000')).toBeVisible();
 
     // Check that win percentage is displayed
-    await expect(page.getByText('Win Rate')).toBeVisible();
+    await expect(page.locator('.text-xs').getByText('Win Rate')).toBeVisible();
 
     // Check that detailed statistics are shown
     await expect(page.getByText('Total Wagered:')).toBeVisible();
@@ -162,15 +164,15 @@ test.describe('Blackjack Simulator', () => {
   test('simulation workflow with hand tracking enabled', async ({ page }) => {
     // Enable hand tracking
     const trackingCheckbox = page.getByLabel(
-      'Enable Hand-by-Hand Tracking (Limits to 1000 hands max)',
+      'Enable Hand-by-Hand Tracking (Required for Strategy Validation)',
     );
     await trackingCheckbox.check();
 
     // Set smaller number of simulations for faster test
-    const numberOfSimulationsInput = page.locator(
-      'input[id="numberOfSimulations"]',
+    const numberOfSimulationsSelect = page.locator(
+      'select[id="numberOfSimulations"]',
     );
-    await numberOfSimulationsInput.fill('50');
+    await numberOfSimulationsSelect.selectOption('10000');
 
     // Run simulation
     const runButton = page.getByRole('button', { name: 'Run Simulation' });
@@ -198,12 +200,12 @@ test.describe('Blackjack Simulator', () => {
     await countingSystemSelect.selectOption('KO');
 
     // Change number of decks
-    const numberOfDecksInput = page.locator('input[id="numberOfDecks"]');
-    await numberOfDecksInput.fill('8');
+    const numberOfDecksInput = page.locator('select[id="numberOfDecks"]');
+    await numberOfDecksInput.selectOption('8');
 
     // Change deck penetration
-    const deckPenetrationInput = page.locator('input[id="deckPenetration"]');
-    await deckPenetrationInput.fill('80');
+    const deckPenetrationInput = page.locator('select[id="deckPenetration"]');
+    await deckPenetrationInput.selectOption('85');
 
     // Toggle dealer hits soft 17
     const dealerHitsSoft17Checkbox = page.locator(
@@ -213,9 +215,9 @@ test.describe('Blackjack Simulator', () => {
 
     // Run simulation with small number for speed
     const numberOfSimulationsInput = page.locator(
-      'input[id="numberOfSimulations"]',
+      'select[id="numberOfSimulations"]',
     );
-    await numberOfSimulationsInput.fill('25');
+    await numberOfSimulationsInput.selectOption('10000');
 
     const runButton = page.getByRole('button', { name: 'Run Simulation' });
     await runButton.click();
@@ -247,9 +249,9 @@ test.describe('Blackjack Simulator', () => {
 
     // Run simulation to see if betting configuration works
     const numberOfSimulationsInput = page.locator(
-      'input[id="numberOfSimulations"]',
+      'select[id="numberOfSimulations"]',
     );
-    await numberOfSimulationsInput.fill('10');
+    await numberOfSimulationsInput.selectOption('10000');
 
     const runButton = page.getByRole('button', { name: 'Run Simulation' });
     await runButton.click();
@@ -264,9 +266,9 @@ test.describe('Blackjack Simulator', () => {
   test('simulation runs without errors', async ({ page }) => {
     // Simple test to verify simulation can run successfully
     const numberOfSimulationsInput = page.locator(
-      'input[id="numberOfSimulations"]',
+      'select[id="numberOfSimulations"]',
     );
-    await numberOfSimulationsInput.fill('50');
+    await numberOfSimulationsInput.selectOption('10000');
 
     // Start simulation
     const runButton = page.getByRole('button', { name: 'Run Simulation' });
@@ -293,16 +295,15 @@ test.describe('Blackjack Simulator', () => {
     ).toBeVisible();
 
     // Check that betting table is responsive
-    await expect(
-      page.getByRole('cell', { name: 'True Count Range' }),
-    ).toBeVisible();
+    await expect(page.getByText('From (≥)')).toBeVisible();
+    await expect(page.getByText('To (<)')).toBeVisible();
     await expect(page.getByText('Wager ($)')).toBeVisible();
 
     // Run a quick simulation to ensure mobile functionality
     const numberOfSimulationsInput = page.locator(
-      'input[id="numberOfSimulations"]',
+      'select[id="numberOfSimulations"]',
     );
-    await numberOfSimulationsInput.fill('10');
+    await numberOfSimulationsInput.selectOption('10000');
 
     const runButton = page.getByRole('button', { name: 'Run Simulation' });
     await runButton.click();
@@ -316,9 +317,9 @@ test.describe('Blackjack Simulator', () => {
   test('error handling and validation', async ({ page }) => {
     // Test with invalid input values
     const numberOfSimulationsInput = page.locator(
-      'input[id="numberOfSimulations"]',
+      'select[id="numberOfSimulations"]',
     );
-    await numberOfSimulationsInput.fill('0');
+    await numberOfSimulationsInput.selectOption('10000');
 
     const betAmountInput = page.locator('input[id^="betAmount-"]').first();
     await betAmountInput.fill('-10');
@@ -332,7 +333,7 @@ test.describe('Blackjack Simulator', () => {
     await page.waitForTimeout(1000);
 
     // Reset to valid values
-    await numberOfSimulationsInput.fill('10');
+    await numberOfSimulationsInput.selectOption('10000');
     await betAmountInput.fill('10');
 
     await runButton.click();
@@ -345,9 +346,9 @@ test.describe('Blackjack Simulator', () => {
   test('results persistence and chart interactions', async ({ page }) => {
     // Run simulation
     const numberOfSimulationsInput = page.locator(
-      'input[id="numberOfSimulations"]',
+      'select[id="numberOfSimulations"]',
     );
-    await numberOfSimulationsInput.fill('100');
+    await numberOfSimulationsInput.selectOption('10000');
 
     const runButton = page.getByRole('button', { name: 'Run Simulation' });
     await runButton.click();
@@ -361,14 +362,14 @@ test.describe('Blackjack Simulator', () => {
     await expect(page.getByText('Total Wagered:')).toBeVisible();
 
     // Run another simulation to see if results update
-    await numberOfSimulationsInput.fill('50');
+    await numberOfSimulationsInput.selectOption('10000');
     await runButton.click();
 
     await page.waitForTimeout(2000);
 
     // Results should update with new values - use more specific selector
     await expect(
-      page.getByText('Hands Played').locator('..').getByText('50'),
+      page.getByText('Hands Played').locator('..').getByText('10,000'),
     ).toBeVisible();
   });
 });
