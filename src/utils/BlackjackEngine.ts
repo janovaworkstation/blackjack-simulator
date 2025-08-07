@@ -392,9 +392,9 @@ export class BlackjackSimulation {
     return decksRemaining > 0 ? this.runningCount / decksRemaining : 0;
   }
 
-  private getBetSize(): number {
+  private getBetSize(currentTrueCount: number): number {
     // Use 0 true count for betting if we need to reshuffle or just shuffled
-    let trueCount = this.previousTrueCount;
+    let trueCount = currentTrueCount;
     if (this.needReshuffle() || this.lastHandWasShuffle) {
       trueCount = 0; // Use 0 true count for betting after shuffle
     }
@@ -516,9 +516,10 @@ export class BlackjackSimulation {
   }
 
   private playHand(): void {
-    const betSize = this.getBetSize();
-    const runningCountStart = this.runningCount;
+    // Calculate true count BEFORE any dealing for accurate bet sizing
     const trueCountStart = this.getTrueCount();
+    const betSize = this.getBetSize(trueCountStart);
+    const runningCountStart = this.runningCount;
     
     // Check if this hand will trigger a shuffle
     const willShuffle = this.needReshuffle();
