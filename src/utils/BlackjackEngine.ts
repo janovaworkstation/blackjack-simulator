@@ -195,6 +195,7 @@ export class BlackjackSimulation {
   private lastHandWasShuffle: boolean;
   private cardsDealtThisShoe: { [key: string]: number }; // Track cards dealt per shoe
   private shuffledThisHand: boolean; // Track if shuffle occurred during current hand
+  private needShuffleNext: boolean; // Casino-realistic: flag to shuffle before next hand
 
   constructor(config: SimulationConfig, countingSystem = 'HI_LO') {
     this.config = config;
@@ -226,6 +227,7 @@ export class BlackjackSimulation {
     this.lastHandWasShuffle = true;
     this.cardsDealtThisShoe = {};
     this.shuffledThisHand = false;
+    this.needShuffleNext = false;
     this.reset();
   }
 
@@ -255,6 +257,7 @@ export class BlackjackSimulation {
     this.lastHandWasShuffle = true;
     this.cardsDealtThisShoe = {};
     this.shuffledThisHand = false;
+    this.needShuffleNext = false;
   }
 
   private createShoe(): Card[] {
@@ -306,16 +309,7 @@ export class BlackjackSimulation {
   }
 
   private dealCard(): Card {
-    if (this.needReshuffle()) {
-      this.shoe = this.createShoe();
-      this.runningCount = 0;
-      this.previousTrueCount = 0;
-      this.lastHandWasShuffle = true;
-      this.cardsDealtThisShoe = {}; // Reset cards dealt tracking
-      this.shuffledThisHand = true; // Mark that shuffle occurred during this hand
-    } else {
-      this.lastHandWasShuffle = false;
-    }
+    // Casino-realistic: No mid-hand shuffling - just deal from current shoe
 
     const card = this.shoe.pop();
     if (!card) {
@@ -393,11 +387,9 @@ export class BlackjackSimulation {
   }
 
   private getBetSize(currentTrueCount: number): number {
-    // Use 0 true count for betting if we need to reshuffle or just shuffled
+    // Casino-realistic: Use the current true count as-is
+    // Shuffle decisions are handled before the hand starts, not during bet sizing
     let trueCount = currentTrueCount;
-    if (this.needReshuffle() || this.lastHandWasShuffle) {
-      trueCount = 0; // Use 0 true count for betting after shuffle
-    }
     
     // If betting table is provided, use it
     if (this.config.bettingTable && this.config.bettingTable.length > 0) {
@@ -516,14 +508,23 @@ export class BlackjackSimulation {
   }
 
   private playHand(): void {
+    // Casino-realistic: Check if we need to shuffle before the hand
+    const willShuffleBeforeHand = this.needShuffleNext;
+    if (this.needShuffleNext) {
+      this.shoe = this.createShoe();
+      this.runningCount = 0;
+      this.cardsDealtThisShoe = {};
+      this.needShuffleNext = false;
+      this.shuffledThisHand = true;
+    }
+    
     // Calculate true count BEFORE any dealing for accurate bet sizing
     const trueCountStart = this.getTrueCount();
     const betSize = this.getBetSize(trueCountStart);
     const runningCountStart = this.runningCount;
     
-    // Check if this hand will trigger a shuffle
-    const willShuffle = this.needReshuffle();
-    const decksRemaining = willShuffle ? this.config.numberOfDecks : this.shoe.length / 52;
+    // Capture decks remaining for hand details (after any shuffle)
+    const decksRemaining = this.shoe.length / 52;
     
     // Reset shuffle flag for this hand
     this.shuffledThisHand = false;
@@ -704,8 +705,8 @@ export class BlackjackSimulation {
     if (this.config.enableHandTracking) {
       this.handDetails.push({
         handNumber: this.handsPlayed + 1,
-        runningCountStart: willShuffle ? 0 : runningCountStart,
-        trueCountStart: willShuffle ? 0 : trueCountStart,
+        runningCountStart: willShuffleBeforeHand ? 0 : runningCountStart,
+        trueCountStart: willShuffleBeforeHand ? 0 : trueCountStart,
         decksRemaining,
         betAmount: betSize,
         playerCardsInitial: playerInitialCards.map((c) => c.rank),
@@ -725,6 +726,12 @@ export class BlackjackSimulation {
       });
     }
 
+    // Casino-realistic: Check if we need to shuffle after this hand
+    // (not during the hand like the old mid-hand shuffle logic)
+    if (this.needReshuffle()) {
+      this.needShuffleNext = true;
+    }
+    
     this.previousTrueCount = this.getTrueCount();
     this.handsPlayed++;
   }
