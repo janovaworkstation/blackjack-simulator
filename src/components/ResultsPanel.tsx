@@ -1,11 +1,14 @@
 import React from 'react';
-import { SimulationResults } from '../types/blackjack';
+import { SimulationResults, SimulationConfig, BetRow, CountingSystemType } from '../types/blackjack';
 import { Card, CardHeader, CardContent, CardTitle } from './UI';
 
 export interface ResultsPanelProps {
   results: SimulationResults | null;
   isRunning: boolean;
   progress: { current: number; total: number } | null;
+  config?: SimulationConfig;
+  bettingStrategy?: BetRow[];
+  countingSystem?: CountingSystemType;
 }
 
 /**
@@ -17,6 +20,9 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({
   results,
   isRunning,
   progress,
+  config,
+  bettingStrategy,
+  countingSystem,
 }) => {
   if (isRunning) {
     return (
@@ -110,32 +116,32 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({
   };
 
   return (
-    <Card className="bg-white shadow-md rounded-lg">
+    <Card className="bg-white shadow-md rounded-lg h-fit">
       <CardHeader className="border-b border-gray-200 px-6 py-4">
         <CardTitle className="text-lg font-semibold text-gray-800">
           Simulation Results
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-6">
-        <div className="space-y-6">
+      <CardContent className="p-6 max-h-[800px] overflow-y-auto">
+        <div className="space-y-4">
           {/* Summary Statistics */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <div className="text-sm text-gray-600">Hands Played</div>
-              <div className="text-xl font-bold text-blue-600">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-blue-50 p-3 rounded-lg">
+              <div className="text-xs text-gray-600">Hands Played</div>
+              <div className="text-lg font-bold text-blue-600">
                 {safeResults.handsPlayed.toLocaleString()}
               </div>
             </div>
-            <div className="bg-green-50 p-4 rounded-lg">
-              <div className="text-sm text-gray-600">Win Rate</div>
-              <div className="text-xl font-bold text-green-600">
+            <div className="bg-green-50 p-3 rounded-lg">
+              <div className="text-xs text-gray-600">Win Rate</div>
+              <div className="text-lg font-bold text-green-600">
                 {safeResults.winPercentage.toFixed(2)}%
               </div>
             </div>
-            <div className="bg-yellow-50 p-4 rounded-lg">
-              <div className="text-sm text-gray-600">EV</div>
+            <div className="bg-yellow-50 p-3 rounded-lg">
+              <div className="text-xs text-gray-600">EV</div>
               <div
-                className={`text-xl font-bold ${
+                className={`text-lg font-bold ${
                   safeResults.expectedValue >= 0
                     ? 'text-green-600'
                     : 'text-red-600'
@@ -144,10 +150,10 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({
                 {safeResults.expectedValue.toFixed(4)}%
               </div>
             </div>
-            <div className="bg-indigo-50 p-4 rounded-lg">
-              <div className="text-sm text-gray-600">Net Result</div>
+            <div className="bg-indigo-50 p-3 rounded-lg">
+              <div className="text-xs text-gray-600">Net Result</div>
               <div
-                className={`text-xl font-bold ${
+                className={`text-lg font-bold ${
                   safeResults.netResult >= 0 ? 'text-green-600' : 'text-red-600'
                 }`}
               >
@@ -161,178 +167,117 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({
           </div>
 
           {/* Detailed Statistics */}
-          <div className="border-t pt-4">
-            <h4 className="font-semibold text-gray-900 mb-3">
+          <div className="border-t pt-3">
+            <h4 className="font-semibold text-gray-900 mb-2 text-sm">
               Detailed Statistics
             </h4>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
               <div>
-                <span className="font-medium text-gray-700">
-                  Total Wagered:
-                </span>
-                <span className="text-gray-900 ml-2">
-                  ${safeResults.totalWagered.toLocaleString()}
-                </span>
+                <span className="font-medium text-gray-700">Total Wagered:</span>
+                <span className="text-gray-900 ml-1">${safeResults.totalWagered.toLocaleString()}</span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Total Won:</span>
-                <span className="text-gray-900 ml-2">
-                  ${safeResults.totalWon.toLocaleString()}
-                </span>
+                <span className="text-gray-900 ml-1">${safeResults.totalWon.toLocaleString()}</span>
               </div>
               <div>
-                <span className="font-medium text-gray-700">
-                  Avg. Bet Size:
-                </span>
-                <span className="text-gray-900 ml-2">
-                  ${safeResults.averageBetSize.toFixed(2)}
-                </span>
+                <span className="font-medium text-gray-700">Avg. Bet Size:</span>
+                <span className="text-gray-900 ml-1">${safeResults.averageBetSize.toFixed(2)}</span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Max Drawdown:</span>
-                <span className="text-gray-900 ml-2">
-                  ${safeResults.maxDrawdown.toLocaleString()}
-                </span>
+                <span className="text-gray-900 ml-1">${safeResults.maxDrawdown.toLocaleString()}</span>
               </div>
               <div>
-                <span className="font-medium text-gray-700">
-                  Hands per Hour:
-                </span>
-                <span className="text-gray-900 ml-2">
-                  {safeResults.handsPerHour}
-                </span>
+                <span className="font-medium text-gray-700">Hands per Hour:</span>
+                <span className="text-gray-900 ml-1">{safeResults.handsPerHour}</span>
               </div>
               <div>
-                <span className="font-medium text-gray-700">
-                  Counting System:
-                </span>
-                <span className="text-gray-900 ml-2">
-                  {safeResults.countingSystem}
-                </span>
+                <span className="font-medium text-gray-700">Counting System:</span>
+                <span className="text-gray-900 ml-1">{safeResults.countingSystem}</span>
               </div>
             </div>
           </div>
 
           {/* Hand Outcomes */}
-          <div className="border-t pt-4">
-            <h4 className="font-semibold text-gray-900 mb-3">Hand Outcomes</h4>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div className="border-t pt-3">
+            <h4 className="font-semibold text-gray-900 mb-2 text-sm">Hand Outcomes</h4>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
               <div>
                 <span className="font-medium text-gray-700">Wins:</span>
-                <span className="text-green-600 ml-2">
-                  {safeResults.wins.toLocaleString()} (
-                  {safeResults.winPercentage.toFixed(2)}%)
+                <span className="text-green-600 ml-1">
+                  {safeResults.wins.toLocaleString()} ({safeResults.winPercentage.toFixed(2)}%)
                 </span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Losses:</span>
-                <span className="text-red-600 ml-2">
-                  {safeResults.losses.toLocaleString()} (
-                  {safeResults.lossPercentage.toFixed(2)}%)
+                <span className="text-red-600 ml-1">
+                  {safeResults.losses.toLocaleString()} ({safeResults.lossPercentage.toFixed(2)}%)
                 </span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Pushes:</span>
-                <span className="text-gray-600 ml-2">
-                  {safeResults.pushes.toLocaleString()} (
-                  {safeResults.pushPercentage.toFixed(2)}%)
+                <span className="text-gray-600 ml-1">
+                  {safeResults.pushes.toLocaleString()} ({safeResults.pushPercentage.toFixed(2)}%)
                 </span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Blackjacks:</span>
-                <span className="text-yellow-600 ml-2">
-                  {safeResults.blackjacks.toLocaleString()}
-                </span>
+                <span className="text-yellow-600 ml-1">{safeResults.blackjacks.toLocaleString()}</span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Player Busts:</span>
-                <span className="text-gray-900 ml-2">
-                  {safeResults.playerBusts.toLocaleString()}
-                </span>
+                <span className="text-gray-900 ml-1">{safeResults.playerBusts.toLocaleString()}</span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Dealer Busts:</span>
-                <span className="text-gray-900 ml-2">
-                  {safeResults.dealerBusts.toLocaleString()}
-                </span>
+                <span className="text-gray-900 ml-1">{safeResults.dealerBusts.toLocaleString()}</span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Surrenders:</span>
-                <span className="text-gray-900 ml-2">
-                  {safeResults.surrenders.toLocaleString()}
-                </span>
+                <span className="text-gray-900 ml-1">{safeResults.surrenders.toLocaleString()}</span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Total Busts:</span>
-                <span className="text-gray-900 ml-2">
-                  {safeResults.busts.toLocaleString()}
-                </span>
+                <span className="text-gray-900 ml-1">{safeResults.busts.toLocaleString()}</span>
               </div>
             </div>
           </div>
 
           {/* Advanced Metrics */}
-          <div className="border-t pt-4">
-            <h4 className="font-semibold text-gray-900 mb-3">
-              Advanced Metrics
-            </h4>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+          <div className="border-t pt-3">
+            <h4 className="font-semibold text-gray-900 mb-2 text-sm">Advanced Metrics</h4>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
               <div>
-                <span className="font-medium text-gray-700">
-                  Risk of Ruin (1000 units):
-                </span>
-                <span className="text-gray-900 ml-2">
-                  {/* Placeholder for RoR */}
-                  N/A
-                </span>
+                <span className="font-medium text-gray-700">Risk of Ruin (1000 units):</span>
+                <span className="text-gray-900 ml-1">N/A</span>
               </div>
               <div>
-                <span className="font-medium text-gray-700">
-                  Kelly Criterion Bet:
-                </span>
-                <span className="text-gray-900 ml-2">
-                  {/* Placeholder for Kelly Bet */}
-                  N/A
-                </span>
+                <span className="font-medium text-gray-700">Kelly Criterion Bet:</span>
+                <span className="text-gray-900 ml-1">N/A</span>
               </div>
               <div>
-                <span className="font-medium text-gray-700">
-                  Standard Deviation:
-                </span>
-                <span className="text-gray-900 ml-2">
-                  {/* Placeholder for Std Dev */}
-                  N/A
-                </span>
+                <span className="font-medium text-gray-700">Standard Deviation:</span>
+                <span className="text-gray-900 ml-1">N/A</span>
               </div>
             </div>
             <p className="text-xs text-gray-500 mt-2">
-              Hard 15s: {safeResults.hands15.toLocaleString()} (
-              {((safeResults.hands15 / safeResults.handsPlayed) * 100).toFixed(
-                2,
-              )}
-              %) | Hard 16s: {safeResults.hands16.toLocaleString()} (
-              {((safeResults.hands16 / safeResults.handsPlayed) * 100).toFixed(
-                2,
-              )}
-              %)
+              Hard 15s: {safeResults.hands15.toLocaleString()} ({((safeResults.hands15 / safeResults.handsPlayed) * 100).toFixed(2)}%) | 
+              Hard 16s: {safeResults.hands16.toLocaleString()} ({((safeResults.hands16 / safeResults.handsPlayed) * 100).toFixed(2)}%)
             </p>
           </div>
 
           {/* Player Actions */}
-          <div className="border-t pt-4">
-            <h4 className="font-semibold text-gray-900 mb-3">Player Actions</h4>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+          <div className="border-t pt-3">
+            <h4 className="font-semibold text-gray-900 mb-2 text-sm">Player Actions</h4>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
               <div>
                 <span className="font-medium text-gray-700">Doubles:</span>
-                <span className="text-gray-900 ml-2">
-                  {safeResults.doubles.toLocaleString()}
-                </span>
+                <span className="text-gray-900 ml-1">{safeResults.doubles.toLocaleString()}</span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Splits:</span>
-                <span className="text-gray-900 ml-2">
-                  {safeResults.splits.toLocaleString()}
-                </span>
+                <span className="text-gray-900 ml-1">{safeResults.splits.toLocaleString()}</span>
               </div>
             </div>
           </div>
@@ -342,4 +287,6 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({
   );
 };
 
+
 export default ResultsPanel;
+

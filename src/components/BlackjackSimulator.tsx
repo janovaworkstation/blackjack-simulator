@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { Button } from './UI';
 import ConfigurationPanel, { PanelConfig } from './ConfigurationPanel';
-import BettingTable, { BetRow } from './BettingTable';
+import BettingTable from './BettingTable';
+import StrategyValidation from './StrategyValidation';
+import StrategyValidationPanel from './StrategyValidationPanel';
+import SavedStrategies from './SavedStrategies';
+import { BetRow, Strategy } from '../types/blackjack';
 import ResultsPanel from './ResultsPanel';
 import HandDetailsTable from './HandDetailsTable';
 import { useSimulation } from '../hooks/useSimulation';
@@ -26,13 +30,13 @@ const BlackjackSimulator = () => {
     handsPerHour: 80,
     countingSystem: 'HI_LO',
     resplitAces: false,
-    enableHandTracking: false,
+    enableHandTracking: true,
     bettingTable: [
-      { minCount: -10, maxCount: -0.1, betAmount: 5 },
-      { minCount: 0, maxCount: 0.9, betAmount: 10 },
-      { minCount: 1, maxCount: 1.9, betAmount: 25 },
-      { minCount: 2, maxCount: 2.9, betAmount: 50 },
-      { minCount: 3, maxCount: 3.9, betAmount: 75 },
+      { minCount: -10, maxCount: 0, betAmount: 5 },
+      { minCount: 0, maxCount: 1, betAmount: 10 },
+      { minCount: 1, maxCount: 2, betAmount: 25 },
+      { minCount: 2, maxCount: 3, betAmount: 50 },
+      { minCount: 3, maxCount: 4, betAmount: 75 },
       { minCount: 4, maxCount: 10, betAmount: 100 },
     ],
   });
@@ -55,6 +59,8 @@ const BlackjackSimulator = () => {
       playerCanSurrender: config.playerCanSurrender,
       numberOfSimulations: config.numberOfSimulations,
       enableHandTracking: config.enableHandTracking,
+      bettingTable: config.bettingTable,
+      countingSystem: config.countingSystem,
     };
     console.log('runSimulation function:', runSimulation);
     runSimulation(simulationConfig);
@@ -62,6 +68,24 @@ const BlackjackSimulator = () => {
 
   const setBettingTable = (newBettingTable: BetRow[]) => {
     setConfig((prev) => ({ ...prev, bettingTable: newBettingTable }));
+  };
+
+  const handleLoadStrategy = (strategy: Strategy) => {
+    // Load strategy configuration into current config
+    setConfig((prev) => ({
+      ...prev,
+      numberOfDecks: strategy.simulationConfig.numberOfDecks,
+      deckPenetration: strategy.simulationConfig.deckPenetration,
+      playerBet: strategy.simulationConfig.playerBet,
+      dealerHitsOnSoft17: strategy.simulationConfig.dealerHitsOnSoft17,
+      playerCanDouble: strategy.simulationConfig.playerCanDouble,
+      playerCanSplit: strategy.simulationConfig.playerCanSplit,
+      playerCanSurrender: strategy.simulationConfig.playerCanSurrender,
+      numberOfSimulations: strategy.simulationConfig.numberOfSimulations,
+      countingSystem: strategy.countingSystem,
+      enableHandTracking: strategy.simulationConfig.enableHandTracking,
+      bettingTable: [...strategy.bettingStrategy], // Deep copy the betting table
+    }));
   };
 
   return (
@@ -111,12 +135,65 @@ const BlackjackSimulator = () => {
 
           {/* Results Panel */}
           <div className="xl:col-span-2">
-            <ResultsPanel
-              results={results}
-              isRunning={isRunning}
-              progress={progress}
-            />
+            <div className="space-y-6">
+              {/* Simulation Results - Back to Original */}
+              <ResultsPanel
+                results={results}
+                isRunning={isRunning}
+                progress={progress}
+                config={{
+                  numberOfDecks: config.numberOfDecks,
+                  deckPenetration: config.deckPenetration,
+                  playerBet: config.playerBet,
+                  dealerHitsOnSoft17: config.dealerHitsOnSoft17,
+                  playerCanDouble: config.playerCanDouble,
+                  playerCanSplit: config.playerCanSplit,
+                  playerCanSurrender: config.playerCanSurrender,
+                  numberOfSimulations: config.numberOfSimulations,
+                  enableHandTracking: config.enableHandTracking,
+                }}
+                bettingStrategy={config.bettingTable}
+                countingSystem={config.countingSystem}
+              />
+
+              {/* Strategy Validation - Only show after simulation has been run */}
+              {results && (
+                <StrategyValidation
+                  bettingTable={config.bettingTable}
+                  handDetails={results.handDetails || []}
+                  results={results}
+                  isRunning={isRunning}
+                />
+              )}
+
+              {/* Strategy Saving Panel - Only show after simulation has been run */}
+              {results && (
+                <StrategyValidationPanel
+                  results={results}
+                  config={{
+                    numberOfDecks: config.numberOfDecks,
+                    deckPenetration: config.deckPenetration,
+                    playerBet: config.playerBet,
+                    dealerHitsOnSoft17: config.dealerHitsOnSoft17,
+                    playerCanDouble: config.playerCanDouble,
+                    playerCanSplit: config.playerCanSplit,
+                    playerCanSurrender: config.playerCanSurrender,
+                    numberOfSimulations: config.numberOfSimulations,
+                    enableHandTracking: config.enableHandTracking,
+                    bettingTable: config.bettingTable,
+                    countingSystem: config.countingSystem,
+                  }}
+                  bettingStrategy={config.bettingTable}
+                  countingSystem={config.countingSystem}
+                />
+              )}
+            </div>
           </div>
+        </div>
+
+        {/* Saved Strategies Section */}
+        <div className="mb-8">
+          <SavedStrategies onLoadStrategy={handleLoadStrategy} />
         </div>
 
         {/* Hand Details Section */}

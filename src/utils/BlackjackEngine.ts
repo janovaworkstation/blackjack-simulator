@@ -5,6 +5,7 @@ import {
   SimulationConfig,
   HandDetails,
   SimulationResults,
+  BetRow,
 } from '../types/blackjack';
 
 // Card counting systems
@@ -124,6 +125,17 @@ export const PAIR_STRATEGY: { [key: string]: string[] } = {
   '10': ['N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'], // 10,10 (never split)
 };
 
+// Helper function to format card with suit
+const formatCardWithSuit = (card: Card): string => {
+  const suitShorthand = {
+    'Hearts': 'H',
+    'Diamonds': 'D', 
+    'Clubs': 'C',
+    'Spades': 'S'
+  };
+  return `${card.rank}${suitShorthand[card.suit]}`;
+};
+
 export class BlackjackSimulation {
   private config: SimulationConfig;
   private countingSystem: { name: string; values: { [key: string]: number } };
@@ -154,10 +166,14 @@ export class BlackjackSimulation {
   private handDetails: HandDetails[];
   private previousTrueCount: number;
   private lastHandWasShuffle: boolean;
+  private cardsDealtThisShoe: { [key: string]: number }; // Track cards dealt per shoe
+  private shuffledThisHand: boolean; // Track if shuffle occurred during current hand
 
   constructor(config: SimulationConfig, countingSystem = 'HI_LO') {
     this.config = config;
-    this.countingSystem = COUNTING_SYSTEMS[countingSystem];
+    // Use counting system from config if provided, otherwise use parameter or default
+    const systemToUse = config.countingSystem || countingSystem;
+    this.countingSystem = COUNTING_SYSTEMS[systemToUse];
     this.shoe = [];
     this.runningCount = 0;
     this.handsPlayed = 0;
@@ -181,6 +197,8 @@ export class BlackjackSimulation {
     this.handDetails = [];
     this.previousTrueCount = 0;
     this.lastHandWasShuffle = true;
+    this.cardsDealtThisShoe = {};
+    this.shuffledThisHand = false;
     this.reset();
   }
 
@@ -208,6 +226,8 @@ export class BlackjackSimulation {
     this.handDetails = [];
     this.previousTrueCount = 0;
     this.lastHandWasShuffle = true;
+    this.cardsDealtThisShoe = {};
+    this.shuffledThisHand = false;
   }
 
   private createShoe(): Card[] {
@@ -240,6 +260,7 @@ export class BlackjackSimulation {
     return this.shuffle(cards);
   }
 
+
   private shuffle(cards: Card[]): Card[] {
     const shuffled = [...cards];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -261,7 +282,10 @@ export class BlackjackSimulation {
     if (this.needReshuffle()) {
       this.shoe = this.createShoe();
       this.runningCount = 0;
+      this.previousTrueCount = 0;
       this.lastHandWasShuffle = true;
+      this.cardsDealtThisShoe = {}; // Reset cards dealt tracking
+      this.shuffledThisHand = true; // Mark that shuffle occurred during this hand
     } else {
       this.lastHandWasShuffle = false;
     }
@@ -270,6 +294,16 @@ export class BlackjackSimulation {
     if (!card) {
       throw new Error('Shoe is empty, cannot deal card.');
     }
+    
+    // Additional validation - this should never happen with proper implementation
+    if (!card.suit || !card.rank) {
+      throw new Error(`Invalid card dealt: ${JSON.stringify(card)}`);
+    }
+    
+    // Track cards dealt this shoe (lightweight tracking for shuffle reset only)
+    const cardKey = formatCardWithSuit(card);
+    this.cardsDealtThisShoe[cardKey] = (this.cardsDealtThisShoe[cardKey] || 0) + 1;
+    
     this.runningCount += this.countingSystem.values[card.rank] || 0;
     return card;
   }
@@ -321,7 +355,45 @@ export class BlackjackSimulation {
   }
 
   private getBetSize(): number {
-    const trueCount = this.previousTrueCount;
+    // Use 0 true count for betting if we need to reshuffle or just shuffled
+    let trueCount = this.previousTrueCount;
+    if (this.needReshuffle() || this.lastHandWasShuffle) {
+      trueCount = 0; // Use 0 true count for betting after shuffle
+    }
+    
+    // If betting table is provided, use it
+    if (this.config.bettingTable && this.config.bettingTable.length > 0) {
+      // Debug logging (only for first 100 hands to avoid console spam)
+      if (this.config.enableHandTracking && this.handsPlayed < 100) {
+        console.log(`Hand ${this.handsPlayed + 1}: TC ${trueCount}, Checking betting table:`);
+        console.table(this.config.bettingTable.map((row, i) => ({
+          index: i,
+          minCount: row.minCount,
+          maxCount: row.maxCount, 
+          betAmount: row.betAmount
+        })));
+      }
+      
+      for (const betRow of this.config.bettingTable) {
+        // Use >= min and < max range logic (no epsilon needed)
+        if (trueCount >= betRow.minCount && trueCount < betRow.maxCount) {
+          if (this.config.enableHandTracking && this.handsPlayed < 100) {
+            console.log(`Hand ${this.handsPlayed + 1}: TC ${trueCount} matches range [${betRow.minCount}, ${betRow.maxCount}), bet: $${betRow.betAmount}`);
+          }
+          return betRow.betAmount;
+        }
+      }
+      
+      // If no range matches, use the last row (highest range)
+      const lastRow = this.config.bettingTable[this.config.bettingTable.length - 1];
+      if (this.config.enableHandTracking && this.handsPlayed < 100) {
+        console.log(`Hand ${this.handsPlayed + 1}: No range matched TC ${trueCount}, using fallback: $${lastRow.betAmount}`);
+        console.log(`Betting table ranges:`, this.config.bettingTable.map(row => `${row.minCount} to ${row.maxCount} = $${row.betAmount}`));
+      }
+      return lastRow.betAmount;
+    }
+    
+    // Fallback to simple multiplication if no betting table
     if (trueCount < 1) return this.config.playerBet;
     const betMultiplier = Math.max(1, Math.floor(trueCount));
     return this.config.playerBet * betMultiplier;
@@ -375,6 +447,13 @@ export class BlackjackSimulation {
     const betSize = this.getBetSize();
     const runningCountStart = this.runningCount;
     const trueCountStart = this.getTrueCount();
+    
+    // Check if this hand will trigger a shuffle
+    const willShuffle = this.needReshuffle();
+    const decksRemaining = willShuffle ? this.config.numberOfDecks : this.shoe.length / 52;
+    
+    // Reset shuffle flag for this hand
+    this.shuffledThisHand = false;
 
     const playerInitialCards = [this.dealCard(), this.dealCard()];
     const dealerInitialCards = [this.dealCard(), this.dealCard()];
@@ -387,6 +466,7 @@ export class BlackjackSimulation {
         value: this.calculateHandValue(playerInitialCards),
         isBlackjack: false,
       }),
+      betAmount: betSize,
     };
 
     const dealerHand: Hand = {
@@ -452,6 +532,7 @@ export class BlackjackSimulation {
           } else if (action === 'D') {
             this.doubles++;
             totalBet += betSize;
+            currentHand.betAmount = (currentHand.betAmount || betSize) + betSize;
             currentHand.cards.push(this.dealCard());
             currentHand.value = this.calculateHandValue(currentHand.cards);
             break;
@@ -463,6 +544,7 @@ export class BlackjackSimulation {
               cards: [cardToSplit, this.dealCard()],
               value: { hard: 0, soft: 0 },
               isBlackjack: false,
+              betAmount: betSize,
             };
             newHand.value = this.calculateHandValue(newHand.cards);
             playerHands.push(newHand);
@@ -493,7 +575,7 @@ export class BlackjackSimulation {
 
       // Settle bets
       for (const hand of playerHands) {
-        const currentBet = hand.cards.length > 2 ? betSize * 2 : betSize;
+        const currentBet = hand.betAmount || betSize;
         if (hand.value.soft > 21) {
           this.losses++;
           this.playerBusts++;
@@ -523,23 +605,28 @@ export class BlackjackSimulation {
       this.currentBankroll - this.minBankroll,
     );
 
-    // Only track hand details if enabled and under limit
-    if (this.config.enableHandTracking && this.handDetails.length < 1000) {
+    // Track hand details if enabled
+    if (this.config.enableHandTracking) {
       this.handDetails.push({
         handNumber: this.handsPlayed + 1,
-        runningCountStart,
-        trueCountStart,
+        runningCountStart: willShuffle ? 0 : runningCountStart,
+        trueCountStart: willShuffle ? 0 : trueCountStart,
+        decksRemaining,
         betAmount: betSize,
         playerCardsInitial: playerInitialCards.map((c) => c.rank),
         dealerCardsInitial: dealerInitialCards.map((c) => c.rank),
+        playerCardsInitialWithSuits: playerInitialCards.map((c) => formatCardWithSuit(c)),
+        dealerCardsInitialWithSuits: dealerInitialCards.map((c) => formatCardWithSuit(c)),
         playerBlackjack: playerHand.isBlackjack,
         dealerBlackjack: dealerHand.isBlackjack,
         initialAction,
         totalBet,
         playerCardsFinal: playerHand.cards.map((c) => c.rank),
         dealerCardsFinal: dealerHand.cards.map((c) => c.rank),
+        playerCardsFinalWithSuits: playerHand.cards.map((c) => formatCardWithSuit(c)),
+        dealerCardsFinalWithSuits: dealerHand.cards.map((c) => formatCardWithSuit(c)),
         winnings,
-        shuffleOccurred: this.lastHandWasShuffle,
+        shuffleOccurred: this.shuffledThisHand,
       });
     }
 

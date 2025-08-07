@@ -45,17 +45,22 @@ const ConfigurationPanel = <T extends PanelConfig = PanelConfig>({
       </CardHeader>
       <CardContent className="space-y-4 p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input
+          <Select
             label="Number of Hands"
-            type="number"
             id="numberOfSimulations"
-            value={config.numberOfSimulations}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            value={config.numberOfSimulations.toString()}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               updateConfig('numberOfSimulations', parseInt(e.target.value, 10))
             }
-            min="1000"
-            max="10000000"
-            step="1000"
+            options={[
+              { value: '10000', label: '10,000' },
+              { value: '50000', label: '50,000' },
+              { value: '100000', label: '100,000' },
+              { value: '250000', label: '250,000' },
+              { value: '500000', label: '500,000' },
+              { value: '1000000', label: '1,000,000' },
+              { value: '2000000', label: '2,000,000' }
+            ]}
             disabled={isRunning}
             className="w-full"
           />
@@ -72,60 +77,79 @@ const ConfigurationPanel = <T extends PanelConfig = PanelConfig>({
             className="w-full"
           />
 
-          <Input
+          <Select
             label="Number of Decks"
-            type="number"
             id="numberOfDecks"
-            value={config.numberOfDecks}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            value={config.numberOfDecks.toString()}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               updateConfig('numberOfDecks', parseInt(e.target.value, 10))
             }
-            min="1"
-            max="8"
+            options={[
+              { value: '1', label: '1 Deck' },
+              { value: '2', label: '2 Decks' },
+              { value: '4', label: '4 Decks' },
+              { value: '6', label: '6 Decks' },
+              { value: '8', label: '8 Decks' }
+            ]}
             disabled={isRunning}
             className="w-full"
           />
 
-          <Input
+          <Select
             label="Penetration (%)"
-            type="number"
             id="deckPenetration"
-            value={config.deckPenetration}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            value={config.deckPenetration.toString()}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               updateConfig('deckPenetration', parseFloat(e.target.value))
             }
-            min="50"
-            max="95"
-            step="5"
+            options={[
+              { value: '50', label: '50%' },
+              { value: '60', label: '60%' },
+              { value: '70', label: '70%' },
+              { value: '75', label: '75%' },
+              { value: '80', label: '80%' },
+              { value: '85', label: '85%' },
+              { value: '90', label: '90%' }
+            ]}
             disabled={isRunning}
             className="w-full"
           />
 
-          <Input
+          <Select
             label="Maximum Bet Limit ($)"
-            type="number"
             id="maxBet"
-            value={config.maxBet}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            value={config.maxBet.toString()}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               updateConfig('maxBet', parseInt(e.target.value, 10))
             }
-            min="25"
-            max="10000"
+            options={[
+              { value: '25', label: '$25' },
+              { value: '50', label: '$50' },
+              { value: '100', label: '$100' },
+              { value: '200', label: '$200' },
+              { value: '500', label: '$500' },
+              { value: '1000', label: '$1,000' },
+              { value: '2500', label: '$2,500' },
+              { value: '5000', label: '$5,000' }
+            ]}
             disabled={isRunning}
             className="w-full"
           />
 
-          <Input
+          <Select
             label="Hands per Hour"
-            type="number"
             id="handsPerHour"
-            value={config.handsPerHour}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            value={config.handsPerHour.toString()}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               updateConfig('handsPerHour', parseInt(e.target.value, 10))
             }
-            min="30"
-            max="150"
-            step="5"
+            options={[
+              { value: '50', label: '50 (Crowded)' },
+              { value: '70', label: '70 (Normal)' },
+              { value: '80', label: '80 (Average)' },
+              { value: '100', label: '100 (Fast)' },
+              { value: '120', label: '120 (Head-to-head)' }
+            ]}
             disabled={isRunning}
             className="w-full"
           />
@@ -244,7 +268,7 @@ const ConfigurationPanel = <T extends PanelConfig = PanelConfig>({
               htmlFor="enableHandTracking"
               className="text-sm text-gray-700"
             >
-              Enable Hand-by-Hand Tracking (Limits to 1000 hands max)
+              Enable Hand-by-Hand Tracking (Required for Strategy Validation)
             </label>
           </div>
           <p className="text-xs text-gray-500 mt-1">

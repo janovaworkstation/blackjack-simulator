@@ -29,17 +29,23 @@ const HandDetailsTable: React.FC<HandDetailsTableProps> = ({ handDetails }) => {
   };
 
   const downloadCSV = () => {
+    console.log('Download CSV clicked, processing', handDetails.length, 'hands');
     const headers = [
       'Hand #',
+      'Decks Remaining',
       'Running Count',
       'True Count',
       'Initial Wager',
       'Initial Cards - Player',
       'Initial Cards - Dealer',
+      'Initial Cards with Suits - Player',
+      'Initial Cards with Suits - Dealer',
       'Initial Action',
       'Total Wager',
       'Final Cards - Player',
       'Final Cards - Dealer',
+      'Final Cards with Suits - Player',
+      'Final Cards with Suits - Dealer',
       'Outcome',
       'Bankroll',
     ];
@@ -51,6 +57,9 @@ const HandDetailsTable: React.FC<HandDetailsTableProps> = ({ handDetails }) => {
 
       return [
         hand.handNumber,
+        hand.shuffleOccurred
+          ? 'Shuffle'
+          : (hand.decksRemaining?.toFixed(1) ?? 'N/A'),
         hand.shuffleOccurred ? 'Shuffle' : hand.runningCountStart,
         hand.shuffleOccurred
           ? 'Shuffle'
@@ -60,6 +69,12 @@ const HandDetailsTable: React.FC<HandDetailsTableProps> = ({ handDetails }) => {
           hand.playerBlackjack ? ' (BJ)' : ''
         }`,
         `D: ${hand.dealerCardsInitial?.[0]}, X${
+          hand.dealerBlackjack ? ' (BJ)' : ''
+        }`,
+        `P: ${formatCards(hand.playerCardsInitialWithSuits || [])}${
+          hand.playerBlackjack ? ' (BJ)' : ''
+        }`,
+        `D: ${hand.dealerCardsInitialWithSuits?.[0] || 'N/A'}, X${
           hand.dealerBlackjack ? ' (BJ)' : ''
         }`,
         hand.initialAction || 'N/A',
@@ -74,28 +89,49 @@ const HandDetailsTable: React.FC<HandDetailsTableProps> = ({ handDetails }) => {
             ? formatCards(hand.dealerCardsFinal)
             : formatCards(hand.dealerCardsInitial)
         }`,
-        `$${Math.abs(hand.winnings)}`,
+        `P: ${
+          hand.playerCardsFinalWithSuits
+            ? formatCards(hand.playerCardsFinalWithSuits)
+            : formatCards(hand.playerCardsInitialWithSuits || [])
+        }`,
+        `D: ${
+          hand.dealerCardsFinalWithSuits
+            ? formatCards(hand.dealerCardsFinalWithSuits)
+            : formatCards(hand.dealerCardsInitialWithSuits || [])
+        }`,
+        hand.winnings > 0 ? `Win ($${hand.winnings})` : 
+        hand.winnings < 0 ? `Loss ($${Math.abs(hand.winnings)})` : 
+        `Push ($0)`,
         `$${bankrollUpToHand.toFixed(2)}`,
       ];
     });
 
     const csvContent = [headers, ...csvData]
-      .map((row) => row.map((cell) => `"${String(cell)}"`).join(','))
+      .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
       .join('\n');
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    if (link.download !== undefined) {
+    console.log('CSV content length:', csvContent.length);
+    
+    try {
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute(
-        'download',
-        `blackjack-hand-details-${new Date().toISOString().slice(0, 10)}.csv`,
-      );
-      link.style.visibility = 'hidden';
+      const link = document.createElement('a');
+      
+      link.href = url;
+      link.download = `blackjack-hand-details-${new Date().toISOString().slice(0, 10)}.csv`;
+      
+      // Trigger download
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      
+      // Clean up
+      URL.revokeObjectURL(url);
+      
+      console.log('CSV download initiated successfully');
+    } catch (error) {
+      console.error('Error downloading CSV:', error);
+      alert('Error downloading CSV file. Check console for details.');
     }
   };
 
@@ -134,31 +170,37 @@ const HandDetailsTable: React.FC<HandDetailsTableProps> = ({ handDetails }) => {
           <table className="min-w-full text-sm">
             <thead className="bg-gray-50">
               <tr>
-                <th className="p-3 text-left font-semibold text-gray-600">
+                <th className="p-3 text-center font-semibold text-gray-600">
                   Hand
                 </th>
-                <th className="p-3 text-left font-semibold text-gray-600">
+                <th className="p-3 text-center font-semibold text-gray-600">
+                  Decks Remaining
+                </th>
+                <th className="p-3 text-center font-semibold text-gray-600">
+                  Running Count
+                </th>
+                <th className="p-3 text-center font-semibold text-gray-600">
                   True Count
                 </th>
-                <th className="p-3 text-left font-semibold text-gray-600">
+                <th className="p-3 text-center font-semibold text-gray-600">
                   Initial Wager
                 </th>
                 <th className="p-3 text-left font-semibold text-gray-600">
                   Initial Cards
                 </th>
-                <th className="p-3 text-left font-semibold text-gray-600">
+                <th className="p-3 text-center font-semibold text-gray-600">
                   Initial Action
                 </th>
-                <th className="p-3 text-left font-semibold text-gray-600">
+                <th className="p-3 text-center font-semibold text-gray-600">
                   Total Wager
                 </th>
                 <th className="p-3 text-left font-semibold text-gray-600">
                   Final Cards
                 </th>
-                <th className="p-3 text-left font-semibold text-gray-600">
+                <th className="p-3 text-center font-semibold text-gray-600">
                   Outcome
                 </th>
-                <th className="p-3 text-left font-semibold text-gray-600">
+                <th className="p-3 text-center font-semibold text-gray-600">
                   Bankroll
                 </th>
               </tr>
@@ -166,13 +208,23 @@ const HandDetailsTable: React.FC<HandDetailsTableProps> = ({ handDetails }) => {
             <tbody className="divide-y divide-gray-200">
               {handsWithBankroll.map((hand) => (
                 <tr key={hand.handNumber} className="hover:bg-gray-50">
-                  <td className="p-3">{hand.handNumber}</td>
-                  <td className="p-3">
+                  <td className="p-3 text-center">{hand.handNumber}</td>
+                  <td className="p-3 text-center">
+                    {hand.shuffleOccurred
+                      ? 'Shuffle'
+                      : hand.decksRemaining?.toFixed(1)}
+                  </td>
+                  <td className="p-3 text-center">
+                    {hand.shuffleOccurred
+                      ? 'Shuffle'
+                      : hand.runningCountStart}
+                  </td>
+                  <td className="p-3 text-center font-bold">
                     {hand.shuffleOccurred
                       ? 'Shuffle'
                       : hand.trueCountStart?.toFixed(1)}
                   </td>
-                  <td className="p-3">${hand.betAmount}</td>
+                  <td className="p-3 text-center font-bold">${hand.betAmount}</td>
                   <td className="p-3">
                     P: {formatCards(hand.playerCardsInitial)}
                     {hand.playerBlackjack ? ' (BJ)' : ''}
@@ -180,8 +232,8 @@ const HandDetailsTable: React.FC<HandDetailsTableProps> = ({ handDetails }) => {
                     D: {hand.dealerCardsInitial?.[0]}, X
                     {hand.dealerBlackjack ? ' (BJ)' : ''}
                   </td>
-                  <td className="p-3">{hand.initialAction || 'N/A'}</td>
-                  <td className="p-3">${hand.totalBet}</td>
+                  <td className="p-3 text-center">{hand.initialAction || 'N/A'}</td>
+                  <td className="p-3 text-center">${hand.totalBet}</td>
                   <td className="p-3">
                     P:{' '}
                     {hand.playerCardsFinal
@@ -194,7 +246,7 @@ const HandDetailsTable: React.FC<HandDetailsTableProps> = ({ handDetails }) => {
                       : formatCards(hand.dealerCardsInitial)}
                   </td>
                   <td
-                    className={`p-3 font-medium ${getOutcomeColor(hand.winnings)}`}
+                    className={`p-3 text-center font-medium ${getOutcomeColor(hand.winnings)}`}
                   >
                     {hand.winnings > 0
                       ? 'Win'
@@ -204,7 +256,7 @@ const HandDetailsTable: React.FC<HandDetailsTableProps> = ({ handDetails }) => {
                     ($
                     {Math.abs(hand.winnings)})
                   </td>
-                  <td className="p-3">${hand.runningBankroll.toFixed(2)}</td>
+                  <td className="p-3 text-center">${hand.runningBankroll.toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>

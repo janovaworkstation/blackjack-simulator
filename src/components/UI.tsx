@@ -123,7 +123,14 @@ export const Input: React.FC<InputProps> = ({
         {label}
       </label>
     )}
-    <input id={id} className={clsx('input', className)} {...props} />
+    <input 
+      id={id} 
+      className={clsx(
+        'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900', 
+        className
+      )} 
+      {...props} 
+    />
   </div>
 );
 
@@ -155,7 +162,14 @@ export const Select: React.FC<SelectProps> = ({
         {label}
       </label>
     )}
-    <select id={id} className={clsx('select', className)} {...props}>
+    <select 
+      id={id} 
+      className={clsx(
+        'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900', 
+        className
+      )} 
+      {...props}
+    >
       {options
         ? options.map((option) => (
             <option key={option.value} value={option.value}>

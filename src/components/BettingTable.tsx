@@ -1,11 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardContent, CardTitle, Button, Input } from './UI';
-
-export interface BetRow {
-  minCount: number;
-  maxCount: number;
-  betAmount: number;
-}
+import { BetRow } from '../types/blackjack';
 
 export interface BettingTableProps {
   bettingTable: BetRow[];
@@ -23,24 +18,56 @@ const BettingTable: React.FC<BettingTableProps> = ({
   setBettingTable,
   isRunning,
 }) => {
+  // Local state to track input values during editing
+  const [inputValues, setInputValues] = useState<{ [key: string]: string }>({});
+
+  // Initialize input values from bettingTable
+  useEffect(() => {
+    const newInputValues: { [key: string]: string } = {};
+    bettingTable.forEach((row, index) => {
+      newInputValues[`minCount-${index}`] = row.minCount.toString();
+      newInputValues[`maxCount-${index}`] = row.maxCount.toString();
+      newInputValues[`betAmount-${index}`] = row.betAmount.toString();
+    });
+    setInputValues(newInputValues);
+  }, [bettingTable]);
+
+  const sortBettingTable = (table: BetRow[]) => {
+    return [...table].sort((a, b) => a.minCount - b.minCount);
+  };
+
   const updateBettingRow = (
     index: number,
     field: keyof BetRow,
     value: string,
   ) => {
-    const newTable = [...bettingTable];
-    newTable[index] = { ...newTable[index], [field]: parseFloat(value) };
-    setBettingTable(newTable);
+    // Update input value immediately for responsive typing
+    const inputKey = `${field}-${index}`;
+    setInputValues(prev => ({ ...prev, [inputKey]: value }));
+
+    // Allow intermediate states for better UX when typing negative numbers
+    if (value === '' || value === '-' || value === '.' || value === '-.') {
+      return; // Don't update the actual data yet, keep the input state
+    }
+
+    // Only update actual data if value is a valid number
+    const numericValue = parseFloat(value);
+    if (!isNaN(numericValue)) {
+      const newTable = [...bettingTable];
+      newTable[index] = { ...newTable[index], [field]: numericValue };
+      setBettingTable(newTable);
+    }
   };
 
   const addBettingRow = () => {
     const lastRow = bettingTable[bettingTable.length - 1];
     const newRow: BetRow = {
-      minCount: lastRow.maxCount + 0.1,
+      minCount: lastRow.maxCount,
       maxCount: lastRow.maxCount + 1,
       betAmount: lastRow.betAmount,
     };
-    setBettingTable([...bettingTable, newRow]);
+    const newTable = [...bettingTable, newRow];
+    setBettingTable(newTable);
   };
 
   const removeBettingRow = (index: number) => {
@@ -60,18 +87,20 @@ const BettingTable: React.FC<BettingTableProps> = ({
       <CardContent className="p-6">
         <div className="space-y-4">
           <p className="text-sm text-gray-600">
-            Define your bet amounts for different true count ranges. The
-            simulator will use these values instead of simple multiplication.
+            Define your bet amounts for different true count ranges. Each range includes the minimum value but excludes the maximum value. For example: "0 to 1" covers 0.0 ≤ TC &lt; 1.0.
           </p>
 
           <div className="overflow-x-auto">
             <table className="w-full text-sm table-fixed">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left py-2 px-2 whitespace-nowrap w-40">
-                    True Count Range
+                  <th className="text-center py-2 px-2 whitespace-nowrap w-20">
+                    From (≥)
                   </th>
-                  <th className="text-left py-2 px-2 whitespace-nowrap w-24">
+                  <th className="text-center py-2 px-2 whitespace-nowrap w-20">
+                    To (&lt;)
+                  </th>
+                  <th className="text-center py-2 px-2 whitespace-nowrap w-24">
                     Wager ($)
                   </th>
                   <th className="text-left py-2 px-2 whitespace-nowrap w-20">
@@ -83,42 +112,41 @@ const BettingTable: React.FC<BettingTableProps> = ({
                 {bettingTable.map((row, index) => (
                   <tr key={index} className="border-b">
                     <td className="py-2 px-2">
-                      <div className="flex items-center space-x-2">
-                        <Input
-                          id={`minCount-${index}`}
-                          type="number"
-                          value={row.minCount}
-                          onChange={(e) =>
-                            updateBettingRow(index, 'minCount', e.target.value)
-                          }
-                          className="w-14 px-2 py-1 border rounded text-xs"
-                          step="0.1"
-                          disabled={isRunning}
-                        />
-                        <span className="text-gray-500">to</span>
-                        <Input
-                          id={`maxCount-${index}`}
-                          type="number"
-                          value={row.maxCount}
-                          onChange={(e) =>
-                            updateBettingRow(index, 'maxCount', e.target.value)
-                          }
-                          className="w-14 px-2 py-1 border rounded text-xs"
-                          step="0.1"
-                          disabled={isRunning}
-                        />
-                      </div>
+                      <input
+                        id={`minCount-${index}`}
+                        type="number"
+                        value={inputValues[`minCount-${index}`] ?? row.minCount ?? ''}
+                        onChange={(e) =>
+                          updateBettingRow(index, 'minCount', e.target.value)
+                        }
+                        className="w-16 px-1 py-1 text-xs text-center border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        step="0.1"
+                        disabled={isRunning}
+                      />
                     </td>
                     <td className="py-2 px-2">
-                      <Input
+                      <input
+                        id={`maxCount-${index}`}
+                        type="number"
+                        value={inputValues[`maxCount-${index}`] ?? row.maxCount ?? ''}
+                        onChange={(e) =>
+                          updateBettingRow(index, 'maxCount', e.target.value)
+                        }
+                        className="w-16 px-1 py-1 text-xs text-center border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        step="0.1"
+                        disabled={isRunning}
+                      />
+                    </td>
+                    <td className="py-2 px-2">
+                      <input
                         id={`betAmount-${index}`}
                         type="number"
-                        value={row.betAmount}
+                        value={inputValues[`betAmount-${index}`] ?? row.betAmount ?? ''}
                         onChange={(e) =>
                           updateBettingRow(index, 'betAmount', e.target.value)
                         }
-                        className="w-16 px-2 py-1 border rounded text-xs"
-                        min="1"
+                        className="w-16 px-1 py-1 text-xs text-center border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        min="0"
                         disabled={isRunning}
                       />
                     </td>
