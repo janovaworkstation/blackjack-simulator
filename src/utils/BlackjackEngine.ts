@@ -487,11 +487,16 @@ export class BlackjackSimulation {
       this.pushes++;
       winnings = 0;
       initialAction = 'Push';
-    } else if (playerHand.isBlackjack) {
+    } else if (playerHand.isBlackjack && !playerHand.isSplitAces) {
       this.wins++;
       this.blackjacks++;
       winnings = betSize * 1.5;
       initialAction = 'Blackjack';
+    } else if (playerHand.isSplitAces && playerHand.value.soft === 21) {
+      // Split Aces that make 21 pay 1:1, not 3:2
+      this.wins++;
+      winnings = betSize;
+      initialAction = '21 (Split Aces)';
     } else if (dealerHand.isBlackjack) {
       this.losses++;
       winnings = -betSize;
@@ -503,20 +508,30 @@ export class BlackjackSimulation {
       while (handIndex < playerHands.length) {
         const currentHand = playerHands[handIndex];
         let canDouble = this.config.playerCanDouble;
-        let canSplit = this.config.playerCanSplit;
+        let canSplit = this.config.playerCanSplit && 
+          (currentHand.cards[0].rank !== 'A' || this.config.resplitAces);
 
-        while (currentHand.value.soft < 21) {
-          const action = this.getBasicStrategyAction(
-            currentHand,
-            dealerHand.cards[0],
-            canDouble,
-            canSplit && playerHands.length < 4,
-          );
+        // Split Aces get only one card - skip the playing loop
+        if (currentHand.isSplitAces) {
+          // Split Aces hands already have their one additional card from the split
+          // No further actions allowed - forced to stand
           if (handIndex === 0 && initialAction === '') {
-            initialAction = action;
+            initialAction = 'S'; // Mark as stand for initial action tracking
           }
+        } else {
+          // Normal playing loop for non-split-Aces hands
+          while (currentHand.value.soft < 21) {
+            const action = this.getBasicStrategyAction(
+              currentHand,
+              dealerHand.cards[0],
+              canDouble,
+              canSplit && playerHands.length < 4,
+            );
+            if (handIndex === 0 && initialAction === '') {
+              initialAction = action;
+            }
 
-          if (action === 'S') break;
+            if (action === 'S') break;
 
           if (action === 'R') {
             this.surrenders++;
@@ -540,18 +555,25 @@ export class BlackjackSimulation {
             this.splits++;
             totalBet += betSize;
             const cardToSplit = currentHand.cards.pop()!;
+            const isSplittingAces = cardToSplit.rank === 'A';
+            
             const newHand: Hand = {
               cards: [cardToSplit, this.dealCard()],
               value: { hard: 0, soft: 0 },
               isBlackjack: false,
               betAmount: betSize,
+              isSplitAces: isSplittingAces,
             };
             newHand.value = this.calculateHandValue(newHand.cards);
             playerHands.push(newHand);
 
             currentHand.cards.push(this.dealCard());
             currentHand.value = this.calculateHandValue(currentHand.cards);
-            canSplit = false;
+            currentHand.isSplitAces = isSplittingAces;
+            
+            // After splitting Aces, no further actions allowed and no re-splitting unless resplitAces is enabled
+            canSplit = !isSplittingAces && this.config.playerCanSplit;
+            }
           }
         }
         handIndex++;

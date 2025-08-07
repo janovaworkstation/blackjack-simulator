@@ -42,6 +42,7 @@ export interface Hand {
   value: HandValue;
   isBlackjack: boolean;
   betAmount?: number;
+  isSplitAces?: boolean;
 }
 
 /**
@@ -59,6 +60,7 @@ export interface SimulationConfig {
   enableHandTracking?: boolean;
   bettingTable?: BetRow[];
   countingSystem?: string;
+  resplitAces?: boolean;
 }
 
 /**
