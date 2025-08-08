@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ResultsPanel from '../ResultsPanel';
-import { SimulationResults } from '../../types/blackjack';
+import { SimulationResults, AppConfig } from '../../types/blackjack';
+import { createDefaultConfig } from '../../constants/defaultConfig';
 
 const mockResults: SimulationResults = {
   handsPlayed: 1000,
@@ -42,9 +43,11 @@ const mockProgress = {
   total: 1000,
 };
 
+const mockAppConfig: AppConfig = createDefaultConfig();
+
 describe('ResultsPanel', () => {
   it('displays loading state when simulation is running without progress', () => {
-    render(<ResultsPanel results={null} isRunning={true} progress={null} />);
+    render(<ResultsPanel results={null} isRunning={true} progress={null} appConfig={mockAppConfig} />);
 
     expect(screen.getByText('Running Simulation...')).toBeInTheDocument();
     expect(screen.getByText('Initializing simulation...')).toBeInTheDocument();
@@ -54,7 +57,7 @@ describe('ResultsPanel', () => {
 
   it('displays progress when simulation is running with progress data', () => {
     render(
-      <ResultsPanel results={null} isRunning={true} progress={mockProgress} />,
+      <ResultsPanel results={null} isRunning={true} progress={mockProgress} appConfig={mockAppConfig} />,
     );
 
     expect(screen.getByText('Running Simulation...')).toBeInTheDocument();
@@ -68,7 +71,7 @@ describe('ResultsPanel', () => {
   });
 
   it('displays empty state when no results and not running', () => {
-    render(<ResultsPanel results={null} isRunning={false} progress={null} />);
+    render(<ResultsPanel results={null} isRunning={false} progress={null} appConfig={mockAppConfig} />);
 
     expect(screen.getByText('Simulation Results')).toBeInTheDocument();
     expect(
@@ -80,7 +83,7 @@ describe('ResultsPanel', () => {
 
   it('displays complete results when simulation is finished', () => {
     render(
-      <ResultsPanel results={mockResults} isRunning={false} progress={null} />,
+      <ResultsPanel results={mockResults} isRunning={false} progress={null} appConfig={mockAppConfig} />,
     );
 
     expect(screen.getByText('Simulation Results')).toBeInTheDocument();
@@ -111,6 +114,7 @@ describe('ResultsPanel', () => {
         results={positiveResults}
         isRunning={false}
         progress={null}
+        appConfig={mockAppConfig}
       />,
     );
 
@@ -125,7 +129,7 @@ describe('ResultsPanel', () => {
 
   it('displays detailed statistics correctly', () => {
     render(
-      <ResultsPanel results={mockResults} isRunning={false} progress={null} />,
+      <ResultsPanel results={mockResults} isRunning={false} progress={null} appConfig={mockAppConfig} />,
     );
 
     expect(screen.getByText('Detailed Statistics')).toBeInTheDocument();
@@ -155,7 +159,7 @@ describe('ResultsPanel', () => {
 
   it('displays hand outcomes section correctly', () => {
     render(
-      <ResultsPanel results={mockResults} isRunning={false} progress={null} />,
+      <ResultsPanel results={mockResults} isRunning={false} progress={null} appConfig={mockAppConfig} />,
     );
 
     expect(screen.getByText('Hand Outcomes')).toBeInTheDocument();
@@ -180,7 +184,7 @@ describe('ResultsPanel', () => {
 
   it('displays player actions section correctly', () => {
     render(
-      <ResultsPanel results={mockResults} isRunning={false} progress={null} />,
+      <ResultsPanel results={mockResults} isRunning={false} progress={null} appConfig={mockAppConfig} />,
     );
 
     expect(screen.getByText('Player Actions')).toBeInTheDocument();
@@ -195,7 +199,7 @@ describe('ResultsPanel', () => {
 
   it('displays bust information in hand outcomes section', () => {
     render(
-      <ResultsPanel results={mockResults} isRunning={false} progress={null} />,
+      <ResultsPanel results={mockResults} isRunning={false} progress={null} appConfig={mockAppConfig} />,
     );
 
     expect(screen.getByText('Player Busts:')).toBeInTheDocument();
@@ -221,6 +225,7 @@ describe('ResultsPanel', () => {
         results={invalidResults}
         isRunning={false}
         progress={null}
+        appConfig={mockAppConfig}
       />,
     );
 
@@ -249,6 +254,7 @@ describe('ResultsPanel', () => {
         results={noCountingSystemResults}
         isRunning={false}
         progress={null}
+        appConfig={mockAppConfig}
       />,
     );
 
@@ -266,6 +272,7 @@ describe('ResultsPanel', () => {
         results={noHandsPerHourResults}
         isRunning={false}
         progress={null}
+        appConfig={mockAppConfig}
       />,
     );
 
@@ -285,6 +292,7 @@ describe('ResultsPanel', () => {
         results={largeNumberResults}
         isRunning={false}
         progress={null}
+        appConfig={mockAppConfig}
       />,
     );
 
@@ -306,7 +314,7 @@ describe('ResultsPanel', () => {
     };
 
     render(
-      <ResultsPanel results={zeroResults} isRunning={false} progress={null} />,
+      <ResultsPanel results={zeroResults} isRunning={false} progress={null} appConfig={mockAppConfig} />,
     );
 
     // Check for zero percentages in win rate - look for the percentage value directly
@@ -320,7 +328,7 @@ describe('ResultsPanel', () => {
 
   it('applies correct color classes for outcome types', () => {
     render(
-      <ResultsPanel results={mockResults} isRunning={false} progress={null} />,
+      <ResultsPanel results={mockResults} isRunning={false} progress={null} appConfig={mockAppConfig} />,
     );
 
     // Wins should be green
@@ -356,6 +364,7 @@ describe('ResultsPanel', () => {
         results={missingTotalResults}
         isRunning={false}
         progress={null}
+        appConfig={mockAppConfig}
       />,
     );
 

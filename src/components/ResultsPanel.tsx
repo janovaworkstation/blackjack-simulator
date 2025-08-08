@@ -1,14 +1,13 @@
 import React from 'react';
-import { SimulationResults, SimulationConfig, BetRow, CountingSystemType } from '../types/blackjack';
+import { SimulationResults, AppConfig } from '../types/blackjack';
 import { Card, CardHeader, CardContent, CardTitle } from './UI';
+import { getSimulationConfig } from '../utils/configUtils';
 
 export interface ResultsPanelProps {
   results: SimulationResults | null;
   isRunning: boolean;
   progress: { current: number; total: number } | null;
-  config?: SimulationConfig;
-  bettingStrategy?: BetRow[];
-  countingSystem?: CountingSystemType;
+  appConfig: AppConfig;
 }
 
 /**
@@ -20,10 +19,12 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({
   results,
   isRunning,
   progress,
-  config,
-  bettingStrategy,
-  countingSystem,
+  appConfig,
 }) => {
+  // Extract needed values from appConfig
+  const config = getSimulationConfig(appConfig);
+  const bettingStrategy = appConfig.bettingTable;
+  const countingSystem = appConfig.countingSystem;
   if (isRunning) {
     return (
       <Card className="bg-white shadow-md rounded-lg">

@@ -111,9 +111,7 @@ const BlackjackSimulator = () => {
                 results={results}
                 isRunning={isRunning}
                 progress={progress}
-                config={getSimulationConfig(config)}
-                bettingStrategy={config.bettingTable}
-                countingSystem={config.countingSystem}
+                appConfig={config}
               />
 
               {/* Strategy Validation - Only show after simulation has been run */}
@@ -130,9 +128,7 @@ const BlackjackSimulator = () => {
               {results && (
                 <StrategyValidationPanel
                   results={results}
-                  config={getSimulationConfig(config)}
-                  bettingStrategy={config.bettingTable}
-                  countingSystem={config.countingSystem}
+                  appConfig={config}
                 />
               )}
             </div>

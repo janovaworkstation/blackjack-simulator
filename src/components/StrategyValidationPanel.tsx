@@ -6,19 +6,16 @@
 import React, { useState, useEffect } from 'react';
 import { 
   SimulationResults, 
-  SimulationConfig, 
-  BetRow, 
-  CountingSystemType, 
+  AppConfig, 
   ValidationResult 
 } from '../types/blackjack';
 import { useStrategyManager } from '../hooks/useStrategyManager';
 import { Button, Card, CardHeader, CardContent, CardTitle } from './UI';
+import { getSimulationConfig } from '../utils/configUtils';
 
 interface StrategyValidationPanelProps {
   results: SimulationResults;
-  config: SimulationConfig;
-  bettingStrategy: BetRow[];
-  countingSystem: CountingSystemType;
+  appConfig: AppConfig;
 }
 
 interface CreateStrategyModalProps {
@@ -118,10 +115,12 @@ const CreateStrategyModal: React.FC<CreateStrategyModalProps> = ({
 
 const StrategyValidationPanel: React.FC<StrategyValidationPanelProps> = ({
   results,
-  config,
-  bettingStrategy,
-  countingSystem
+  appConfig
 }) => {
+  // Extract needed values from appConfig
+  const config = getSimulationConfig(appConfig);
+  const bettingStrategy = appConfig.bettingTable;
+  const countingSystem = appConfig.countingSystem;
   const { validateStrategy, createStrategy } = useStrategyManager();
   const [validation, setValidation] = useState<ValidationResult | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
