@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import * as THREE from 'three';
+import { debugContext } from '../../utils/debug';
 
 interface Chip3DProps {
   position: [number, number, number];
@@ -37,13 +38,13 @@ export function Chip3D({ position, value, color }: Chip3DProps) {
     const loader = new THREE.TextureLoader();
     
     const chipPath = `/chips/chip-${displayValue}.png`;
-    console.log(`🎰 Loading chip texture: $${value} bet → $${displayValue} chip from ${chipPath}`);
+    debugContext('UI', `Loading chip texture: $${value} bet → $${displayValue} chip from ${chipPath}`);
     
     // Direct load since PNG files exist
     loader.load(
       chipPath,
       (texture) => {
-        console.log(`✅ Successfully loaded PNG chip texture for $${displayValue}`);
+        debugContext('UI', `Successfully loaded PNG chip texture for $${displayValue}`);
         // Configure texture for proper display on cylinder
         texture.generateMipmaps = true;
         texture.minFilter = THREE.LinearMipmapLinearFilter;
@@ -56,7 +57,7 @@ export function Chip3D({ position, value, color }: Chip3DProps) {
         setTextureLoading(false);
       },
       (progress) => {
-        console.log(`📊 Loading progress for chip $${displayValue}:`, progress);
+        debugContext('UI', `Loading progress for chip $${displayValue}`, { progress });
       },
       (error) => {
         console.error(`❌ Failed to load chip texture ${chipPath}:`, error);

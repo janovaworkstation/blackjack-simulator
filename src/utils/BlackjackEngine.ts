@@ -8,6 +8,7 @@ import {
   BetRow,
 } from '../types/blackjack';
 import { COUNTING_SYSTEMS_METADATA } from '../constants/countingSystems';
+import { debugContext } from './debug';
 
 // Card counting systems - now imported from centralized constants
 export const COUNTING_SYSTEMS = COUNTING_SYSTEMS_METADATA;
@@ -380,8 +381,8 @@ export class BlackjackSimulation {
       // If no range matches, use the last row (highest range)
       const lastRow = this.config.bettingTable[this.config.bettingTable.length - 1];
       if (this.config.enableHandTracking && this.handsPlayed < 100) {
-        console.log(`Hand ${this.handsPlayed + 1}: No range matched TC ${trueCount}, using fallback: $${lastRow.betAmount}`);
-        console.log(`Betting table ranges:`, this.config.bettingTable.map(row => `${row.minCount} to ${row.maxCount} = $${row.betAmount}`));
+        debugContext('BETTING', `Hand ${this.handsPlayed + 1}: No range matched TC ${trueCount}, using fallback: $${lastRow.betAmount}`);
+        debugContext('BETTING', `Betting table ranges`, this.config.bettingTable.map(row => `${row.minCount} to ${row.maxCount} = $${row.betAmount}`));
       }
       return lastRow.betAmount;
     }

@@ -4,6 +4,7 @@
 import Bugsnag from '@bugsnag/js';
 import BugsnagPluginReact from '@bugsnag/plugin-react';
 import BugsnagPerformance from '@bugsnag/browser-performance';
+import { debugLog } from './debug';
 
 // Types for monitoring configuration
 interface MonitoringConfig {
@@ -261,14 +262,14 @@ export const initializeMonitoring = (): void => {
         BugsnagPerformance.start({ 
           apiKey: import.meta.env.VITE_BUGSNAG_API_KEY 
         });
-        console.log('BugsnagPerformance started successfully');
+        debugLog('BugsnagPerformance started successfully');
       } catch (error) {
         console.warn('BugsnagPerformance failed to start:', error);
       }
     }
   }
 
-  console.log('Monitoring initialized:', config);
+  debugLog('Monitoring initialized', config);
 
   // Set up global error handling
   if (config.enableErrorTracking) {

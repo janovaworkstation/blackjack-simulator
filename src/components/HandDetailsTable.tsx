@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { HandDetails } from '../types/blackjack';
 import { Card, CardHeader, CardContent, CardTitle, Button } from './UI';
+import { debugContext } from '../utils/debug';
 
 export interface HandDetailsTableProps {
   handDetails: HandDetails[];
@@ -43,7 +44,7 @@ const HandDetailsTable: React.FC<HandDetailsTableProps> = ({ handDetails }) => {
   };
 
   const downloadCSV = () => {
-    console.log('Download CSV clicked, processing', handDetails.length, 'hands');
+    debugContext('EXPORT', `Download CSV clicked, processing ${handDetails.length} hands`);
     const headers = [
       'Hand #',
       'Decks Remaining',
@@ -126,7 +127,7 @@ const HandDetailsTable: React.FC<HandDetailsTableProps> = ({ handDetails }) => {
       .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
       .join('\n');
 
-    console.log('CSV content length:', csvContent.length);
+    debugContext('EXPORT', `CSV content generated`, { length: csvContent.length, hands: handDetails.length });
     
     try {
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -144,7 +145,7 @@ const HandDetailsTable: React.FC<HandDetailsTableProps> = ({ handDetails }) => {
       // Clean up
       URL.revokeObjectURL(url);
       
-      console.log('CSV download initiated successfully');
+      debugContext('EXPORT', 'CSV download initiated successfully');
     } catch (error) {
       console.error('Error downloading CSV:', error);
       alert('Error downloading CSV file. Check console for details.');

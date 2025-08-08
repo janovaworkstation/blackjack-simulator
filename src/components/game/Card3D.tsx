@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { debugContext } from '../../utils/debug';
 
 interface Card3DProps {
   position: [number, number, number];
@@ -61,7 +62,7 @@ export function Card3D({
     const suitCode = suitMap[suit] || 'S';
     
     const cardCode = `${rankCode}${suitCode}`;
-    console.log(`Card3D: Converting ${rank} of ${suit} to ${cardCode}`);
+    debugContext('CARDS', `Converting ${rank} of ${suit} to ${cardCode}`);
     
     return cardCode;
   };
@@ -71,23 +72,23 @@ export function Card3D({
     ? `/cards/${getCardCode(rank, suit)}.png`
     : '/cards/card-back.png';
   
-  console.log(`Card3D: Final image path for ${rank} of ${suit}:`, finalImagePath);
+  debugContext('CARDS', `Final image path for ${rank} of ${suit}`, { finalImagePath });
   
   // Alternative texture loading approach to debug the issue
   const [customTexture, setCustomTexture] = useState<THREE.Texture | null>(null);
   
   useEffect(() => {
-    console.log(`Card3D: Loading texture for ${rank} of ${suit} from:`, finalImagePath);
+    debugContext('CARDS', `Loading texture for ${rank} of ${suit} from: ${finalImagePath}`);
     
     const loader = new THREE.TextureLoader();
     loader.load(
       finalImagePath,
       (loadedTexture) => {
-        console.log(`Card3D: Successfully loaded texture for ${rank} of ${suit}`);
+        debugContext('CARDS', `Successfully loaded texture for ${rank} of ${suit}`);
         setCustomTexture(loadedTexture);
       },
       (progress) => {
-        console.log(`Card3D: Loading progress for ${rank} of ${suit}:`, progress);
+        debugContext('CARDS', `Loading progress for ${rank} of ${suit}`, { progress });
       },
       (error) => {
         console.error(`Card3D: Failed to load texture for ${rank} of ${suit}:`, error);
@@ -135,7 +136,7 @@ export function Card3D({
           }
           
           const fallbackTexture = new THREE.CanvasTexture(canvas);
-          console.log(`Card3D: Created fallback texture for ${rank} of ${suit}`);
+          debugContext('CARDS', `Created fallback texture for ${rank} of ${suit}`);
           setCustomTexture(fallbackTexture);
         });
       }
@@ -157,7 +158,7 @@ export function Card3D({
   // Start flip animation when shouldFlip changes
   useEffect(() => {
     if (shouldFlip && !faceUp) {
-      console.log(`Card3D: Starting flip animation for ${rank} of ${suit}`);
+      debugContext('UI', `Starting flip animation for ${rank} of ${suit}`);
       setIsFlipping(true);
       setFlipProgress(0);
     }
@@ -166,7 +167,7 @@ export function Card3D({
   // Start peek animation when shouldPeek changes
   useEffect(() => {
     if (shouldPeek && !faceUp) {
-      console.log(`Card3D: Starting peek animation for ${rank} of ${suit}`);
+      debugContext('UI', `Starting peek animation for ${rank} of ${suit}`);
       setIsPeeking(true);
       setPeekProgress(0);
     }
@@ -188,7 +189,7 @@ export function Card3D({
         setIsFlipping(false);
         setFlipProgress(0);
         onFlipComplete?.();
-        console.log(`Card3D: Flip animation complete for ${rank} of ${suit}`);
+        debugContext('UI', `Flip animation complete for ${rank} of ${suit}`);
       }
     }
     
@@ -201,7 +202,7 @@ export function Card3D({
         setIsPeeking(false);
         setPeekProgress(0);
         onPeekComplete?.();
-        console.log(`Card3D: Peek animation complete for ${rank} of ${suit}`);
+        debugContext('UI', `Peek animation complete for ${rank} of ${suit}`);
       }
     }
   });

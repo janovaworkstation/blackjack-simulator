@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { debugContext, debugLog } from '../utils/debug';
 
 interface Card {
   rank: string;
@@ -128,7 +129,7 @@ export function useBlackjackGame() {
   // Update game state when dealer check completes
   useEffect(() => {
     if (dealerCheckComplete && gameState.gameStatus === 'playing' && !gameState.canHit) {
-      console.log('Dealer check completed - re-enabling player actions');
+      debugContext('GAME', 'Dealer check completed - re-enabling player actions');
       const isBlackjack = gameState.handValue === 21 && playerCards.length === 2;
       const canDouble = gameState.bankroll >= gameState.currentBet;
       const canSplit = playerCards.length === 2 && playerCards[0].rank === playerCards[1].rank && gameState.bankroll >= gameState.currentBet;
@@ -196,7 +197,7 @@ export function useBlackjackGame() {
       [shoe[i], shoe[j]] = [shoe[j], shoe[i]];
     }
 
-    console.log(`Created and shuffled ${shoeSize}-deck shoe with ${shoe.length} cards`);
+    debugContext('CARDS', `Created and shuffled ${shoeSize}-deck shoe with ${shoe.length} cards`);
     return shoe;
   }, [shoeSize]);
 
@@ -285,7 +286,7 @@ export function useBlackjackGame() {
     // Normal dealing logic
     // If deck is empty or needs shuffle, create new shoe
     if (currentDeck.length === 0 || needsShuffle) {
-      console.log('Creating new shoe due to:', currentDeck.length === 0 ? 'empty deck' : 'penetration reached');
+      debugContext('CARDS', 'Creating new shoe due to: ' + (currentDeck.length === 0 ? 'empty deck' : 'penetration reached'));
       const newShoe = createShoe();
       setTotalCardsInShoe(newShoe.length);
       setNeedsShuffle(false);
@@ -297,7 +298,7 @@ export function useBlackjackGame() {
     // Check if we need to shuffle after this card
     const remainingAfterDeal = currentDeck.slice(1);
     if (checkIfNeedsShuffle(remainingAfterDeal)) {
-      console.log(`Penetration reached: ${((totalCardsInShoe - remainingAfterDeal.length) / totalCardsInShoe * 100).toFixed(1)}% - will shuffle after this hand`);
+      debugContext('CARDS', `Penetration reached: ${((totalCardsInShoe - remainingAfterDeal.length) / totalCardsInShoe * 100).toFixed(1)}% - will shuffle after this hand`);
       setNeedsShuffle(true);
     }
     
@@ -411,10 +412,10 @@ export function useBlackjackGame() {
       setTimeout(() => {
         if (dealerCards.length >= 2) {
           const dealerValue = calculateHandValue(dealerCards);
-          console.log('Dealer total after insurance taken:', dealerValue);
+          debugContext('GAME', 'Dealer total after insurance taken', { dealerValue });
           
           if (dealerValue === 21) {
-            console.log('Dealer has blackjack - insurance pays out');
+            debugContext('GAME', 'Dealer has blackjack - insurance pays out');
             const insuranceWinnings = insuranceAmount * 3; // Insurance pays 2:1 (return bet + 2x payout)
             setGameState(prev => ({
               ...prev,
@@ -432,7 +433,7 @@ export function useBlackjackGame() {
             // Trigger hole card flip
             setWaitingForHoleCardFlip(true);
           } else {
-            console.log('Dealer does not have blackjack after insurance taken - enabling player actions');
+            debugContext('GAME', 'Dealer does not have blackjack after insurance taken - enabling player actions');
             const isBlackjack = gameState.handValue === 21 && playerCards.length === 2;
             const canDouble = gameState.bankroll >= gameState.currentBet;
             const canSplit = playerCards.length === 2 && playerCards[0].rank === playerCards[1].rank && gameState.bankroll >= gameState.currentBet;
@@ -736,7 +737,7 @@ export function useBlackjackGame() {
 
   // Deal initial cards
   const onDeal = useCallback(() => {
-    console.log('onDeal called with gameStatus:', gameState.gameStatus, 'currentBet:', gameState.currentBet);
+    debugContext('GAME', 'onDeal called', { gameStatus: gameState.gameStatus, currentBet: gameState.currentBet });
     if (gameState.gameStatus === 'betting' && gameState.currentBet > 0 && !isDealing) {
       // Initialize shoe if needed
       let currentDeck = deck;
@@ -744,7 +745,7 @@ export function useBlackjackGame() {
         currentDeck = createShoe();
         setTotalCardsInShoe(currentDeck.length);
         setNeedsShuffle(false);
-        console.log('Initialized new shoe, length:', currentDeck.length);
+        debugContext('CARDS', 'Initialized new shoe', { length: currentDeck.length });
       }
       
       // Reset cards and start dealing sequence
@@ -765,11 +766,11 @@ export function useBlackjackGame() {
     } else if (gameState.gameStatus === 'complete') {
       // Use stored previous bet for auto-default (already stored when hand ended)
       const baseBetAmount = previousBaseBet;
-      console.log('Using stored previous bet:', { previousBaseBet, baseBetAmount });
+      debugContext('BETTING', 'Using stored previous bet', { previousBaseBet, baseBetAmount });
       
       // Auto-default to previous base bet for new hand
       const shouldAutoDefault = baseBetAmount > 0 && gameState.bankroll >= baseBetAmount;
-      console.log('Auto-default check:', { baseBetAmount, shouldAutoDefault, bankroll: gameState.bankroll });
+      debugContext('BETTING', 'Auto-default check', { baseBetAmount, shouldAutoDefault, bankroll: gameState.bankroll });
       
       // Show shuffle message if needed
       const shuffleMessage = needsShuffle ? ' Shuffling shoe...' : '';
@@ -888,12 +889,12 @@ export function useBlackjackGame() {
         );
         
         if ((isBust || is21) && !isSplitAces) {
-          console.log(`onHit: Hand completion detected for non-Aces, moving to next hand`);
+          debugContext('GAME', 'onHit: Hand completion detected for non-Aces, moving to next hand');
           setTimeout(() => {
             moveToNextSplitHand();
           }, is21 ? 2000 : 1000);
         } else if (isSplitAces) {
-          console.log(`onHit: Split Aces completion will be handled by card dealing useEffect`);
+          debugContext('GAME', 'onHit: Split Aces completion will be handled by card dealing useEffect');
         }
         
         return newSplitCards;
@@ -940,10 +941,10 @@ export function useBlackjackGame() {
   // Move to next split hand or dealer if all hands complete
   const moveToNextSplitHand = useCallback(() => {
     const timestamp = Date.now();
-    console.log(`=== moveToNextSplitHand called at ${timestamp} ===`);
+    debugContext('GAME', `moveToNextSplitHand called at ${timestamp}`);
     setGameState(prev => {
       // For split hands, find the next incomplete hand going right to left
-      console.log(`moveToNextSplitHand: Current hand ${prev.activeHand}`, {
+      debugContext('GAME', `moveToNextSplitHand: Current hand ${prev.activeHand}`, {
         currentSplitHands: prev.splitHands,
         splitPlayerCards: splitPlayerCards
       });
@@ -951,7 +952,7 @@ export function useBlackjackGame() {
       // Find the highest-indexed incomplete hand (rightmost incomplete hand)
       let nextHandIndex = -1;
       
-      console.log('Looking for next hand to play. Current state:', {
+      debugContext('GAME', 'Looking for next hand to play. Current state:', {
         activeHand: prev.activeHand,
         allHands: prev.splitHands.map((h, i) => ({
           index: i,
@@ -971,11 +972,11 @@ export function useBlackjackGame() {
         
         // Skip the current hand only if it's complete
         if (i === prev.activeHand && isHandComplete) {
-          console.log(`Skipping current hand ${i} (already complete)`);
+          debugContext('GAME', `Skipping current hand ${i} (already complete)`);
           continue;
         }
         
-        console.log(`Checking hand ${i} for completion:`, { 
+        debugContext('GAME', `Checking hand ${i} for completion:`, { 
           isComplete: hand.isComplete, 
           cardsLength: hand.cards.length, 
           handComplete: isHandComplete,
@@ -984,7 +985,7 @@ export function useBlackjackGame() {
         
         if (!isHandComplete) {
           nextHandIndex = i;
-          console.log(`Found next incomplete hand: ${nextHandIndex}`);
+          debugContext('GAME', `Found next incomplete hand: ${nextHandIndex}`);
           break;
         }
       }
@@ -992,7 +993,7 @@ export function useBlackjackGame() {
       if (nextHandIndex >= 0) {
         // Move to next incomplete hand
         const nextHand = prev.splitHands[nextHandIndex];
-        console.log(`Moving to incomplete hand ${nextHandIndex}:`, nextHand);
+        debugContext('GAME', `Moving to incomplete hand ${nextHandIndex}`, nextHand);
         
         return {
           ...prev,
@@ -1008,18 +1009,18 @@ export function useBlackjackGame() {
         };
       } else {
         // All hands complete - move to dealer
-        console.log('All split hands complete, moving to dealer');
-        console.log('Final check - all hands state:', prev.splitHands);
+        debugContext('GAME', 'All split hands complete, moving to dealer');
+        debugContext('GAME', 'Final check - all hands state', prev.splitHands);
         
         // Check that ALL hands are actually complete
         const allHandsComplete = prev.splitHands.every((hand, index) => {
           // A hand is only complete if explicitly marked as complete (stood, bust, or 21)
           const isComplete = hand.isComplete;
-          console.log(`Hand ${index} complete check:`, { isComplete, cardsLength: hand.cards.length, isCompleteFlag: hand.isComplete });
+          debugContext('GAME', `Hand ${index} complete check`, { isComplete, cardsLength: hand.cards.length, isCompleteFlag: hand.isComplete });
           return isComplete;
         });
         
-        console.log('All hands completion check:', { allHandsComplete, totalHands: prev.splitHands.length });
+        debugContext('GAME', 'All hands completion check', { allHandsComplete, totalHands: prev.splitHands.length });
         
         if (!allHandsComplete) {
           // Find the first incomplete hand and stay there
@@ -1027,7 +1028,7 @@ export function useBlackjackGame() {
             // A hand is only complete if explicitly marked as complete
             return !hand.isComplete;
           });
-          console.log(`WARNING: Not all hands complete. Hand ${incompleteHandIndex} is incomplete. Staying in play mode.`);
+          debugContext('GAME', `WARNING: Not all hands complete. Hand ${incompleteHandIndex} is incomplete. Staying in play mode.`);
           return {
             ...prev,
             activeHand: incompleteHandIndex,
@@ -1039,7 +1040,7 @@ export function useBlackjackGame() {
         const allHandsBusted = prev.splitHands.every(hand => hand.isBust);
         
         if (allHandsBusted) {
-          console.log('All split hands busted - skip dealer play, go straight to results');
+          debugContext('GAME', 'All split hands busted - skip dealer play, go straight to results');
           // All hands busted - skip dealer play and go straight to results
           // Set a flag to trigger finalization after state update
           setTimeout(() => {
@@ -1064,7 +1065,7 @@ export function useBlackjackGame() {
           // At least one hand is still active - dealer needs to play
           // Trigger dealer play after setting state
           setTimeout(() => {
-            console.log('=== All split hands complete, moving to dealer phase ===');
+            debugContext('GAME', 'All split hands complete, moving to dealer phase');
             // Reset dealer playing flag to ensure startDealerPlay can run
             setDealerIsPlaying(false);
             setWaitingForHoleCardFlip(true);
@@ -1094,7 +1095,7 @@ export function useBlackjackGame() {
       return;
     }
     
-    console.log('=== Split card dealing useEffect triggered ===', {
+    debugContext('GAME', 'Split card dealing useEffect triggered', {
       isSplit: gameState.isSplit,
       gameStatus: gameState.gameStatus,
       activeHand: gameState.activeHand,
@@ -1107,7 +1108,7 @@ export function useBlackjackGame() {
       const activeHand = gameState.splitHands[gameState.activeHand];
       const activeSplitCards = splitPlayerCards[gameState.activeHand];
       
-      console.log('Split hand check:', {
+      debugContext('GAME', 'Split hand check:', {
         activeHandIndex: gameState.activeHand,
         activeHand,
         activeSplitCards,
@@ -1117,7 +1118,7 @@ export function useBlackjackGame() {
       
       // Only deal ONE additional card if the hand has exactly 1 card
       const shouldDealCard = activeHand && activeHand.cards.length === 1 && activeSplitCards && activeSplitCards.length === 1;
-      console.log('Should deal card check:', {
+      debugContext('GAME', 'Should deal card check:', {
         activeHand: activeHand,
         activeHandCardsLength: activeHand?.cards.length,
         activeSplitCards: activeSplitCards,
@@ -1126,7 +1127,7 @@ export function useBlackjackGame() {
       });
       
       if (shouldDealCard) {
-        console.log(`Dealing card to split hand ${gameState.activeHand}`);
+        debugContext('CARDS', `Dealing card to split hand ${gameState.activeHand}`);
         setTimeout(() => {
           const { card, remainingDeck } = dealCard(deck);
           setDeck(remainingDeck);
@@ -1184,14 +1185,14 @@ export function useBlackjackGame() {
             
             // For split Aces, always complete after one card (regardless of total)
             if (isSplitAces) {
-              console.log(`Split Aces hand ${gameState.activeHand} complete with value ${newValue}. Triggering hand transition.`);
+              debugContext('GAME', `Split Aces hand ${gameState.activeHand} complete with value ${newValue}. Triggering hand transition.`);
               setTimeout(() => {
                 moveToNextSplitHand();
               }, 1000);
             } else if (isBust || is21) {
               // For non-Aces, only complete on bust or 21 (handled by onHit function)
               const reason = isBust ? 'busts' : 'has 21';
-              console.log(`Split hand ${gameState.activeHand} ${reason} with value ${newValue}. NOT automatically moving (handled by onHit).`);
+              debugContext('GAME', `Split hand ${gameState.activeHand} ${reason} with value ${newValue}. NOT automatically moving (handled by onHit).`);
             }
             
             return newSplitCards;
@@ -1340,7 +1341,7 @@ export function useBlackjackGame() {
 
   // Finalize split hand results
   const finalizeSplitHandResults = useCallback((finalDealerCards: Card[], finalDealerValue: number) => {
-    console.log('Finalizing split hand results:', {
+    debugContext('GAME', 'Finalizing split hand results:', {
       splitHands: gameState.splitHands,
       dealerValue: finalDealerValue,
       splitPlayerCards
@@ -1353,7 +1354,7 @@ export function useBlackjackGame() {
     const newSplitWinningsAnimations: boolean[] = [false, false];
     
     // Calculate result for each split hand
-    console.log('Calculating split results:', {
+    debugContext('GAME', 'Calculating split results:', {
       currentBet: gameState.currentBet,
       numHands: gameState.splitHands.length,
       doubledHandIndex
@@ -1367,7 +1368,7 @@ export function useBlackjackGame() {
       const isDoubled = doubledHandIndex === handIndex;
       const betAmount = isDoubled ? baseBetPerHand * 2 : baseBetPerHand;
       
-      console.log(`Hand ${handIndex} bet calculation:`, {
+      debugContext('BETTING', `Hand ${handIndex} bet calculation:`, {
         baseBetPerHand,
         isDoubled,
         betAmount
@@ -1450,7 +1451,7 @@ export function useBlackjackGame() {
   const finalizeDealerPlay = useCallback((finalDealerCards: Card[], finalDealerValue: number) => {
     // Check if this is a split hand game
     if (gameState.isSplit) {
-      console.log('Finalizing split hand results');
+      debugContext('GAME', 'Finalizing split hand results');
       return finalizeSplitHandResults(finalDealerCards, finalDealerValue);
     }
     
@@ -1516,7 +1517,7 @@ export function useBlackjackGame() {
       // Create winnings chip stack (matching the bet amount won)
       const netWinnings = winnings - gameState.currentBet; // Subtract original bet to get profit
       const hasDoubleChips = doubleChipStack.length > 0;
-      console.log('Player win detected:', { winnings, currentBet: gameState.currentBet, netWinnings, chipStack, hasDoubleChips });
+      debugContext('GAME', 'Player win detected', { winnings, currentBet: gameState.currentBet, netWinnings, chipStack, hasDoubleChips });
       
       if (netWinnings > 0) {
         if (hasDoubleChips) {
@@ -1524,13 +1525,13 @@ export function useBlackjackGame() {
           const originalBetAmount = gameState.currentBet / 2; // Half of total bet is original
           setWinningsChipStack([...chipStack]); // Winnings for original bet
           setDoubleWinningsChipStack([...doubleChipStack]); // Winnings for double bet
-          console.log('Setting double winnings animations to true');
+          debugContext('UI', 'Setting double winnings animations to true');
           setShowWinningsAnimation(true);
           setShowDoubleWinningsAnimation(true);
         } else {
           // Regular hand, single winnings stack
           setWinningsChipStack([...chipStack]); // Copy current chip stack for winnings
-          console.log('Setting winnings animation to true, chip stack:', chipStack);
+          debugContext('UI', 'Setting winnings animation to true', { chipStack });
           setShowWinningsAnimation(true);
         }
       }
@@ -1553,7 +1554,7 @@ export function useBlackjackGame() {
   // Handle all-busted scenario (must be after finalizeDealerPlay is defined)
   useEffect(() => {
     if (gameState.gameStatus === 'all-busted') {
-      console.log('All hands busted - finalizing game');
+      debugContext('GAME', 'All hands busted - finalizing game');
       // Call finalizeDealerPlay with current dealer cards
       finalizeDealerPlay(dealerCards, calculateHandValue(dealerCards));
     }
@@ -1714,13 +1715,13 @@ export function useBlackjackGame() {
         const allHandsNowComplete = activeHandIndex === 0 && newSplitHands.every(hand => hand.isComplete);
         
         if (allHandsNowComplete) {
-          console.log('Last hand stood - all hands complete, checking if all busted');
+          debugContext('GAME', 'Last hand stood - all hands complete, checking if all busted');
           
           // Check if all hands busted
           const allHandsBusted = newSplitHands.every(hand => hand.isBust);
           
           if (allHandsBusted) {
-            console.log('All split hands busted - skip dealer play, go straight to results');
+            debugContext('GAME', 'All split hands busted - skip dealer play, go straight to results');
             // All hands busted - skip dealer play and go straight to results
             // Set a flag to trigger finalization after state update
             setTimeout(() => {
@@ -1745,7 +1746,7 @@ export function useBlackjackGame() {
           } else {
             // Trigger dealer play after setting state
             setTimeout(() => {
-              console.log('=== Hand 0 stood, all hands complete, triggering dealer phase ===');
+              debugContext('GAME', 'Hand 0 stood, all hands complete, triggering dealer phase');
               setDealerIsPlaying(false);
               setWaitingForHoleCardFlip(true);
             }, 1000);
@@ -2044,7 +2045,7 @@ export function useBlackjackGame() {
         
         // Check if current hand is complete (bust or 21)
         if (currentHand.isComplete) {
-          console.log(`updateSplitHandDisplay: Hand ${handIndex} is complete - NOT calling moveToNextSplitHand (will be handled by card dealing useEffect)`);
+          debugContext('GAME', `updateSplitHandDisplay: Hand ${handIndex} is complete - NOT calling moveToNextSplitHand (will be handled by card dealing useEffect)`);
           
           return {
             ...prev,
@@ -2084,13 +2085,13 @@ export function useBlackjackGame() {
   const handleDealerBlackjack = useCallback(() => {
     // Don't override if game is already complete (e.g., player surrendered)
     if (gameState.gameStatus === 'complete') {
-      console.log('Game already complete, not overriding with dealer blackjack');
+      debugContext('GAME', 'Game already complete, not overriding with dealer blackjack');
       return dealerCards.length >= 2 && calculateHandValue(dealerCards) === 21;
     }
     
     if (dealerCards.length >= 2) {
       const dealerValue = calculateHandValue(dealerCards);
-      console.log('handleDealerBlackjack called - dealer value:', dealerValue);
+      debugContext('GAME', 'handleDealerBlackjack called', { dealerValue });
       
       if (dealerValue === 21) {
         // Dealer has blackjack - end the game immediately
@@ -2281,7 +2282,7 @@ export function useBlackjackGame() {
     setWaitingForHoleCardFlip(false);
     
     // Clear any pending timeouts by clearing them
-    console.log('Reset complete - all state cleared');
+    debugContext('GAME', 'Reset complete - all state cleared');
   }, [gameState.bankroll]);
 
   const applyTestCardsAndDeal = useCallback((cards: {
@@ -2290,12 +2291,12 @@ export function useBlackjackGame() {
     additionalCards: string[];
   }) => {
     // FIRST: Complete reset to clear any existing game state
-    console.log('Apply & Deal: Starting complete reset');
+    debugContext('GAME', 'Apply & Deal: Starting complete reset');
     resetToInitialState();
     
     // Wait for reset to complete before proceeding
     setTimeout(() => {
-      console.log('Apply & Deal: Reset complete, now setting up test cards');
+      debugContext('GAME', 'Apply & Deal: Reset complete, now setting up test cards');
       
       // Convert string representations to Card objects
     const convertToCard = (cardStr: string): Card => {
@@ -2490,7 +2491,7 @@ export function useBlackjackGame() {
       
       // STEP 3: Start fresh dealing sequence after complete reset
       setTimeout(() => {
-        console.log('Starting fresh dealing sequence with test cards');
+        debugContext('CARDS', 'Starting fresh dealing sequence with test cards');
         setIsDealing(true);
         
         // Start completely fresh dealing sequence

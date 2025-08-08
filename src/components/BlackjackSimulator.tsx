@@ -12,6 +12,7 @@ import { useSimulation } from '../hooks/useSimulation';
 import { getSimulationConfig } from '../utils/configUtils';
 import { DEFAULT_APP_CONFIG, createDefaultConfig } from '../constants/defaultConfig';
 import { getCountingSystemsForUI } from '../constants/countingSystems';
+import { debugContext, debugTimer } from '../utils/debug';
 
 const BlackjackSimulator = () => {
   const { isRunning, results, progress, runSimulation } = useSimulation();
@@ -21,10 +22,17 @@ const BlackjackSimulator = () => {
   const countingSystems = getCountingSystemsForUI();
 
   const handleRunSimulation = () => {
-    console.log('Button clicked! Config:', config);
+    const timer = debugTimer('Simulation Run');
+    debugContext('SIMULATION', 'Button clicked! Starting simulation', {
+      config,
+      simulationConfig: getSimulationConfig(config)
+    });
+    
     const simulationConfig = getSimulationConfig(config);
-    console.log('runSimulation function:', runSimulation);
     runSimulation(simulationConfig);
+    
+    // Timer will automatically log completion time when simulation finishes
+    timer.end();
   };
 
   const setBettingTable = (newBettingTable: BetRow[]) => {

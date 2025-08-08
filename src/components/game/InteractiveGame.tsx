@@ -8,6 +8,7 @@ import { useBlackjackGame } from '../../hooks/useBlackjackGame';
 import { useSpring, animated } from '@react-spring/three';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { debugContext, debugLog } from '../../utils/debug';
 
 interface Card {
   rank: string;
@@ -48,7 +49,7 @@ function AnimatedChip({
       
       // Debug logging for winning chips
       if (isWinning && showAnimation) {
-        console.log(`Winning chip opacity: ${currentOpacity}`);
+        debugContext('UI', `Winning chip opacity: ${currentOpacity}`);
       }
       
       groupRef.current.traverse((child) => {
@@ -152,7 +153,7 @@ function InteractiveTable({
       <BlackjackTable3D>
         <Suspense fallback={null}>
           {/* Player cards - handle both regular and split hands */}
-          {console.log('Rendering player cards:', {
+          {debugContext('UI', 'Rendering player cards', {
             isSplit: gameState.isSplit,
             playerCards: playerCards,
             splitPlayerCards: splitPlayerCards,
@@ -161,7 +162,7 @@ function InteractiveTable({
           {!gameState.isSplit ? (
             // Regular hand
             playerCards.map((card, index) => {
-              console.log(`Rendering regular player card ${index}:`, card);
+              debugContext('CARDS', `Rendering regular player card ${index}`, card);
               // Dynamic spacing based on number of cards - back to overlapping style
               const cardCount = playerCards.length;
               const baseSpacing = 1.0;
@@ -195,7 +196,7 @@ function InteractiveTable({
             // Split hands
             splitPlayerCards.map((hand, handIndex) => 
               hand.map((card, cardIndex) => {
-                console.log(`Rendering split hand ${handIndex} card ${cardIndex}:`, card);
+                debugContext('CARDS', `Rendering split hand ${handIndex} card ${cardIndex}`, card);
                 
                 // Position split hands side by side (support up to 4 hands)
                 const totalHands = splitPlayerCards.length;
@@ -225,7 +226,7 @@ function InteractiveTable({
           
           {/* Dealer cards */}
           {dealerCards.map((card, index) => {
-            console.log(`Rendering dealer card ${index}:`, card);
+            debugContext('CARDS', `Rendering dealer card ${index}`, card);
             const isHoleCard = index === 1; // Second card is the hole card
             
             // Dynamic spacing based on number of cards - back to overlapping style
@@ -334,7 +335,7 @@ function InteractiveTable({
           const handIndex = stackIndex + 1; // Middle hands start at index 1
           const xPos = handPositions[handIndex];
           
-          console.log(`Rendering additional chip stack ${stackIndex} for hand ${handIndex} at position ${xPos}`);
+          debugContext('UI', `Rendering additional chip stack ${stackIndex} for hand ${handIndex} at position ${xPos}`);
           
           return chipStack.map((chipValue, chipIndex) => (
             <Chip3D 
@@ -522,7 +523,7 @@ export function InteractiveGame() {
         // Ace (only peek after insurance is declined, not automatically)
         (dealerUpCard.rank === 'A' && gameState.insuranceBet === 0 && gameState.gameStatus === 'playing')
       )) {
-        console.log('Dealer showing peek-worthy card - triggering peek animation');
+        debugContext('GAME', 'Dealer showing peek-worthy card - triggering peek animation');
         setDealerCheckComplete(false); // Reset check state
         setShouldPeekDealerCard(true);
         setIsDealerPeeking(true);
@@ -544,7 +545,7 @@ export function InteractiveGame() {
       );
       
       if (dealerShowingBlackjackCard && gameState.dealerValue === 21 && !dealerHoleCardFlipped) {
-        console.log('Dealer has blackjack - immediately revealing hole card');
+        debugContext('GAME', 'Dealer has blackjack - immediately revealing hole card');
         setDealerHoleCardFlipped(true);
       }
     }
@@ -553,14 +554,14 @@ export function InteractiveGame() {
   // Trigger dealer card flip when waiting for hole card flip
   useEffect(() => {
     if (waitingForHoleCardFlip && dealerCards.length > 1 && !dealerHoleCardFlipped) {
-      console.log('Player stood - triggering dealer hole card flip');
+      debugContext('GAME', 'Player stood - triggering dealer hole card flip');
       setShouldFlipDealerCard(true);
     }
   }, [waitingForHoleCardFlip, dealerCards.length, dealerHoleCardFlipped]);
 
   // Handle dealer card flip completion
   const handleDealerCardFlipped = () => {
-    console.log('Dealer card flip animation completed - starting dealer play');
+    debugContext('GAME', 'Dealer card flip animation completed - starting dealer play');
     setShouldFlipDealerCard(false);
     setDealerHoleCardFlipped(true);
     
@@ -570,20 +571,20 @@ export function InteractiveGame() {
 
   // Handle dealer peek completion
   const handleDealerPeekComplete = () => {
-    console.log('Dealer peek completed, checking for blackjack...');
+    debugContext('GAME', 'Dealer peek completed, checking for blackjack...');
     setShouldPeekDealerCard(false);
     
     // Check if dealer has blackjack after peek using the hook function
     const hasBlackjack = handleDealerBlackjack();
     
     if (hasBlackjack) {
-      console.log('Dealer has blackjack - game ended by hook');
+      debugContext('GAME', 'Dealer has blackjack - game ended by hook');
       // Flip the hole card to show the blackjack
       setTimeout(() => {
         setDealerHoleCardFlipped(true);
       }, 500);
     } else {
-      console.log('Dealer does not have blackjack - showing message');
+      debugContext('GAME', 'Dealer does not have blackjack - showing message');
       // Show "no blackjack" message first
       setShowNoBlackjackMessage(true);
       
@@ -591,13 +592,13 @@ export function InteractiveGame() {
       setTimeout(() => {
         setShowNoBlackjackMessage(false);
         setDealerCheckComplete(true);
-        console.log('Player actions enabled after dealer check');
+        debugContext('GAME', 'Player actions enabled after dealer check');
       }, 2000); // Show message for 2 seconds
     }
     
     // Reset the peeking state
     setTimeout(() => {
-      console.log('Resetting isDealerPeeking to false');
+      debugContext('GAME', 'Resetting isDealerPeeking to false');
       setIsDealerPeeking(false);
     }, 100);
   };
