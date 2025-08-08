@@ -905,8 +905,13 @@ export class BlackjackSimulation {
         });
       }
 
+      // Progress callback every 1000 hands
       if (progressCallback && (i + 1) % 1000 === 0) {
         progressCallback(i + 1, totalSimulations);
+      }
+
+      // Yield to main thread more frequently for better UI responsiveness
+      if ((i + 1) % 5000 === 0) {
         await new Promise((resolve) => setTimeout(resolve, 0)); // Yield to main thread
       }
     }

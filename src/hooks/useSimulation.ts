@@ -22,8 +22,15 @@ export const useSimulation = () => {
       try {
         const simulation = new BlackjackSimulation(config);
 
+        // Throttle progress updates to avoid excessive re-renders
+        let lastProgressUpdate = 0;
         const progressCallback = (current: number, total: number) => {
-          setProgress({ current, total });
+          const now = Date.now();
+          // Update progress at most every 100ms or on completion
+          if (now - lastProgressUpdate >= 100 || current === total) {
+            setProgress({ current, total });
+            lastProgressUpdate = now;
+          }
         };
 
         const simulationResults = await simulation.simulate(progressCallback);
