@@ -1,20 +1,10 @@
 import React from 'react';
-import { SimulationConfig } from '../types/blackjack';
+import { AppConfig } from '../types/blackjack';
 import { Card, CardHeader, CardContent, CardTitle, Input, Select } from './UI';
 
-// Extends SimulationConfig to include UI-specific fields
-export interface PanelConfig extends SimulationConfig {
-  maxBet: number;
-  handsPerHour: number;
-  countingSystem: string;
-  resplitAces: boolean;
-  enableHandTracking: boolean;
-  doubleAfterSplit: boolean;
-}
-
-export interface ConfigurationPanelProps<T extends PanelConfig = PanelConfig> {
-  config: T;
-  setConfig: React.Dispatch<React.SetStateAction<T>>;
+export interface ConfigurationPanelProps {
+  config: AppConfig;
+  setConfig: React.Dispatch<React.SetStateAction<AppConfig>>;
   countingSystems: { value: string; label: string }[];
   isRunning: boolean;
 }
@@ -24,17 +14,17 @@ export interface ConfigurationPanelProps<T extends PanelConfig = PanelConfig> {
  * @param {ConfigurationPanelProps} props - The props for the component.
  * @returns {JSX.Element} The rendered component.
  */
-const ConfigurationPanel = <T extends PanelConfig = PanelConfig>({
+const ConfigurationPanel: React.FC<ConfigurationPanelProps> = ({
   config,
   setConfig,
   countingSystems,
   isRunning,
-}: ConfigurationPanelProps<T>) => {
+}) => {
   const updateConfig = (
-    key: keyof PanelConfig,
+    key: keyof AppConfig,
     value: string | number | boolean,
   ) => {
-    setConfig((prev: T) => ({ ...prev, [key]: value }) as T);
+    setConfig((prev) => ({ ...prev, [key]: value }));
   };
 
   return (

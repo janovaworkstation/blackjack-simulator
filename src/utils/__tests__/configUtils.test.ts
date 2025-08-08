@@ -4,12 +4,11 @@
  */
 
 import { getSimulationConfig, validateSimulationConfig } from '../configUtils';
-import { PanelConfig } from '../../components/ConfigurationPanel';
-import { SimulationConfig } from '../../types/blackjack';
+import { AppConfig, SimulationConfig } from '../../types/blackjack';
 
 describe('configUtils', () => {
   describe('getSimulationConfig', () => {
-    const mockPanelConfig: PanelConfig = {
+    const mockAppConfig: AppConfig = {
       // Core simulation parameters
       numberOfDecks: 6,
       deckPenetration: 75,
@@ -37,8 +36,8 @@ describe('configUtils', () => {
       handsPerHour: 80,
     };
 
-    it('should extract all SimulationConfig fields from PanelConfig', () => {
-      const result = getSimulationConfig(mockPanelConfig);
+    it('should extract all SimulationConfig fields from AppConfig', () => {
+      const result = getSimulationConfig(mockAppConfig);
       
       // Should include all SimulationConfig fields
       expect(result.numberOfDecks).toBe(6);
@@ -50,23 +49,25 @@ describe('configUtils', () => {
       expect(result.playerCanSplit).toBe(true);
       expect(result.playerCanSurrender).toBe(false);
       expect(result.enableHandTracking).toBe(true);
-      expect(result.bettingTable).toEqual(mockPanelConfig.bettingTable);
+      expect(result.bettingTable).toEqual(mockAppConfig.bettingTable);
       expect(result.countingSystem).toBe('HI_LO');
       expect(result.resplitAces).toBe(false);
       expect(result.doubleAfterSplit).toBe(true);
+      expect(result.handsPerHour).toBe(80);
     });
 
     it('should not include UI-only fields', () => {
-      const result = getSimulationConfig(mockPanelConfig);
+      const result = getSimulationConfig(mockAppConfig);
       
       // Should NOT include UI-only fields
       expect(result).not.toHaveProperty('maxBet');
-      expect(result).not.toHaveProperty('handsPerHour');
+      // handsPerHour is now included as it's needed by simulation engine
+      expect(result).toHaveProperty('handsPerHour');
     });
 
     it('should handle undefined optional fields gracefully', () => {
-      const configWithUndefined: PanelConfig = {
-        ...mockPanelConfig,
+      const configWithUndefined: AppConfig = {
+        ...mockAppConfig,
         enableHandTracking: undefined,
         bettingTable: undefined,
         countingSystem: undefined,
@@ -84,7 +85,7 @@ describe('configUtils', () => {
     });
 
     it('should maintain field type safety', () => {
-      const result = getSimulationConfig(mockPanelConfig);
+      const result = getSimulationConfig(mockAppConfig);
       
       // Type assertions to ensure correct types
       expect(typeof result.numberOfDecks).toBe('number');
@@ -103,15 +104,15 @@ describe('configUtils', () => {
     });
 
     it('should create identical configs for identical inputs', () => {
-      const result1 = getSimulationConfig(mockPanelConfig);
-      const result2 = getSimulationConfig(mockPanelConfig);
+      const result1 = getSimulationConfig(mockAppConfig);
+      const result2 = getSimulationConfig(mockAppConfig);
       
       expect(result1).toEqual(result2);
     });
 
     it('should handle edge cases correctly', () => {
-      const edgeCaseConfig: PanelConfig = {
-        ...mockPanelConfig,
+      const edgeCaseConfig: AppConfig = {
+        ...mockAppConfig,
         numberOfDecks: 1,         // minimum decks
         deckPenetration: 50,      // minimum penetration
         playerBet: 0,            // edge case bet
@@ -199,7 +200,7 @@ describe('configUtils', () => {
 
   describe('integration: getSimulationConfig + validation', () => {
     it('should produce valid configs that pass validation', () => {
-      const mockPanelConfig: PanelConfig = {
+      const mockAppConfig: AppConfig = {
         numberOfDecks: 6,
         deckPenetration: 75,
         playerBet: 10,
@@ -217,7 +218,7 @@ describe('configUtils', () => {
         handsPerHour: 80,
       };
       
-      const simulationConfig = getSimulationConfig(mockPanelConfig);
+      const simulationConfig = getSimulationConfig(mockAppConfig);
       const validationErrors = validateSimulationConfig(simulationConfig);
       
       expect(validationErrors).toEqual([]);

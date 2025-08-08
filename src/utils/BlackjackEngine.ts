@@ -944,7 +944,7 @@ export class BlackjackSimulation {
       expectedValue: this.totalWagered > 0 ? (this.totalWon / this.totalWagered) * 100 : 0,
       averageBetSize: this.totalWagered / this.handsPlayed,
       maxDrawdown: this.maxDrawdown,
-      handsPerHour: 100, // Placeholder
+      handsPerHour: this.config.handsPerHour ?? 80,
       countingSystem: this.countingSystem.name,
       sessionResults: this.sessionResults,
       handDetails: this.handDetails,

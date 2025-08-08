@@ -5,24 +5,23 @@
  * @license MIT
  */
 
-import { SimulationConfig } from '../types/blackjack';
-import { PanelConfig } from '../components/ConfigurationPanel';
+import { SimulationConfig, AppConfig } from '../types/blackjack';
 
 /**
- * Transforms PanelConfig to SimulationConfig with complete field mapping.
+ * Transforms AppConfig to SimulationConfig by extracting only simulation-relevant fields.
  * This is the canonical source for SimulationConfig construction to prevent
  * configuration drift between different components.
  * 
- * @param config - The panel configuration containing both UI and simulation fields
- * @returns Complete SimulationConfig with all required and optional fields
+ * @param config - The complete application configuration
+ * @returns SimulationConfig with all required fields for the simulation engine
  * 
  * @example
  * ```typescript
- * const simulationConfig = getSimulationConfig(panelConfig);
+ * const simulationConfig = getSimulationConfig(appConfig);
  * runSimulation(simulationConfig);
  * ```
  */
-export function getSimulationConfig(config: PanelConfig): SimulationConfig {
+export function getSimulationConfig(config: AppConfig): SimulationConfig {
   return {
     // Core simulation parameters
     numberOfDecks: config.numberOfDecks,
@@ -36,12 +35,13 @@ export function getSimulationConfig(config: PanelConfig): SimulationConfig {
     playerCanSplit: config.playerCanSplit,
     playerCanSurrender: config.playerCanSurrender,
     
-    // Optional features with safe defaults
+    // Required simulation features (no longer optional)
     enableHandTracking: config.enableHandTracking,
     bettingTable: config.bettingTable,
     countingSystem: config.countingSystem,
     resplitAces: config.resplitAces,
     doubleAfterSplit: config.doubleAfterSplit,
+    handsPerHour: config.handsPerHour,
   };
 }
 

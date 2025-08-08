@@ -1,23 +1,20 @@
 import { useState } from 'react';
 import { Button } from './UI';
-import ConfigurationPanel, { PanelConfig } from './ConfigurationPanel';
+import ConfigurationPanel from './ConfigurationPanel';
 import BettingTable from './BettingTable';
 import StrategyValidation from './StrategyValidation';
 import StrategyValidationPanel from './StrategyValidationPanel';
 import SavedStrategies from './SavedStrategies';
-import { BetRow, Strategy } from '../types/blackjack';
+import { BetRow, Strategy, AppConfig } from '../types/blackjack';
 import ResultsPanel from './ResultsPanel';
 import HandDetailsTable from './HandDetailsTable';
 import { useSimulation } from '../hooks/useSimulation';
-import { SimulationConfig } from '../types/blackjack';
 import { getSimulationConfig } from '../utils/configUtils';
 
 const BlackjackSimulator = () => {
   const { isRunning, results, progress, runSimulation } = useSimulation();
 
-  const [config, setConfig] = useState<
-    PanelConfig & { bettingTable: BetRow[] }
-  >({
+  const [config, setConfig] = useState<AppConfig>({
     numberOfSimulations: 100000,
     numberOfDecks: 6,
     deckPenetration: 75,

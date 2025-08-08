@@ -186,7 +186,7 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({
               </div>
               <div>
                 <span className="font-medium text-gray-700">Max Drawdown:</span>
-                <span className="text-gray-900 ml-1">${safeResults.maxDrawdown.toLocaleString()}</span>
+                <span className="text-gray-900 ml-1">${safeResults.maxDrawdown.toFixed(2)}</span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Hands per Hour:</span>

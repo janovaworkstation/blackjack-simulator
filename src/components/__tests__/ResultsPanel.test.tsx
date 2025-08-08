@@ -140,7 +140,7 @@ describe('ResultsPanel', () => {
     expect(screen.getByText('$25.00')).toBeInTheDocument();
 
     expect(screen.getByText('Max Drawdown:')).toBeInTheDocument();
-    expect(screen.getByText('$1,200')).toBeInTheDocument();
+    expect(screen.getByText('$1200.00')).toBeInTheDocument();
 
     expect(screen.getByText('Hands per Hour:')).toBeInTheDocument();
     expect(screen.getByText('100')).toBeInTheDocument();

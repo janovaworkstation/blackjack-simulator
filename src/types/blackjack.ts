@@ -63,6 +63,7 @@ export interface SimulationConfig {
   countingSystem?: string;
   resplitAces?: boolean;
   doubleAfterSplit?: boolean;
+  handsPerHour?: number;
 }
 
 /**
@@ -155,6 +156,39 @@ export interface BetRow {
  * Supported card counting systems
  */
 export type CountingSystemType = 'HI_LO' | 'KO' | 'HI_OPT_I' | 'HI_OPT_II' | 'RED_7';
+
+/**
+ * Complete application configuration - single source of truth for all UI and simulation settings.
+ * This replaces the fragmented PanelConfig + inline extensions pattern to prevent configuration drift.
+ */
+export interface AppConfig {
+  // Core simulation parameters (required)
+  numberOfDecks: number;
+  deckPenetration: number;
+  playerBet: number;
+  numberOfSimulations: number;
+  
+  // Game rules (required)
+  dealerHitsOnSoft17: boolean;
+  playerCanDouble: boolean;
+  playerCanSplit: boolean;
+  playerCanSurrender: boolean;
+  
+  // Advanced game rules (required with defaults)
+  resplitAces: boolean;
+  doubleAfterSplit: boolean;
+  
+  // Simulation features (required with defaults)
+  enableHandTracking: boolean;
+  countingSystem: CountingSystemType;
+  
+  // Betting strategy (required)
+  bettingTable: BetRow[];
+  
+  // UI-only fields (required for display/calculations)
+  maxBet: number;
+  handsPerHour: number;
+}
 
 /**
  * Validated performance metrics from a successful simulation
