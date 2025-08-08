@@ -128,6 +128,7 @@ export interface SimulationResults {
   expectedValue: number;
   averageBetSize: number;
   maxDrawdown: number;
+  maxDrawdownHand: number;
   handsPerHour: number;
   countingSystem: string;
   sessionResults: {

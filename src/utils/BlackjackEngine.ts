@@ -192,8 +192,11 @@ export class BlackjackSimulation {
   private hands15: number;
   private hands16: number;
   private maxDrawdown: number;
+  private maxDrawdownHand: number;
   private currentBankroll: number;
   private minBankroll: number;
+  private peakBankroll: number;
+  private currentTrough: number;
   private sessionResults: {
     session: number;
     bankroll: number;
@@ -228,8 +231,11 @@ export class BlackjackSimulation {
     this.hands15 = 0;
     this.hands16 = 0;
     this.maxDrawdown = 0;
+    this.maxDrawdownHand = 0;
     this.currentBankroll = 0;
     this.minBankroll = 0;
+    this.peakBankroll = 0;
+    this.currentTrough = 0;
     this.sessionResults = [];
     this.handDetails = [];
     this.previousTrueCount = 0;
@@ -258,8 +264,11 @@ export class BlackjackSimulation {
     this.hands15 = 0;
     this.hands16 = 0;
     this.maxDrawdown = 0;
+    this.maxDrawdownHand = 0;
     this.currentBankroll = 0;
     this.minBankroll = 0;
+    this.peakBankroll = 0;
+    this.currentTrough = 0;
     this.sessionResults = [];
     this.handDetails = [];
     this.previousTrueCount = 0;
@@ -790,10 +799,25 @@ export class BlackjackSimulation {
     this.totalWon += actualTotalWinnings;
     this.currentBankroll += actualTotalWinnings;
     this.minBankroll = Math.min(this.minBankroll, this.currentBankroll);
-    this.maxDrawdown = Math.max(
-      this.maxDrawdown,
-      this.currentBankroll - this.minBankroll,
-    );
+    
+    // Maximum Drawdown: Peak-to-Trough calculation
+    if (this.currentBankroll > this.peakBankroll) {
+      // New peak reached - finalize any ongoing drawdown and start new cycle
+      if (this.peakBankroll > 0) { // Only if we had a previous peak
+        const completedDrawdown = this.peakBankroll - this.currentTrough;
+        if (completedDrawdown > this.maxDrawdown) {
+          this.maxDrawdown = completedDrawdown;
+          this.maxDrawdownHand = this.handsPlayed;
+        }
+      }
+      
+      // Set new peak and reset trough
+      this.peakBankroll = this.currentBankroll;
+      this.currentTrough = this.currentBankroll;
+    } else {
+      // Update current trough for ongoing drawdown
+      this.currentTrough = Math.min(this.currentTrough, this.currentBankroll);
+    }
 
     // Track hand details if enabled - record each split hand separately
     if (this.config.enableHandTracking) {
@@ -924,6 +948,15 @@ export class BlackjackSimulation {
   }
 
   getResults(): SimulationResults {
+    // Check for final drawdown if simulation ended during a drawdown period
+    if (this.peakBankroll > this.currentTrough) {
+      const finalDrawdown = this.peakBankroll - this.currentTrough;
+      if (finalDrawdown > this.maxDrawdown) {
+        this.maxDrawdown = finalDrawdown;
+        // Keep the hand where max drawdown was reached, not the final hand
+      }
+    }
+    
     const totalOutcomes = this.wins + this.losses + this.pushes;
     return {
       handsPlayed: this.handsPlayed,
@@ -944,6 +977,7 @@ export class BlackjackSimulation {
       expectedValue: this.totalWagered > 0 ? (this.totalWon / this.totalWagered) * 100 : 0,
       averageBetSize: this.totalWagered / this.handsPlayed,
       maxDrawdown: this.maxDrawdown,
+      maxDrawdownHand: this.maxDrawdownHand,
       handsPerHour: this.config.handsPerHour ?? 80,
       countingSystem: this.countingSystem.name,
       sessionResults: this.sessionResults,

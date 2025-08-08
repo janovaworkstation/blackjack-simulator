@@ -1,29 +1,17 @@
 import { render, fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ConfigurationPanel from '../ConfigurationPanel';
+import { DEFAULT_APP_CONFIG, DEFAULT_COUNTING_SYSTEMS } from '../../constants/defaultConfig';
 
 const mockSetConfig = jest.fn();
 
 const mockConfig = {
-  numberOfSimulations: 100000,
-  numberOfDecks: 6,
-  deckPenetration: 75,
-  playerBet: 10,
-  dealerHitsOnSoft17: true,
-  playerCanDouble: true,
-  playerCanSplit: true,
-  playerCanSurrender: false,
-  maxBet: 100,
-  handsPerHour: 80,
-  countingSystem: 'HI_LO',
-  resplitAces: false,
+  ...DEFAULT_APP_CONFIG,
+  // Test-specific override - hand tracking disabled to test the checkbox
   enableHandTracking: false,
 };
 
-const mockCountingSystems = [
-  { value: 'HI_LO', label: 'Hi-Lo' },
-  { value: 'KO', label: 'Knock-Out (KO)' },
-];
+const mockCountingSystems = DEFAULT_COUNTING_SYSTEMS;
 
 describe('ConfigurationPanel', () => {
   beforeEach(() => {

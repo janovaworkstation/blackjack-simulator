@@ -104,6 +104,7 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({
     expectedValue: safeNumber(results.expectedValue),
     averageBetSize: safeNumber(results.averageBetSize),
     maxDrawdown: safeNumber(results.maxDrawdown),
+    maxDrawdownHand: safeNumber(results.maxDrawdownHand),
     handsPerHour: safeNumber(results.handsPerHour) || 80,
     countingSystem: results.countingSystem || 'Unknown',
     sessionResults: results.sessionResults || [],
@@ -178,7 +179,7 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({
               </div>
               <div>
                 <span className="font-medium text-gray-700">Total Won:</span>
-                <span className="text-gray-900 ml-1">${safeResults.totalWon.toLocaleString()}</span>
+                <span className="text-gray-900 ml-1">${safeResults.totalWon.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Avg. Bet Size:</span>
@@ -186,7 +187,11 @@ const ResultsPanel: React.FC<ResultsPanelProps> = ({
               </div>
               <div>
                 <span className="font-medium text-gray-700">Max Drawdown:</span>
-                <span className="text-gray-900 ml-1">${safeResults.maxDrawdown.toFixed(2)}</span>
+                <span className="text-red-600 ml-1">${safeResults.maxDrawdown.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">Drawdown Hand:</span>
+                <span className="text-gray-900 ml-1">{safeResults.maxDrawdownHand > 0 ? safeResults.maxDrawdownHand.toLocaleString() : 'N/A'}</span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Hands per Hour:</span>

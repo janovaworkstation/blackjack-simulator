@@ -10,41 +10,14 @@ import ResultsPanel from './ResultsPanel';
 import HandDetailsTable from './HandDetailsTable';
 import { useSimulation } from '../hooks/useSimulation';
 import { getSimulationConfig } from '../utils/configUtils';
+import { DEFAULT_APP_CONFIG, DEFAULT_COUNTING_SYSTEMS, createDefaultConfig } from '../constants/defaultConfig';
 
 const BlackjackSimulator = () => {
   const { isRunning, results, progress, runSimulation } = useSimulation();
 
-  const [config, setConfig] = useState<AppConfig>({
-    numberOfSimulations: 100000,
-    numberOfDecks: 6,
-    deckPenetration: 75,
-    playerBet: 10,
-    dealerHitsOnSoft17: true,
-    playerCanDouble: true,
-    playerCanSplit: true,
-    playerCanSurrender: false,
-    // UI-specific or other config
-    maxBet: 100,
-    handsPerHour: 80,
-    countingSystem: 'HI_LO',
-    resplitAces: false,
-    enableHandTracking: true,
-    doubleAfterSplit: true,
-    bettingTable: [
-      { minCount: -10, maxCount: 0, betAmount: 5 },
-      { minCount: 0, maxCount: 1, betAmount: 10 },
-      { minCount: 1, maxCount: 2, betAmount: 25 },
-      { minCount: 2, maxCount: 3, betAmount: 50 },
-      { minCount: 3, maxCount: 4, betAmount: 75 },
-      { minCount: 4, maxCount: 10, betAmount: 100 },
-    ],
-  });
+  const [config, setConfig] = useState<AppConfig>(createDefaultConfig());
 
-  const countingSystems = [
-    { value: 'HI_LO', label: 'Hi-Lo' },
-    { value: 'KO', label: 'Knock-Out (KO)' },
-    { value: 'HI_OPT_I', label: 'Hi-Opt I' },
-  ];
+  const countingSystems = DEFAULT_COUNTING_SYSTEMS;
 
   const handleRunSimulation = () => {
     console.log('Button clicked! Config:', config);

@@ -5,35 +5,18 @@
 
 import { getSimulationConfig, validateSimulationConfig } from '../configUtils';
 import { AppConfig, SimulationConfig } from '../../types/blackjack';
+import { DEFAULT_APP_CONFIG } from '../../constants/defaultConfig';
 
 describe('configUtils', () => {
   describe('getSimulationConfig', () => {
     const mockAppConfig: AppConfig = {
-      // Core simulation parameters
-      numberOfDecks: 6,
-      deckPenetration: 75,
-      playerBet: 10,
-      numberOfSimulations: 100000,
-      
-      // Game rules
-      dealerHitsOnSoft17: true,
-      playerCanDouble: true,
-      playerCanSplit: true,
-      playerCanSurrender: false,
-      
-      // Optional simulation features
-      enableHandTracking: true,
+      ...DEFAULT_APP_CONFIG,
+      // Test-specific overrides
+      maxBet: 500, // Different from default to test UI-only field filtering
       bettingTable: [
         { minCount: -10, maxCount: 1, betAmount: 5 },
         { minCount: 1, maxCount: 3, betAmount: 25 }
-      ],
-      countingSystem: 'HI_LO',
-      resplitAces: false,
-      doubleAfterSplit: true,
-      
-      // UI-only fields (should not appear in SimulationConfig)
-      maxBet: 500,
-      handsPerHour: 80,
+      ], // Simpler betting table for testing
     };
 
     it('should extract all SimulationConfig fields from AppConfig', () => {

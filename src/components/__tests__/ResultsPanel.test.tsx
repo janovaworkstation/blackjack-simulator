@@ -22,6 +22,7 @@ const mockResults: SimulationResults = {
   expectedValue: -0.5,
   averageBetSize: 25,
   maxDrawdown: 1200,
+  maxDrawdownHand: 573,
   handsPerHour: 100,
   countingSystem: 'Hi-Lo',
   sessionResults: [
@@ -134,13 +135,16 @@ describe('ResultsPanel', () => {
     expect(screen.getByText('$25,000')).toBeInTheDocument();
 
     expect(screen.getByText('Total Won:')).toBeInTheDocument();
-    expect(screen.getByText('$24,500')).toBeInTheDocument();
+    expect(screen.getByText('$24,500.00')).toBeInTheDocument();
 
     expect(screen.getByText('Avg. Bet Size:')).toBeInTheDocument();
     expect(screen.getByText('$25.00')).toBeInTheDocument();
 
     expect(screen.getByText('Max Drawdown:')).toBeInTheDocument();
-    expect(screen.getByText('$1200.00')).toBeInTheDocument();
+    expect(screen.getByText('$1,200.00')).toBeInTheDocument();
+
+    expect(screen.getByText('Drawdown Hand:')).toBeInTheDocument();
+    expect(screen.getByText('573')).toBeInTheDocument();
 
     expect(screen.getByText('Hands per Hour:')).toBeInTheDocument();
     expect(screen.getByText('100')).toBeInTheDocument();
@@ -335,6 +339,10 @@ describe('ResultsPanel', () => {
     const blackjacksLabel = screen.getByText('Blackjacks:');
     const blackjacksText = blackjacksLabel.parentElement?.querySelector('.text-yellow-600');
     expect(blackjacksText).toBeInTheDocument();
+
+    // Max Drawdown should be red (negative metric)
+    const maxDrawdownText = screen.getByText('$1,200.00');
+    expect(maxDrawdownText).toHaveClass('text-red-600');
   });
 
   it('calculates total outcomes correctly when missing', () => {
