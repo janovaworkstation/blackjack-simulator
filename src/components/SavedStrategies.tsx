@@ -148,7 +148,7 @@ const SavedStrategies: React.FC<SavedStrategiesProps> = ({ onLoadStrategy }) => 
                 <div className="flex items-center space-x-3">
                   <h3 className="text-base font-semibold text-gray-900">{strategy.name}</h3>
                   <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
-                    {strategy.countingSystem}
+                    {strategy.simulationConfig.countingSystem}
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">

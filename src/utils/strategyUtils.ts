@@ -149,9 +149,11 @@ export function createStrategyFromSimulation(
     description,
     createdAt: now,
     lastModified: now,
-    simulationConfig: config,
+    simulationConfig: {
+      ...config,
+      countingSystem  // Ensure countingSystem is stored inside simulationConfig
+    },
     bettingStrategy: [...bettingStrategy], // Deep copy
-    countingSystem,
     performance,
     coachingConfig: coachingConfig || createDefaultCoachingConfig(),
     isValidated: true,
@@ -179,8 +181,8 @@ export function compareStrategies(strategy1: Strategy, strategy2: Strategy): Str
     configurationDifferences.push(`Penetration: ${strategy1.simulationConfig.deckPenetration}% vs ${strategy2.simulationConfig.deckPenetration}%`);
   }
   
-  if (strategy1.countingSystem !== strategy2.countingSystem) {
-    configurationDifferences.push(`Counting system: ${strategy1.countingSystem} vs ${strategy2.countingSystem}`);
+  if (strategy1.simulationConfig.countingSystem !== strategy2.simulationConfig.countingSystem) {
+    configurationDifferences.push(`Counting system: ${strategy1.simulationConfig.countingSystem} vs ${strategy2.simulationConfig.countingSystem}`);
   }
   
   // Compare betting strategies (simplified)

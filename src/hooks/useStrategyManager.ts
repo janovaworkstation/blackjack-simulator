@@ -230,7 +230,7 @@ export function useStrategyManager() {
     return strategies.filter(strategy => 
       strategy.name.toLowerCase().includes(lowerQuery) ||
       (strategy.description && strategy.description.toLowerCase().includes(lowerQuery)) ||
-      strategy.countingSystem.toLowerCase().includes(lowerQuery)
+      strategy.simulationConfig.countingSystem.toLowerCase().includes(lowerQuery)
     );
   }, [strategies]);
 
@@ -308,7 +308,7 @@ export function useStrategyManager() {
       totalStrategies,
       avgROI,
       bestStrategy,
-      countingSystems: [...new Set(strategies.map(s => s.countingSystem))],
+      countingSystems: [...new Set(strategies.map(s => s.simulationConfig.countingSystem))],
     };
   }, [strategies, getStrategiesByPerformance]);
 

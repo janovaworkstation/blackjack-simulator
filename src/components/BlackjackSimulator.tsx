@@ -51,7 +51,7 @@ const BlackjackSimulator = () => {
       playerCanSplit: strategy.simulationConfig.playerCanSplit,
       playerCanSurrender: strategy.simulationConfig.playerCanSurrender,
       numberOfSimulations: strategy.simulationConfig.numberOfSimulations,
-      countingSystem: strategy.countingSystem,
+      countingSystem: strategy.simulationConfig.countingSystem,
       enableHandTracking: strategy.simulationConfig.enableHandTracking,
       doubleAfterSplit: strategy.simulationConfig.doubleAfterSplit ?? true,
       bettingTable: [...strategy.bettingStrategy], // Deep copy the betting table

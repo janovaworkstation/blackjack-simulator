@@ -60,7 +60,7 @@ export interface SimulationConfig {
   numberOfSimulations: number;
   enableHandTracking?: boolean;
   bettingTable?: BetRow[];
-  countingSystem?: string;
+  countingSystem: CountingSystemType;
   resplitAces?: boolean;
   doubleAfterSplit?: boolean;
   handsPerHour?: number;
@@ -257,9 +257,8 @@ export interface Strategy {
   lastModified: Date;                   // Last modification timestamp
   
   // Simulation Configuration (complete snapshot)
-  simulationConfig: SimulationConfig;   // Game rules, deck config, simulation size
+  simulationConfig: SimulationConfig;   // Game rules, deck config, simulation size, counting system
   bettingStrategy: BetRow[];            // Count-based betting table
-  countingSystem: CountingSystemType;   // Which counting system was used
   
   // Validated Performance Metrics (from simulation results)
   performance: StrategyPerformance;     // Key metrics that validated this strategy
