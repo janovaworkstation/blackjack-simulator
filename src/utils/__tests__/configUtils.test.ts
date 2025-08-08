@@ -49,23 +49,16 @@ describe('configUtils', () => {
       expect(result).toHaveProperty('handsPerHour');
     });
 
-    it('should handle undefined optional fields gracefully', () => {
-      const configWithUndefined: AppConfig = {
-        ...mockAppConfig,
-        enableHandTracking: undefined,
-        bettingTable: undefined,
-        countingSystem: undefined,
-        resplitAces: undefined,
-        doubleAfterSplit: undefined,
-      };
+    it('should handle all required fields correctly', () => {
+      const result = getSimulationConfig(mockAppConfig);
       
-      const result = getSimulationConfig(configWithUndefined);
-      
-      expect(result.enableHandTracking).toBeUndefined();
-      expect(result.bettingTable).toBeUndefined();
-      expect(result.countingSystem).toBeUndefined();
-      expect(result.resplitAces).toBeUndefined();
-      expect(result.doubleAfterSplit).toBeUndefined();
+      // Verify all newly required fields are present and correctly typed
+      expect(result.enableHandTracking).toBeDefined();
+      expect(result.bettingTable).toBeDefined();
+      expect(result.countingSystem).toBeDefined();
+      expect(result.resplitAces).toBeDefined();
+      expect(result.doubleAfterSplit).toBeDefined();
+      expect(result.handsPerHour).toBeDefined();
     });
 
     it('should maintain field type safety', () => {
@@ -122,6 +115,12 @@ describe('configUtils', () => {
       playerCanSplit: true,
       playerCanSurrender: false,
       numberOfSimulations: 100000,
+      enableHandTracking: true,
+      bettingTable: [],
+      countingSystem: DEFAULT_COUNTING_SYSTEM,
+      resplitAces: false,
+      doubleAfterSplit: true,
+      handsPerHour: 80,
     };
 
     it('should return empty array for valid config', () => {
@@ -144,11 +143,11 @@ describe('configUtils', () => {
       expect(result).toContain('playerCanSplit');
       expect(result).toContain('playerCanSurrender');
       expect(result).toContain('numberOfSimulations');
-      expect(result.length).toBe(7); // 7 missing fields
+      expect(result.length).toBe(13); // 13 missing fields
     });
 
-    it('should not require optional fields', () => {
-      const configWithoutOptionals: SimulationConfig = {
+    it('should require all fields (no optional fields anymore)', () => {
+      const configWithAllFields: SimulationConfig = {
         numberOfDecks: 6,
         deckPenetration: 75,
         playerBet: 10,
@@ -157,10 +156,15 @@ describe('configUtils', () => {
         playerCanSplit: true,
         playerCanSurrender: false,
         numberOfSimulations: 100000,
-        // Optional fields omitted
+        enableHandTracking: true,
+        bettingTable: [],
+        countingSystem: DEFAULT_COUNTING_SYSTEM,
+        resplitAces: false,
+        doubleAfterSplit: true,
+        handsPerHour: 80,
       };
       
-      const result = validateSimulationConfig(configWithoutOptionals);
+      const result = validateSimulationConfig(configWithAllFields);
       expect(result).toEqual([]);
     });
 
@@ -174,6 +178,12 @@ describe('configUtils', () => {
         playerCanSplit: true,
         playerCanSurrender: false,
         numberOfSimulations: 100000,
+        enableHandTracking: true,
+        bettingTable: [],
+        countingSystem: DEFAULT_COUNTING_SYSTEM,
+        resplitAces: false,
+        doubleAfterSplit: true,
+        handsPerHour: 80,
       };
       
       const result = validateSimulationConfig(configWithNulls);

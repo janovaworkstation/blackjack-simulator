@@ -58,12 +58,12 @@ export interface SimulationConfig {
   playerCanSplit: boolean;
   playerCanSurrender: boolean;
   numberOfSimulations: number;
-  enableHandTracking?: boolean;
-  bettingTable?: BetRow[];
+  enableHandTracking: boolean;
+  bettingTable: BetRow[];
   countingSystem: CountingSystemType;
-  resplitAces?: boolean;
-  doubleAfterSplit?: boolean;
-  handsPerHour?: number;
+  resplitAces: boolean;
+  doubleAfterSplit: boolean;
+  handsPerHour: number;
 }
 
 /**

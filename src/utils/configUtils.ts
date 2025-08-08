@@ -61,7 +61,13 @@ export function validateSimulationConfig(config: Partial<SimulationConfig>): str
     'playerCanDouble',
     'playerCanSplit',
     'playerCanSurrender',
-    'numberOfSimulations'
+    'numberOfSimulations',
+    'enableHandTracking',
+    'bettingTable',
+    'countingSystem',
+    'resplitAces',
+    'doubleAfterSplit',
+    'handsPerHour'
   ];
 
   const missing: string[] = [];
