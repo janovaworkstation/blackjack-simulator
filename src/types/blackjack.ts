@@ -78,13 +78,17 @@ export type HandOutcome =
 
 /**
  * Contains the detailed results of a single hand played.
+ * For split hands, each split creates a separate HandDetails entry.
  */
 export interface HandDetails {
   handNumber: number;
+  handId: string;                        // Unique ID for the original hand (e.g., "H123")
+  subHandId: number;                     // Split hand index (0=original, 1=first split, 2=second split, etc.)
+  splitHandCount: number;                // Total number of hands created from this original hand
   runningCountStart: number;
   trueCountStart: number;
   decksRemaining: number;
-  betAmount: number;
+  betAmount: number;                     // Individual bet amount for this specific split hand
   playerCardsInitial: string[];
   dealerCardsInitial: string[];
   playerCardsInitialWithSuits: string[]; // e.g., ["5H", "KS"]
@@ -92,12 +96,12 @@ export interface HandDetails {
   playerBlackjack: boolean;
   dealerBlackjack: boolean;
   initialAction: string;
-  totalBet: number;
-  playerCardsFinal: string[];
+  totalBet: number;                      // Total bet across ALL split hands for this original hand
+  playerCardsFinal: string[];            // Final cards for THIS specific split hand
   dealerCardsFinal: string[];
-  playerCardsFinalWithSuits: string[]; // e.g., ["5H", "KS", "8D"]
-  dealerCardsFinalWithSuits: string[]; // e.g., ["AD", "10C", "6H"]
-  winnings: number;
+  playerCardsFinalWithSuits: string[];  // Final cards for THIS specific split hand with suits
+  dealerCardsFinalWithSuits: string[];  // e.g., ["AD", "10C", "6H"]
+  winnings: number;                      // Individual winnings for this specific split hand
   shuffleOccurred: boolean;
 }
 

@@ -402,23 +402,24 @@ export class BlackjackSimulation {
     
     // If betting table is provided, use it
     if (this.config.bettingTable && this.config.bettingTable.length > 0) {
-      // Debug logging (only for first 100 hands to avoid console spam)
-      if (this.config.enableHandTracking && this.handsPlayed < 100) {
-        console.log(`Hand ${this.handsPlayed + 1}: TC ${trueCount}, Checking betting table:`);
-        console.table(this.config.bettingTable.map((row, i) => ({
-          index: i,
-          minCount: row.minCount,
-          maxCount: row.maxCount, 
-          betAmount: row.betAmount
-        })));
-      }
+      // Debug logging disabled for cleaner test output
+      // if (this.config.enableHandTracking && this.handsPlayed < 100) {
+      //   console.log(`Hand ${this.handsPlayed + 1}: TC ${trueCount}, Checking betting table:`);
+      //   console.table(this.config.bettingTable.map((row, i) => ({
+      //     index: i,
+      //     minCount: row.minCount,
+      //     maxCount: row.maxCount, 
+      //     betAmount: row.betAmount
+      //   })));
+      // }
       
       for (const betRow of this.config.bettingTable) {
         // Use >= min and < max range logic (no epsilon needed)
         if (trueCount >= betRow.minCount && trueCount < betRow.maxCount) {
-          if (this.config.enableHandTracking && this.handsPlayed < 100) {
-            console.log(`Hand ${this.handsPlayed + 1}: TC ${trueCount} matches range [${betRow.minCount}, ${betRow.maxCount}), bet: $${betRow.betAmount}`);
-          }
+          // Debug logging disabled for cleaner test output
+          // if (this.config.enableHandTracking && this.handsPlayed < 100) {
+          //   console.log(`Hand ${this.handsPlayed + 1}: TC ${trueCount} matches range [${betRow.minCount}, ${betRow.maxCount}), bet: $${betRow.betAmount}`);
+          // }
           return betRow.betAmount;
         }
       }
@@ -578,6 +579,7 @@ export class BlackjackSimulation {
     let totalBet = betSize;
     let winnings = 0;
     let initialAction = '';
+    let playerHands: Hand[] = [playerHand]; // Initialize for all scenarios
 
     if (playerHand.isBlackjack && dealerHand.isBlackjack) {
       this.pushes++;
@@ -598,8 +600,7 @@ export class BlackjackSimulation {
       winnings = -betSize;
       initialAction = 'Loss';
     } else {
-      // Player's turn
-      const playerHands: Hand[] = [playerHand];
+      // Player's turn - playerHands already initialized above
       let handIndex = 0;
       while (handIndex < playerHands.length) {
         const currentHand = playerHands[handIndex];
@@ -608,7 +609,7 @@ export class BlackjackSimulation {
           ? (this.config.doubleAfterSplit ?? true)
           : this.config.playerCanDouble;
         let canSplit = this.config.playerCanSplit && 
-          (currentHand.cards[0].rank !== 'A' || this.config.resplitAces);
+          (!currentHand.isPostSplit || currentHand.cards[0].rank !== 'A' || this.config.resplitAces);
 
         // Split Aces get only one card - skip the playing loop
         if (currentHand.isSplitAces) {
@@ -728,29 +729,66 @@ export class BlackjackSimulation {
       this.currentBankroll - this.minBankroll,
     );
 
-    // Track hand details if enabled
+    // Track hand details if enabled - record each split hand separately
     if (this.config.enableHandTracking) {
-      this.handDetails.push({
-        handNumber: this.handsPlayed + 1,
-        runningCountStart: willShuffleBeforeHand ? 0 : runningCountStart,
-        trueCountStart: willShuffleBeforeHand ? 0 : trueCountStart,
-        decksRemaining,
-        betAmount: betSize,
-        playerCardsInitial: playerInitialCards.map((c) => c.rank),
-        dealerCardsInitial: dealerInitialCards.map((c) => c.rank),
-        playerCardsInitialWithSuits: playerInitialCards.map((c) => formatCardWithSuit(c)),
-        dealerCardsInitialWithSuits: dealerInitialCards.map((c) => formatCardWithSuit(c)),
-        playerBlackjack: playerHand.isBlackjack,
-        dealerBlackjack: dealerHand.isBlackjack,
-        initialAction,
-        totalBet,
-        playerCardsFinal: playerHand.cards.map((c) => c.rank),
-        dealerCardsFinal: dealerHand.cards.map((c) => c.rank),
-        playerCardsFinalWithSuits: playerHand.cards.map((c) => formatCardWithSuit(c)),
-        dealerCardsFinalWithSuits: dealerHand.cards.map((c) => formatCardWithSuit(c)),
-        winnings,
-        shuffleOccurred: this.shuffledThisHand,
-      });
+      const handId = `H${this.handsPlayed + 1}`;
+      const splitHandCount = playerHands.length;
+      
+      // Record each split hand as a separate HandDetails entry
+      for (let subHandId = 0; subHandId < playerHands.length; subHandId++) {
+        const hand = playerHands[subHandId];
+        const handBet = hand.betAmount || betSize;
+        
+        // Calculate individual hand winnings
+        let handWinnings = 0;
+        if (subHandId === 0 && playerHand.isBlackjack && dealerHand.isBlackjack) {
+          handWinnings = 0; // Push
+        } else if (subHandId === 0 && playerHand.isBlackjack && !playerHand.isSplitAces) {
+          handWinnings = handBet * 1.5; // Blackjack pays 3:2
+        } else if (subHandId === 0 && playerHand.isSplitAces && playerHand.value.soft === 21) {
+          handWinnings = handBet; // Split Aces 21 pays 1:1
+        } else if (dealerHand.isBlackjack) {
+          handWinnings = -handBet; // Dealer blackjack
+        } else {
+          // Standard hand evaluation
+          if (hand.value.soft > 21) {
+            handWinnings = -handBet; // Player bust
+          } else if (dealerHand.value.soft > 21) {
+            handWinnings = handBet; // Dealer bust
+          } else if (hand.value.soft > dealerHand.value.soft) {
+            handWinnings = handBet; // Player wins
+          } else if (hand.value.soft < dealerHand.value.soft) {
+            handWinnings = -handBet; // Player loses
+          } else {
+            handWinnings = 0; // Push
+          }
+        }
+
+        this.handDetails.push({
+          handNumber: this.handsPlayed + 1,
+          handId,
+          subHandId,
+          splitHandCount,
+          runningCountStart: willShuffleBeforeHand ? 0 : runningCountStart,
+          trueCountStart: willShuffleBeforeHand ? 0 : trueCountStart,
+          decksRemaining,
+          betAmount: handBet,
+          playerCardsInitial: playerInitialCards.map((c) => c.rank),
+          dealerCardsInitial: dealerInitialCards.map((c) => c.rank),
+          playerCardsInitialWithSuits: playerInitialCards.map((c) => formatCardWithSuit(c)),
+          dealerCardsInitialWithSuits: dealerInitialCards.map((c) => formatCardWithSuit(c)),
+          playerBlackjack: subHandId === 0 ? playerHand.isBlackjack : false, // Only first hand can be blackjack
+          dealerBlackjack: dealerHand.isBlackjack,
+          initialAction,
+          totalBet,
+          playerCardsFinal: hand.cards.map((c) => c.rank),
+          dealerCardsFinal: dealerHand.cards.map((c) => c.rank),
+          playerCardsFinalWithSuits: hand.cards.map((c) => formatCardWithSuit(c)),
+          dealerCardsFinalWithSuits: dealerHand.cards.map((c) => formatCardWithSuit(c)),
+          winnings: handWinnings,
+          shuffleOccurred: this.shuffledThisHand,
+        });
+      }
     }
 
     // Casino-realistic: Check if we need to shuffle after this hand

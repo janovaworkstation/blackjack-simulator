@@ -28,18 +28,47 @@ const StrategyValidation: React.FC<StrategyValidationProps> = ({
   results,
   isRunning,
 }) => {
+  // Pre-process handDetails into a Map for O(1) lookup performance
+  const handIdMap = React.useMemo(() => {
+    const map = new Map<string, HandDetails[]>();
+    handDetails.forEach(hand => {
+      if (hand.handId) {
+        if (!map.has(hand.handId)) {
+          map.set(hand.handId, []);
+        }
+        map.get(hand.handId)!.push(hand);
+      }
+    });
+    return map;
+  }, [handDetails]);
+
   // Calculate statistics for each betting range
   const calculateRangeStats = (minCount: number, maxCount: number): RangeStats => {
-    const rangeHands = handDetails.filter(hand => {
+    // Get original hands in this true count range
+    const originalHands = handDetails.filter(hand => {
       const tc = hand.trueCountStart;
-      return tc >= minCount && tc < maxCount;
+      const isOriginalHand = hand.subHandId === undefined || hand.subHandId === 0;
+      return isOriginalHand && tc >= minCount && tc < maxCount;
+    });
+    
+    // For each original hand, collect all split hands with same handId using pre-built map
+    const handGroups = originalHands.map(originalHand => {
+      const handId = originalHand.handId;
+      if (handId && handIdMap.has(handId)) {
+        // Use O(1) map lookup instead of O(n) filter
+        return handIdMap.get(handId)!;
+      } else {
+        // Legacy hand without handId - just return the original hand
+        return [originalHand];
+      }
     });
 
     // Debug: log any hands that don't fall into ranges
     if (minCount === bettingTable[0].minCount) { // Only log once on first range
       const unmatchedHands = handDetails.filter(hand => {
         const tc = hand.trueCountStart;
-        return !bettingTable.some(row => tc >= row.minCount && tc < row.maxCount);
+        const isOriginalHand = hand.subHandId === undefined || hand.subHandId === 0;
+        return isOriginalHand && !bettingTable.some(row => tc >= row.minCount && tc < row.maxCount);
       });
       if (unmatchedHands.length > 0) {
         console.log(`Found ${unmatchedHands.length} hands that don't match any betting range:`);
@@ -50,7 +79,7 @@ const StrategyValidation: React.FC<StrategyValidationProps> = ({
     }
 
     const stats: RangeStats = {
-      handsPlayed: rangeHands.length,
+      handsPlayed: handGroups.length, // Count original hands only
       wins: 0,
       losses: 0,
       pushes: 0,
@@ -62,14 +91,21 @@ const StrategyValidation: React.FC<StrategyValidationProps> = ({
       netResult: 0,
     };
 
-    rangeHands.forEach(hand => {
-      stats.totalWagered += hand.totalBet;
-      stats.totalWinnings += hand.winnings;
+    // Calculate stats for each hand group (original hand + all its split hands)
+    handGroups.forEach(handGroup => {
+      // Sum up all split hand results for this original hand
+      const totalHandWinnings = handGroup.reduce((sum, h) => sum + h.winnings, 0);
+      const totalHandWagered = handGroup.reduce((sum, h) => sum + h.betAmount, 0);
+      const hasBlackjack = handGroup.some(h => h.playerBlackjack);
       
-      if (hand.winnings > 0) {
+      stats.totalWagered += totalHandWagered;
+      stats.totalWinnings += totalHandWinnings;
+      
+      // Classify hand outcome based on total winnings from all splits
+      if (totalHandWinnings > 0) {
         stats.wins++;
-        if (hand.playerBlackjack) stats.blackjacks++;
-      } else if (hand.winnings < 0) {
+        if (hasBlackjack) stats.blackjacks++;
+      } else if (totalHandWinnings < 0) {
         stats.losses++;
       } else {
         stats.pushes++;
@@ -115,7 +151,8 @@ const StrategyValidation: React.FC<StrategyValidationProps> = ({
   totals.expectedValue = totals.totalWagered > 0 ? (totals.totalWinnings / totals.totalWagered) * 100 : 0;
 
   // Calculate overall strategy validation - use more realistic criteria for blackjack
-  const totalHands = handDetails.length;
+  // Only count original hands to match the simulation's hand count
+  const totalHands = handDetails.filter(hand => hand.subHandId === undefined || hand.subHandId === 0).length;
   
   // Use flexible minimum based on range frequency: low counts need more data, high counts need less
   const getMinHandsForRange = (stats: RangeStats, rangeIndex: number) => {

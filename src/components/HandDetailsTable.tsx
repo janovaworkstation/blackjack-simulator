@@ -28,6 +28,20 @@ const HandDetailsTable: React.FC<HandDetailsTableProps> = ({ handDetails }) => {
     return cards.join(', ');
   };
 
+  const formatAction = (action: string | undefined): string => {
+    if (!action) return 'N/A';
+    
+    const actionMap: { [key: string]: string } = {
+      'H': 'Hit',
+      'S': 'Stand',
+      'D': 'Double',
+      'P': 'Split',
+      'R': 'Surrender'
+    };
+    
+    return actionMap[action.toUpperCase()] || action;
+  };
+
   const downloadCSV = () => {
     console.log('Download CSV clicked, processing', handDetails.length, 'hands');
     const headers = [
@@ -56,7 +70,9 @@ const HandDetailsTable: React.FC<HandDetailsTableProps> = ({ handDetails }) => {
         .reduce((sum, h) => sum + (h.winnings || 0), 0);
 
       return [
-        hand.handNumber,
+        hand.handId && hand.splitHandCount > 1 
+          ? `${hand.handNumber}${String.fromCharCode(97 + hand.subHandId)}`  // "123a", "123b", etc.
+          : hand.handNumber,
         hand.shuffleOccurred
           ? 'Shuffle'
           : (hand.decksRemaining?.toFixed(1) ?? 'N/A'),
@@ -77,7 +93,7 @@ const HandDetailsTable: React.FC<HandDetailsTableProps> = ({ handDetails }) => {
         `D: ${hand.dealerCardsInitialWithSuits?.[0] || 'N/A'}, X${
           hand.dealerBlackjack ? ' (BJ)' : ''
         }`,
-        hand.initialAction || 'N/A',
+        formatAction(hand.initialAction),
         `$${hand.totalBet}`,
         `P: ${
           hand.playerCardsFinal
@@ -206,9 +222,13 @@ const HandDetailsTable: React.FC<HandDetailsTableProps> = ({ handDetails }) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {handsWithBankroll.map((hand) => (
-                <tr key={hand.handNumber} className="hover:bg-gray-50">
-                  <td className="p-3 text-center">{hand.handNumber}</td>
+              {handsWithBankroll.map((hand, index) => (
+                <tr key={`${hand.handId || hand.handNumber}-${hand.subHandId || 0}`} className="hover:bg-gray-50">
+                  <td className="p-3 text-center">
+                    {hand.handId && hand.splitHandCount > 1 
+                      ? `${hand.handNumber}${String.fromCharCode(97 + hand.subHandId)}`  // "123a", "123b", etc.
+                      : hand.handNumber}
+                  </td>
                   <td className="p-3 text-center">
                     {hand.shuffleOccurred
                       ? 'Shuffle'
@@ -232,7 +252,7 @@ const HandDetailsTable: React.FC<HandDetailsTableProps> = ({ handDetails }) => {
                     D: {hand.dealerCardsInitial?.[0]}, X
                     {hand.dealerBlackjack ? ' (BJ)' : ''}
                   </td>
-                  <td className="p-3 text-center">{hand.initialAction || 'N/A'}</td>
+                  <td className="p-3 text-center">{formatAction(hand.initialAction)}</td>
                   <td className="p-3 text-center">${hand.totalBet}</td>
                   <td className="p-3">
                     P:{' '}
