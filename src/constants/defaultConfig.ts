@@ -14,21 +14,22 @@ import { getCountingSystemsForUI, DEFAULT_COUNTING_SYSTEM } from './countingSyst
 /**
  * Default betting table configuration for count-based betting strategy.
  * 
- * This conservative strategy increases bets gradually with positive counts:
- * - Negative counts: Minimum bet ($5)
+ * This conservative strategy increases bets gradually with positive counts and provides
+ * full coverage from -99 to +99 as required by validation:
+ * - Extreme negative counts (-99 to 0): Minimum bet ($5)
  * - True count 0-1: Base bet ($10)  
  * - True count 1-2: 2.5x bet ($25)
  * - True count 2-3: 5x bet ($50)
  * - True count 3-4: 7.5x bet ($75)
- * - True count 4+: Maximum bet ($100)
+ * - True count 4 to 99: Maximum bet ($100)
  */
 export const DEFAULT_BETTING_TABLE: BetRow[] = [
-  { minCount: -10, maxCount: 0, betAmount: 5 },
+  { minCount: -99, maxCount: 0, betAmount: 5 },
   { minCount: 0, maxCount: 1, betAmount: 10 },
   { minCount: 1, maxCount: 2, betAmount: 25 },
   { minCount: 2, maxCount: 3, betAmount: 50 },
   { minCount: 3, maxCount: 4, betAmount: 75 },
-  { minCount: 4, maxCount: 10, betAmount: 100 },
+  { minCount: 4, maxCount: 99, betAmount: 100 },
 ];
 
 /**

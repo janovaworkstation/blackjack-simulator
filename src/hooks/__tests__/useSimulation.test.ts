@@ -20,6 +20,14 @@ const mockConfig: SimulationConfig = {
   playerCanSurrender: false,
   numberOfSimulations: 100,
   enableHandTracking: false,
+  bettingTable: [
+    { minCount: -99, maxCount: 0, betAmount: 5 },
+    { minCount: 0, maxCount: 99, betAmount: 10 },
+  ],
+  countingSystem: 'HI_LO',
+  resplitAces: false,
+  doubleAfterSplit: true,
+  handsPerHour: 80,
 };
 
 const mockResults = {

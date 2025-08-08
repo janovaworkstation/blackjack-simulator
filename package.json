@@ -30,7 +30,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "recharts": "^2.8.0",
-    "three": "^0.170.0"
+    "three": "^0.170.0",
+    "zod": "^4.0.15"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",
