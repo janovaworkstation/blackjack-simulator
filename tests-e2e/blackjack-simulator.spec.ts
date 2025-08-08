@@ -58,32 +58,33 @@ test.describe('Blackjack Simulator', () => {
     );
     const runButton = page.getByRole('button', { name: 'Run Simulation' });
 
-    // Initially checked by default
+    // Initially unchecked by default (for performance)
+    await expect(checkbox).not.toBeChecked();
+
+    // Enable tracking first
+    await checkbox.check();
     await expect(checkbox).toBeChecked();
 
-    // Disable tracking first
-    await checkbox.uncheck();
-
-    // Run simulation without tracking
+    // Run simulation with tracking enabled
     await runButton.click();
 
     // Wait for simulation to complete (adjust timeout as needed)
     await page.waitForTimeout(3000);
 
-    // Should not show hand details table
+    // Should show hand details table
     const handDetailsTable = page.locator('text=Hand Details');
-    await expect(handDetailsTable).not.toBeVisible();
+    await expect(handDetailsTable).toBeVisible();
 
-    // Check the checkbox
-    await checkbox.check();
-    await expect(checkbox).toBeChecked();
+    // Disable tracking
+    await checkbox.uncheck();
+    await expect(checkbox).not.toBeChecked();
 
-    // Run simulation with tracking
+    // Run simulation without tracking
     await runButton.click();
     await page.waitForTimeout(3000);
 
-    // Should show hand details table
-    await expect(handDetailsTable).toBeVisible();
+    // Should not show hand details table
+    await expect(handDetailsTable).not.toBeVisible();
   });
 
   test('betting table inputs have correct sizes', async ({ page }) => {
@@ -190,7 +191,7 @@ test.describe('Blackjack Simulator', () => {
       page.getByRole('cell', { name: 'Hand', exact: true }),
     ).toBeVisible();
     await expect(
-      page.getByRole('cell', { name: 'True Count', exact: true }),
+      page.getByRole('cell', { name: 'T-Count', exact: true }),
     ).toBeVisible();
   });
 
