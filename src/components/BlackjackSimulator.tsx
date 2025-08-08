@@ -20,6 +20,7 @@ const BlackjackSimulator = () => {
   const [config, setConfig] = useState<AppConfig>(createDefaultConfig());
 
   const countingSystems = getCountingSystemsForUI();
+  const handDetails = results?.handDetails || [];
 
   const handleRunSimulation = () => {
     const timer = debugTimer('Simulation Run');
@@ -114,11 +115,11 @@ const BlackjackSimulator = () => {
                 appConfig={config}
               />
 
-              {/* Strategy Validation - Only show after simulation has been run */}
-              {results && (
+              {/* Strategy Validation - Only show when hand tracking is enabled */}
+              {results && handDetails.length > 0 && (
                 <StrategyValidation
                   bettingTable={config.bettingTable}
-                  handDetails={results.handDetails || []}
+                  handDetails={handDetails}
                   results={results}
                   isRunning={isRunning}
                 />
@@ -141,9 +142,9 @@ const BlackjackSimulator = () => {
         </div>
 
         {/* Hand Details Section */}
-        {results && results.handDetails && results.handDetails.length > 0 && (
+        {handDetails.length > 0 && (
           <div className="mb-8">
-            <HandDetailsTable handDetails={results.handDetails} />
+            <HandDetailsTable handDetails={handDetails} />
           </div>
         )}
 

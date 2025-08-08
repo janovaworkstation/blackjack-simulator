@@ -396,8 +396,18 @@ const StrategyValidation: React.FC<StrategyValidationProps> = ({
           )}
 
           {handDetails.length === 0 && !isRunning && (
-            <div className="text-center text-gray-500 py-8">
-              Run a simulation with hand tracking enabled to see strategy validation results.
+            <div className="text-center py-8">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 max-w-md mx-auto">
+                <div className="text-blue-800 text-lg font-semibold mb-2">
+                  ℹ️ Strategy Validation Requires Hand Tracking
+                </div>
+                <div className="text-blue-700 text-sm mb-4">
+                  To see detailed strategy validation results, enable "Hand-by-Hand Tracking" in the configuration panel above, then run a new simulation.
+                </div>
+                <div className="text-blue-600 text-xs">
+                  This will show performance analysis for each true count range in your betting strategy.
+                </div>
+              </div>
             </div>
           )}
 

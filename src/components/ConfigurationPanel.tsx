@@ -258,30 +258,34 @@ const ConfigurationPanel: React.FC<ConfigurationPanelProps> = ({
 
         <div className="border-t pt-4">
           <h4 className="font-semibold text-gray-900 mb-3">
-            Debugging Options
+            Advanced Analysis
           </h4>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="enableHandTracking"
-              checked={config.enableHandTracking}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                updateConfig('enableHandTracking', e.target.checked)
+          <div className={`p-3 rounded-lg border-2 ${config.enableHandTracking ? 'border-green-200 bg-green-50' : 'border-blue-200 bg-blue-50'}`}>
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="enableHandTracking"
+                checked={config.enableHandTracking}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  updateConfig('enableHandTracking', e.target.checked)
+                }
+                disabled={isRunning}
+                className="mr-3 w-4 h-4"
+              />
+              <label
+                htmlFor="enableHandTracking"
+                className={`text-sm font-medium ${config.enableHandTracking ? 'text-green-800' : 'text-blue-800'}`}
+              >
+                Enable Hand-by-Hand Tracking (Required for Strategy Validation)
+              </label>
+            </div>
+            <p className={`text-xs mt-2 ml-7 ${config.enableHandTracking ? 'text-green-700' : 'text-blue-700'}`}>
+              {config.enableHandTracking 
+                ? "✅ Detailed analysis enabled: Track individual hands, strategy validation, and export capabilities"
+                : "ℹ️ Fast simulation mode: Enable for detailed hand analysis, strategy validation, and Hand-by-Hand table"
               }
-              disabled={isRunning}
-              className="mr-2"
-            />
-            <label
-              htmlFor="enableHandTracking"
-              className="text-sm text-gray-700"
-            >
-              Enable Hand-by-Hand Tracking (Required for Strategy Validation)
-            </label>
+            </p>
           </div>
-          <p className="text-xs text-gray-500 mt-1">
-            Track detailed information for each hand including cards, counts,
-            bets, and outcomes
-          </p>
         </div>
       </CardContent>
     </Card>

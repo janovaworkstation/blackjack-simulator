@@ -54,8 +54,8 @@ export const useSimulation = () => {
         let lastProgressUpdate = 0;
         const progressCallback = (current: number, total: number) => {
           const now = Date.now();
-          // Update progress at most every 100ms or on completion
-          if (now - lastProgressUpdate >= 100 || current === total) {
+          // Update progress less frequently for better performance - every 200ms minimum
+          if (now - lastProgressUpdate >= 200 || current === total) {
             setProgress({ current, total });
             lastProgressUpdate = now;
           }

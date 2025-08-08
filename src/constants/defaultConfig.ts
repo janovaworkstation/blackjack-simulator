@@ -73,7 +73,7 @@ export const DEFAULT_APP_CONFIG: AppConfig = {
   doubleAfterSplit: true,
   
   // Simulation features
-  enableHandTracking: true,
+  enableHandTracking: false,
   countingSystem: DEFAULT_COUNTING_SYSTEM,
   
   // Betting strategy

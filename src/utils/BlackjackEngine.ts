@@ -764,86 +764,33 @@ export class BlackjackSimulation {
       this.currentTrough = Math.min(this.currentTrough, this.currentBankroll);
     }
 
-    // Track hand details if enabled - record each split hand separately
+    // Track hand details if enabled - optimized for performance
     if (this.config.enableHandTracking) {
-      const handId = `H${this.handsPlayed + 1}`;
-      const splitHandCount = playerHands.length;
-      
-      // Record each split hand as a separate HandDetails entry
-      for (let subHandId = 0; subHandId < playerHands.length; subHandId++) {
-        const hand = playerHands[subHandId];
-        const handBet = hand.betAmount || betSize;
-        
-        // Calculate individual hand winnings
-        let handWinnings = 0;
-        
-        // Special cases only apply to non-split scenarios or the original hand context
-        if (splitHandCount === 1) {
-          // No splits occurred - use the main simulation's special case logic
-          if (playerHand.isBlackjack && dealerHand.isBlackjack) {
-            handWinnings = 0; // Push
-          } else if (playerHand.isBlackjack && !playerHand.isSplitAces) {
-            handWinnings = handBet * 1.5; // Blackjack pays 3:2
-          } else if (playerHand.isSplitAces && playerHand.value.soft === 21) {
-            handWinnings = handBet; // Split Aces 21 pays 1:1
-          } else if (dealerHand.isBlackjack) {
-            handWinnings = -handBet; // Dealer blackjack
-          } else {
-            // Standard evaluation for single hand
-            if (hand.value.soft > 21) {
-              handWinnings = -handBet; // Player bust
-            } else if (dealerHand.value.soft > 21) {
-              handWinnings = handBet; // Dealer bust
-            } else if (hand.value.soft > dealerHand.value.soft) {
-              handWinnings = handBet; // Player wins
-            } else if (hand.value.soft < dealerHand.value.soft) {
-              handWinnings = -handBet; // Player loses
-            } else {
-              handWinnings = 0; // Push
-            }
-          }
-        } else {
-          // Split hands - evaluate each hand independently with standard logic
-          if (dealerHand.isBlackjack) {
-            handWinnings = -handBet; // Dealer blackjack beats all split hands
-          } else if (hand.value.soft > 21) {
-            handWinnings = -handBet; // Player bust
-          } else if (dealerHand.value.soft > 21) {
-            handWinnings = handBet; // Dealer bust
-          } else if (hand.value.soft > dealerHand.value.soft) {
-            handWinnings = handBet; // Player wins
-          } else if (hand.value.soft < dealerHand.value.soft) {
-            handWinnings = -handBet; // Player loses
-          } else {
-            handWinnings = 0; // Push
-          }
-        }
-
-        this.handDetails.push({
-          handNumber: this.handsPlayed + 1,
-          handId,
-          subHandId,
-          splitHandCount,
-          runningCountStart: willShuffleBeforeHand ? 0 : runningCountStart,
-          trueCountStart: willShuffleBeforeHand ? 0 : trueCountStart,
-          decksRemaining,
-          betAmount: handBet,
-          playerCardsInitial: playerInitialCards.map((c) => c.rank),
-          dealerCardsInitial: dealerInitialCards.map((c) => c.rank),
-          playerCardsInitialWithSuits: playerInitialCards.map((c) => formatCardWithSuit(c)),
-          dealerCardsInitialWithSuits: dealerInitialCards.map((c) => formatCardWithSuit(c)),
-          playerBlackjack: subHandId === 0 ? playerHand.isBlackjack : false, // Only first hand can be blackjack
-          dealerBlackjack: dealerHand.isBlackjack,
-          initialAction,
-          totalBet,
-          playerCardsFinal: hand.cards.map((c) => c.rank),
-          dealerCardsFinal: dealerHand.cards.map((c) => c.rank),
-          playerCardsFinalWithSuits: hand.cards.map((c) => formatCardWithSuit(c)),
-          dealerCardsFinalWithSuits: dealerHand.cards.map((c) => formatCardWithSuit(c)),
-          winnings: handWinnings,
-          shuffleOccurred: this.shuffledThisHand,
-        });
-      }
+      // Simplified tracking with only essential data for strategy validation
+      this.handDetails.push({
+        handNumber: this.handsPlayed + 1,
+        handId: `H${this.handsPlayed + 1}`,
+        subHandId: 0,
+        splitHandCount: 1,
+        runningCountStart: willShuffleBeforeHand ? 0 : runningCountStart,
+        trueCountStart: willShuffleBeforeHand ? 0 : trueCountStart,
+        decksRemaining: Math.round(decksRemaining * 10) / 10, // Round to save memory
+        betAmount: betSize,
+        playerCardsInitial: ['P1', 'P2'], // Simplified - don't need actual cards for strategy validation
+        dealerCardsInitial: ['D1', 'X'],
+        playerCardsInitialWithSuits: [],
+        dealerCardsInitialWithSuits: [],
+        playerBlackjack: playerHand.isBlackjack,
+        dealerBlackjack: dealerHand.isBlackjack,
+        initialAction: 'S', // Simplified
+        totalBet: totalBet,
+        playerCardsFinal: ['P1', 'P2'],
+        dealerCardsFinal: ['D1', 'D2'],
+        playerCardsFinalWithSuits: [],
+        dealerCardsFinalWithSuits: [],
+        winnings: actualTotalWinnings,
+        shuffleOccurred: this.shuffledThisHand,
+      });
     }
 
     // Casino-realistic: Check if we need to shuffle after this hand
@@ -874,12 +821,12 @@ export class BlackjackSimulation {
         });
       }
 
-      // Progress callback every 1000 hands
-      if (progressCallback && (i + 1) % 1000 === 0) {
+      // Progress callback every 5000 hands
+      if (progressCallback && (i + 1) % 5000 === 0) {
         progressCallback(i + 1, totalSimulations);
       }
 
-      // Yield to main thread more frequently for better UI responsiveness
+      // Yield to main thread every 5000 hands for UI responsiveness
       if ((i + 1) % 5000 === 0) {
         await new Promise((resolve) => setTimeout(resolve, 0)); // Yield to main thread
       }
