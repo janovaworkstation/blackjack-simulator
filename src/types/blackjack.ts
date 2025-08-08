@@ -154,9 +154,14 @@ export interface BetRow {
 }
 
 /**
- * Supported card counting systems
+ * Supported card counting systems.
+ * 
+ * These correspond to the systems defined in src/constants/countingSystems.ts:
+ * - HI_LO: The most popular balanced counting system
+ * - KO: Knock-Out unbalanced system  
+ * - HI_OPT_I: Hi-Opt I balanced system with neutral Aces
  */
-export type CountingSystemType = 'HI_LO' | 'KO' | 'HI_OPT_I' | 'HI_OPT_II' | 'RED_7';
+export type CountingSystemType = 'HI_LO' | 'KO' | 'HI_OPT_I';
 
 /**
  * Complete application configuration - single source of truth for all UI and simulation settings.

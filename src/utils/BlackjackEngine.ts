@@ -7,66 +7,10 @@ import {
   SimulationResults,
   BetRow,
 } from '../types/blackjack';
+import { COUNTING_SYSTEMS_METADATA } from '../constants/countingSystems';
 
-// Card counting systems
-export const COUNTING_SYSTEMS: {
-  [key: string]: { name: string; values: { [key: string]: number } };
-} = {
-  HI_LO: {
-    name: 'Hi-Lo',
-    values: {
-      A: -1,
-      '2': 1,
-      '3': 1,
-      '4': 1,
-      '5': 1,
-      '6': 1,
-      '7': 0,
-      '8': 0,
-      '9': 0,
-      '10': -1,
-      J: -1,
-      Q: -1,
-      K: -1,
-    },
-  },
-  KO: {
-    name: 'Knock-Out (KO)',
-    values: {
-      A: -1,
-      '2': 1,
-      '3': 1,
-      '4': 1,
-      '5': 1,
-      '6': 1,
-      '7': 1,
-      '8': 0,
-      '9': 0,
-      '10': -1,
-      J: -1,
-      Q: -1,
-      K: -1,
-    },
-  },
-  HI_OPT_I: {
-    name: 'Hi-Opt I',
-    values: {
-      A: 0,
-      '2': 0,
-      '3': 1,
-      '4': 1,
-      '5': 1,
-      '6': 1,
-      '7': 0,
-      '8': 0,
-      '9': 0,
-      '10': -1,
-      J: -1,
-      Q: -1,
-      K: -1,
-    },
-  },
-};
+// Card counting systems - now imported from centralized constants
+export const COUNTING_SYSTEMS = COUNTING_SYSTEMS_METADATA;
 
 // Basic Strategy Matrix (S17 - Dealer Stands on Soft 17)
 export const BASIC_STRATEGY: { [key: number]: string[] } = {

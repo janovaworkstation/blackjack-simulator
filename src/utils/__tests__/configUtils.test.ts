@@ -6,6 +6,7 @@
 import { getSimulationConfig, validateSimulationConfig } from '../configUtils';
 import { AppConfig, SimulationConfig } from '../../types/blackjack';
 import { DEFAULT_APP_CONFIG } from '../../constants/defaultConfig';
+import { DEFAULT_COUNTING_SYSTEM } from '../../constants/countingSystems';
 
 describe('configUtils', () => {
   describe('getSimulationConfig', () => {
@@ -33,7 +34,7 @@ describe('configUtils', () => {
       expect(result.playerCanSurrender).toBe(false);
       expect(result.enableHandTracking).toBe(true);
       expect(result.bettingTable).toEqual(mockAppConfig.bettingTable);
-      expect(result.countingSystem).toBe('HI_LO');
+      expect(result.countingSystem).toBe(DEFAULT_COUNTING_SYSTEM);
       expect(result.resplitAces).toBe(false);
       expect(result.doubleAfterSplit).toBe(true);
       expect(result.handsPerHour).toBe(80);
@@ -194,7 +195,7 @@ describe('configUtils', () => {
         playerCanSurrender: false,
         enableHandTracking: true,
         bettingTable: [],
-        countingSystem: 'HI_LO',
+        countingSystem: DEFAULT_COUNTING_SYSTEM,
         resplitAces: false,
         doubleAfterSplit: true,
         maxBet: 500,

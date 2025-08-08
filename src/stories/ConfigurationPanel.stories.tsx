@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import ConfigurationPanel from '../components/ConfigurationPanel';
 import { useState } from 'react';
+import { getCountingSystemsForUI, DEFAULT_COUNTING_SYSTEM } from '../constants/countingSystems';
 
 const meta: Meta<typeof ConfigurationPanel> = {
   title: 'Components/ConfigurationPanel',
@@ -22,16 +23,12 @@ const ConfigurationPanelWithState = () => {
     playerCanSurrender: false,
     maxBet: 100,
     handsPerHour: 80,
-    countingSystem: 'HI_LO',
+    countingSystem: DEFAULT_COUNTING_SYSTEM,
     resplitAces: false,
     enableHandTracking: false,
   });
 
-  const countingSystems = [
-    { value: 'HI_LO', label: 'Hi-Lo' },
-    { value: 'KO', label: 'Knock-Out (KO)' },
-    { value: 'HI_OPT_I', label: 'Hi-Opt I' },
-  ];
+  const countingSystems = getCountingSystemsForUI();
 
   return (
     <ConfigurationPanel

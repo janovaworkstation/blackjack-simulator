@@ -1,7 +1,8 @@
 import { render, fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ConfigurationPanel from '../ConfigurationPanel';
-import { DEFAULT_APP_CONFIG, DEFAULT_COUNTING_SYSTEMS } from '../../constants/defaultConfig';
+import { DEFAULT_APP_CONFIG } from '../../constants/defaultConfig';
+import { getCountingSystemsForUI } from '../../constants/countingSystems';
 
 const mockSetConfig = jest.fn();
 
@@ -11,7 +12,7 @@ const mockConfig = {
   enableHandTracking: false,
 };
 
-const mockCountingSystems = DEFAULT_COUNTING_SYSTEMS;
+const mockCountingSystems = getCountingSystemsForUI();
 
 describe('ConfigurationPanel', () => {
   beforeEach(() => {

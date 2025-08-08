@@ -10,14 +10,15 @@ import ResultsPanel from './ResultsPanel';
 import HandDetailsTable from './HandDetailsTable';
 import { useSimulation } from '../hooks/useSimulation';
 import { getSimulationConfig } from '../utils/configUtils';
-import { DEFAULT_APP_CONFIG, DEFAULT_COUNTING_SYSTEMS, createDefaultConfig } from '../constants/defaultConfig';
+import { DEFAULT_APP_CONFIG, createDefaultConfig } from '../constants/defaultConfig';
+import { getCountingSystemsForUI } from '../constants/countingSystems';
 
 const BlackjackSimulator = () => {
   const { isRunning, results, progress, runSimulation } = useSimulation();
 
   const [config, setConfig] = useState<AppConfig>(createDefaultConfig());
 
-  const countingSystems = DEFAULT_COUNTING_SYSTEMS;
+  const countingSystems = getCountingSystemsForUI();
 
   const handleRunSimulation = () => {
     console.log('Button clicked! Config:', config);

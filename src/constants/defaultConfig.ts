@@ -9,6 +9,7 @@
  */
 
 import { AppConfig, BetRow, CountingSystemType } from '../types/blackjack';
+import { getCountingSystemsForUI, DEFAULT_COUNTING_SYSTEM } from './countingSystems';
 
 /**
  * Default betting table configuration for count-based betting strategy.
@@ -31,18 +32,12 @@ export const DEFAULT_BETTING_TABLE: BetRow[] = [
 ];
 
 /**
- * Available card counting systems for simulation.
+ * Available card counting systems for UI components.
  * 
- * Hi-Lo is selected as default due to its:
- * - Simplicity for beginners
- * - Proven effectiveness in casino play
- * - Wide adoption in professional play
+ * This uses the centralized counting systems helper to ensure consistency
+ * and prevent typos or dead values across the application.
  */
-export const DEFAULT_COUNTING_SYSTEMS = [
-  { value: 'HI_LO' as CountingSystemType, label: 'Hi-Lo' },
-  { value: 'KO' as CountingSystemType, label: 'Knock-Out (KO)' },
-  { value: 'HI_OPT_I' as CountingSystemType, label: 'Hi-Opt I' },
-];
+export const DEFAULT_COUNTING_SYSTEMS = getCountingSystemsForUI();
 
 /**
  * Complete default application configuration.
@@ -78,7 +73,7 @@ export const DEFAULT_APP_CONFIG: AppConfig = {
   
   // Simulation features
   enableHandTracking: true,
-  countingSystem: 'HI_LO',
+  countingSystem: DEFAULT_COUNTING_SYSTEM,
   
   // Betting strategy
   bettingTable: DEFAULT_BETTING_TABLE,
