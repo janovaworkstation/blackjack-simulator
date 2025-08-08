@@ -10,6 +10,7 @@ import ResultsPanel from './ResultsPanel';
 import HandDetailsTable from './HandDetailsTable';
 import { useSimulation } from '../hooks/useSimulation';
 import { SimulationConfig } from '../types/blackjack';
+import { getSimulationConfig } from '../utils/configUtils';
 
 const BlackjackSimulator = () => {
   const { isRunning, results, progress, runSimulation } = useSimulation();
@@ -50,20 +51,7 @@ const BlackjackSimulator = () => {
 
   const handleRunSimulation = () => {
     console.log('Button clicked! Config:', config);
-    const simulationConfig: SimulationConfig = {
-      numberOfDecks: config.numberOfDecks,
-      deckPenetration: config.deckPenetration,
-      playerBet: config.playerBet,
-      dealerHitsOnSoft17: config.dealerHitsOnSoft17,
-      playerCanDouble: config.playerCanDouble,
-      playerCanSplit: config.playerCanSplit,
-      playerCanSurrender: config.playerCanSurrender,
-      numberOfSimulations: config.numberOfSimulations,
-      enableHandTracking: config.enableHandTracking,
-      bettingTable: config.bettingTable,
-      countingSystem: config.countingSystem,
-      doubleAfterSplit: config.doubleAfterSplit,
-    };
+    const simulationConfig = getSimulationConfig(config);
     console.log('runSimulation function:', runSimulation);
     runSimulation(simulationConfig);
   };
@@ -144,17 +132,7 @@ const BlackjackSimulator = () => {
                 results={results}
                 isRunning={isRunning}
                 progress={progress}
-                config={{
-                  numberOfDecks: config.numberOfDecks,
-                  deckPenetration: config.deckPenetration,
-                  playerBet: config.playerBet,
-                  dealerHitsOnSoft17: config.dealerHitsOnSoft17,
-                  playerCanDouble: config.playerCanDouble,
-                  playerCanSplit: config.playerCanSplit,
-                  playerCanSurrender: config.playerCanSurrender,
-                  numberOfSimulations: config.numberOfSimulations,
-                  enableHandTracking: config.enableHandTracking,
-                }}
+                config={getSimulationConfig(config)}
                 bettingStrategy={config.bettingTable}
                 countingSystem={config.countingSystem}
               />
@@ -173,19 +151,7 @@ const BlackjackSimulator = () => {
               {results && (
                 <StrategyValidationPanel
                   results={results}
-                  config={{
-                    numberOfDecks: config.numberOfDecks,
-                    deckPenetration: config.deckPenetration,
-                    playerBet: config.playerBet,
-                    dealerHitsOnSoft17: config.dealerHitsOnSoft17,
-                    playerCanDouble: config.playerCanDouble,
-                    playerCanSplit: config.playerCanSplit,
-                    playerCanSurrender: config.playerCanSurrender,
-                    numberOfSimulations: config.numberOfSimulations,
-                    enableHandTracking: config.enableHandTracking,
-                    bettingTable: config.bettingTable,
-                    countingSystem: config.countingSystem,
-                  }}
+                  config={getSimulationConfig(config)}
                   bettingStrategy={config.bettingTable}
                   countingSystem={config.countingSystem}
                 />
