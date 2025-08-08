@@ -63,19 +63,16 @@ const StrategyValidation: React.FC<StrategyValidationProps> = ({
       }
     });
 
-    // Debug: log any hands that don't fall into ranges
-    if (minCount === bettingTable[0].minCount) { // Only log once on first range
-      const unmatchedHands = handDetails.filter(hand => {
-        const tc = hand.trueCountStart;
-        const isOriginalHand = hand.subHandId === undefined || hand.subHandId === 0;
-        return isOriginalHand && !bettingTable.some(row => tc >= row.minCount && tc < row.maxCount);
-      });
-      if (unmatchedHands.length > 0) {
-        console.log(`Found ${unmatchedHands.length} hands that don't match any betting range:`);
-        const tcExamples = unmatchedHands.slice(0, 10).map(h => h.trueCountStart);
-        console.log(`Example TC values: ${tcExamples.join(', ')}`);
-        console.log(`Betting ranges: ${bettingTable.map(r => `[${r.minCount}, ${r.maxCount})`).join(', ')}`);
-      }
+    // Check for unmatched hands that fall outside betting ranges
+    const unmatchedHands = originalHands.filter(hand => {
+      const tc = hand.trueCountStart;
+      return !bettingTable.some(row => tc >= row.minCount && tc < row.maxCount);
+    });
+    
+    if (unmatchedHands.length > 0 && minCount === bettingTable[0].minCount) {
+      console.warn(`Strategy Validation: ${unmatchedHands.length} hands fall outside betting ranges and will be excluded from analysis`);
+      console.warn(`Example excluded TC values: ${unmatchedHands.slice(0, 5).map(h => h.trueCountStart).join(', ')}`);
+      console.warn(`Betting ranges: ${bettingTable.map(r => `[${r.minCount}, ${r.maxCount})`).join(', ')}`);
     }
 
     const stats: RangeStats = {
@@ -101,15 +98,17 @@ const StrategyValidation: React.FC<StrategyValidationProps> = ({
       stats.totalWagered += totalHandWagered;
       stats.totalWinnings += totalHandWinnings;
       
-      // Classify hand outcome based on total winnings from all splits
-      if (totalHandWinnings > 0) {
-        stats.wins++;
-        if (hasBlackjack) stats.blackjacks++;
-      } else if (totalHandWinnings < 0) {
-        stats.losses++;
-      } else {
-        stats.pushes++;
-      }
+      // Count each individual split hand's outcome (matching main simulation logic)
+      handGroup.forEach(hand => {
+        if (hand.winnings > 0) {
+          stats.wins++;
+          if (hand.playerBlackjack) stats.blackjacks++;
+        } else if (hand.winnings < 0) {
+          stats.losses++;
+        } else {
+          stats.pushes++;
+        }
+      });
     });
 
     stats.netResult = stats.totalWinnings;
@@ -120,6 +119,7 @@ const StrategyValidation: React.FC<StrategyValidationProps> = ({
   };
 
   const rangeStats = bettingTable.map(row => calculateRangeStats(row.minCount, row.maxCount));
+
 
   // Calculate totals across all ranges
   const totals: RangeStats = rangeStats.reduce((acc, stats) => ({
@@ -386,7 +386,10 @@ const StrategyValidation: React.FC<StrategyValidationProps> = ({
               </div>
               {totals.handsPlayed !== results.handsPlayed && (
                 <div className="mt-2 text-xs text-red-700">
-                  <strong>Missing:</strong> {(results.handsPlayed - totals.handsPlayed).toLocaleString()} hands not categorized in any betting range
+                  <strong>Missing:</strong> {(results.handsPlayed - totals.handsPlayed).toLocaleString()} hands fall outside betting table ranges
+                  <div className="mt-1 text-xs text-orange-700">
+                    <strong>Tip:</strong> Check console for excluded True Count values. Consider expanding betting table ranges to cover all possible TC values (e.g., [-99, 99]).
+                  </div>
                 </div>
               )}
             </div>

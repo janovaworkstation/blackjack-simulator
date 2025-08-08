@@ -631,6 +631,16 @@ export class BlackjackSimulation {
               initialAction = action;
             }
 
+            // Track hard 15 and 16 totals (important strategy decision points)
+            if (handIndex === 0) { // Only count for the first hand to avoid double-counting splits
+              const hardValue = currentHand.value.hard;
+              if (hardValue === 15 && !this.isSoftHand(currentHand)) {
+                this.hands15++;
+              } else if (hardValue === 16 && !this.isSoftHand(currentHand)) {
+                this.hands16++;
+              }
+            }
+
             if (action === 'S') break;
 
           if (action === 'R') {
@@ -721,8 +731,64 @@ export class BlackjackSimulation {
     }
 
     this.totalWagered += totalBet;
-    this.totalWon += winnings;
-    this.currentBankroll += winnings;
+    
+    // Use the sum of individual hand winnings for accuracy (matches HandDetails calculation)
+    let actualTotalWinnings = 0;
+    if (this.config.enableHandTracking) {
+      // Sum the actual individual hand winnings from our corrected calculation
+      const currentSplitHandCount = playerHands.length;
+      for (let subHandId = 0; subHandId < playerHands.length; subHandId++) {
+        const hand = playerHands[subHandId];
+        const handBet = hand.betAmount || betSize;
+        
+        // Calculate individual hand winnings using the same logic as HandDetails
+        let handWinnings = 0;
+        if (currentSplitHandCount === 1) {
+          if (playerHand.isBlackjack && dealerHand.isBlackjack) {
+            handWinnings = 0;
+          } else if (playerHand.isBlackjack && !playerHand.isSplitAces) {
+            handWinnings = handBet * 1.5;
+          } else if (playerHand.isSplitAces && playerHand.value.soft === 21) {
+            handWinnings = handBet;
+          } else if (dealerHand.isBlackjack) {
+            handWinnings = -handBet;
+          } else {
+            if (hand.value.soft > 21) {
+              handWinnings = -handBet;
+            } else if (dealerHand.value.soft > 21) {
+              handWinnings = handBet;
+            } else if (hand.value.soft > dealerHand.value.soft) {
+              handWinnings = handBet;
+            } else if (hand.value.soft < dealerHand.value.soft) {
+              handWinnings = -handBet;
+            } else {
+              handWinnings = 0;
+            }
+          }
+        } else {
+          if (dealerHand.isBlackjack) {
+            handWinnings = -handBet;
+          } else if (hand.value.soft > 21) {
+            handWinnings = -handBet;
+          } else if (dealerHand.value.soft > 21) {
+            handWinnings = handBet;
+          } else if (hand.value.soft > dealerHand.value.soft) {
+            handWinnings = handBet;
+          } else if (hand.value.soft < dealerHand.value.soft) {
+            handWinnings = -handBet;
+          } else {
+            handWinnings = 0;
+          }
+        }
+        actualTotalWinnings += handWinnings;
+      }
+    } else {
+      // Fallback to original winnings calculation when hand tracking disabled
+      actualTotalWinnings = winnings;
+    }
+    
+    this.totalWon += actualTotalWinnings;
+    this.currentBankroll += actualTotalWinnings;
     this.minBankroll = Math.min(this.minBankroll, this.currentBankroll);
     this.maxDrawdown = Math.max(
       this.maxDrawdown,
@@ -741,17 +807,37 @@ export class BlackjackSimulation {
         
         // Calculate individual hand winnings
         let handWinnings = 0;
-        if (subHandId === 0 && playerHand.isBlackjack && dealerHand.isBlackjack) {
-          handWinnings = 0; // Push
-        } else if (subHandId === 0 && playerHand.isBlackjack && !playerHand.isSplitAces) {
-          handWinnings = handBet * 1.5; // Blackjack pays 3:2
-        } else if (subHandId === 0 && playerHand.isSplitAces && playerHand.value.soft === 21) {
-          handWinnings = handBet; // Split Aces 21 pays 1:1
-        } else if (dealerHand.isBlackjack) {
-          handWinnings = -handBet; // Dealer blackjack
+        
+        // Special cases only apply to non-split scenarios or the original hand context
+        if (splitHandCount === 1) {
+          // No splits occurred - use the main simulation's special case logic
+          if (playerHand.isBlackjack && dealerHand.isBlackjack) {
+            handWinnings = 0; // Push
+          } else if (playerHand.isBlackjack && !playerHand.isSplitAces) {
+            handWinnings = handBet * 1.5; // Blackjack pays 3:2
+          } else if (playerHand.isSplitAces && playerHand.value.soft === 21) {
+            handWinnings = handBet; // Split Aces 21 pays 1:1
+          } else if (dealerHand.isBlackjack) {
+            handWinnings = -handBet; // Dealer blackjack
+          } else {
+            // Standard evaluation for single hand
+            if (hand.value.soft > 21) {
+              handWinnings = -handBet; // Player bust
+            } else if (dealerHand.value.soft > 21) {
+              handWinnings = handBet; // Dealer bust
+            } else if (hand.value.soft > dealerHand.value.soft) {
+              handWinnings = handBet; // Player wins
+            } else if (hand.value.soft < dealerHand.value.soft) {
+              handWinnings = -handBet; // Player loses
+            } else {
+              handWinnings = 0; // Push
+            }
+          }
         } else {
-          // Standard hand evaluation
-          if (hand.value.soft > 21) {
+          // Split hands - evaluate each hand independently with standard logic
+          if (dealerHand.isBlackjack) {
+            handWinnings = -handBet; // Dealer blackjack beats all split hands
+          } else if (hand.value.soft > 21) {
             handWinnings = -handBet; // Player bust
           } else if (dealerHand.value.soft > 21) {
             handWinnings = handBet; // Dealer bust
