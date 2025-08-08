@@ -296,10 +296,10 @@ describe('useSimulation with validation', () => {
       });
 
       expect(global.alert).toHaveBeenCalledWith(
-        expect.stringContaining('Betting strategy validation failed')
+        expect.stringContaining('Configuration validation failed')
       );
       expect(global.alert).toHaveBeenCalledWith(
-        expect.stringContaining('must be positive')
+        expect.stringContaining('betAmount must be positive')
       );
     });
 

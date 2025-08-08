@@ -32,7 +32,7 @@ describe('configUtils', () => {
       expect(result.playerCanDouble).toBe(true);
       expect(result.playerCanSplit).toBe(true);
       expect(result.playerCanSurrender).toBe(false);
-      expect(result.enableHandTracking).toBe(true);
+      expect(result.enableHandTracking).toBe(false);
       expect(result.bettingTable).toEqual(mockAppConfig.bettingTable);
       expect(result.countingSystem).toBe(DEFAULT_COUNTING_SYSTEM);
       expect(result.resplitAces).toBe(false);

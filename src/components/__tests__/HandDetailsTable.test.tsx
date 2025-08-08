@@ -82,11 +82,11 @@ describe('HandDetailsTable', () => {
       screen.getByText('Hand-by-Hand Details (3 hands tracked)'),
     ).toBeInTheDocument();
     expect(screen.getByText('Hand')).toBeInTheDocument();
-    expect(screen.getByText('True Count')).toBeInTheDocument();
-    expect(screen.getByText('Initial Wager')).toBeInTheDocument();
+    expect(screen.getByText('T-Count')).toBeInTheDocument();
+    expect(screen.getByText('Bet')).toBeInTheDocument();
     expect(screen.getByText('Initial Cards')).toBeInTheDocument();
-    expect(screen.getByText('Initial Action')).toBeInTheDocument();
-    expect(screen.getByText('Total Wager')).toBeInTheDocument();
+    expect(screen.getByText('Action')).toBeInTheDocument();
+    expect(screen.getByText('Total Bet')).toBeInTheDocument();
     expect(screen.getByText('Final Cards')).toBeInTheDocument();
     expect(screen.getByText('Outcome')).toBeInTheDocument();
     expect(screen.getByText('Bankroll')).toBeInTheDocument();
@@ -224,7 +224,7 @@ describe('HandDetailsTable', () => {
     expect(
       screen.getByText('Hand-by-Hand Details (3 hands tracked)'),
     ).toBeInTheDocument();
-    expect(screen.getByText('True Count')).toBeInTheDocument();
+    expect(screen.getByText('T-Count')).toBeInTheDocument();
   });
 
   it('shows N/A for missing true count data', () => {
@@ -239,6 +239,6 @@ describe('HandDetailsTable', () => {
     expect(
       screen.getByText('Hand-by-Hand Details (1 hands tracked)'),
     ).toBeInTheDocument();
-    expect(screen.getByText('True Count')).toBeInTheDocument();
+    expect(screen.getByText('T-Count')).toBeInTheDocument();
   });
 });

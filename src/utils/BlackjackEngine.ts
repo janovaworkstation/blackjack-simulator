@@ -764,33 +764,80 @@ export class BlackjackSimulation {
       this.currentTrough = Math.min(this.currentTrough, this.currentBankroll);
     }
 
-    // Track hand details if enabled - optimized for performance
+    // Track hand details if enabled - create individual records for split hands to maintain financial accuracy
     if (this.config.enableHandTracking) {
-      // Simplified tracking with only essential data for strategy validation
-      this.handDetails.push({
-        handNumber: this.handsPlayed + 1,
-        handId: `H${this.handsPlayed + 1}`,
-        subHandId: 0,
-        splitHandCount: 1,
-        runningCountStart: willShuffleBeforeHand ? 0 : runningCountStart,
-        trueCountStart: willShuffleBeforeHand ? 0 : trueCountStart,
-        decksRemaining: Math.round(decksRemaining * 10) / 10, // Round to save memory
-        betAmount: betSize,
-        playerCardsInitial: ['P1', 'P2'], // Simplified - don't need actual cards for strategy validation
-        dealerCardsInitial: ['D1', 'X'],
-        playerCardsInitialWithSuits: [],
-        dealerCardsInitialWithSuits: [],
-        playerBlackjack: playerHand.isBlackjack,
-        dealerBlackjack: dealerHand.isBlackjack,
-        initialAction: 'S', // Simplified
-        totalBet: totalBet,
-        playerCardsFinal: ['P1', 'P2'],
-        dealerCardsFinal: ['D1', 'D2'],
-        playerCardsFinalWithSuits: [],
-        dealerCardsFinalWithSuits: [],
-        winnings: actualTotalWinnings,
-        shuffleOccurred: this.shuffledThisHand,
-      });
+      const currentSplitHandCount = playerHands.length;
+      const handId = `H${this.handsPlayed + 1}`;
+      
+      // Create a HandDetails record for each split hand (maintains financial calculation accuracy)
+      for (let subHandId = 0; subHandId < playerHands.length; subHandId++) {
+        const hand = playerHands[subHandId];
+        const handBet = hand.betAmount || betSize;
+        let handWinnings = 0;
+
+        // Calculate winnings for this specific split hand (simplified from original complex logic)
+        if (currentSplitHandCount === 1) {
+          if (playerHand.isBlackjack && dealerHand.isBlackjack) {
+            handWinnings = 0;
+          } else if (playerHand.isBlackjack && !playerHand.isSplitAces) {
+            handWinnings = handBet * 1.5;
+          } else if (dealerHand.isBlackjack) {
+            handWinnings = -handBet;
+          } else {
+            if (hand.value.soft > 21) {
+              handWinnings = -handBet;
+            } else if (dealerHand.value.soft > 21) {
+              handWinnings = handBet;
+            } else if (hand.value.soft > dealerHand.value.soft) {
+              handWinnings = handBet;
+            } else if (hand.value.soft < dealerHand.value.soft) {
+              handWinnings = -handBet;
+            } else {
+              handWinnings = 0;
+            }
+          }
+        } else {
+          // Split hand logic
+          if (dealerHand.isBlackjack) {
+            handWinnings = -handBet;
+          } else if (hand.value.soft > 21) {
+            handWinnings = -handBet;
+          } else if (dealerHand.value.soft > 21) {
+            handWinnings = handBet;
+          } else if (hand.value.soft > dealerHand.value.soft) {
+            handWinnings = handBet;
+          } else if (hand.value.soft < dealerHand.value.soft) {
+            handWinnings = -handBet;
+          } else {
+            handWinnings = 0;
+          }
+        }
+
+        this.handDetails.push({
+          handNumber: this.handsPlayed + 1,
+          handId: handId,
+          subHandId: subHandId,
+          splitHandCount: currentSplitHandCount,
+          runningCountStart: willShuffleBeforeHand ? 0 : runningCountStart,
+          trueCountStart: willShuffleBeforeHand ? 0 : trueCountStart,
+          decksRemaining: Math.round(decksRemaining * 10) / 10,
+          betAmount: handBet,
+          playerCardsInitial: ['P1', 'P2'], // Simplified for performance
+          dealerCardsInitial: ['D1', 'X'],
+          playerCardsInitialWithSuits: [],
+          dealerCardsInitialWithSuits: [],
+          playerBlackjack: hand.isBlackjack || false,
+          dealerBlackjack: dealerHand.isBlackjack,
+          initialAction: subHandId === 0 ? (initialAction || 'S') : 'S', // Only track for main hand
+          totalBet: handBet,
+          playerCardsFinal: ['P1', 'P2'],
+          dealerCardsFinal: ['D1', 'D2'],
+          playerCardsFinalWithSuits: [],
+          dealerCardsFinalWithSuits: [],
+          winnings: handWinnings,
+          shuffleOccurred: this.shuffledThisHand,
+        });
+      }
     }
 
     // Casino-realistic: Check if we need to shuffle after this hand
